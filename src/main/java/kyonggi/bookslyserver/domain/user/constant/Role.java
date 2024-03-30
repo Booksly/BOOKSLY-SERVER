@@ -1,4 +1,5 @@
 package kyonggi.bookslyserver.domain.user.constant;
 
-public enum Temp {
+public enum Role {
+    ROLE_ADMIN, ROLE_USER
 }
