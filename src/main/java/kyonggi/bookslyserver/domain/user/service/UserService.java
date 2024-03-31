@@ -34,7 +34,7 @@ public class UserService {
                     user.updateUserInfo(nickname, profileImgUrl);
                     return user;
                 })
-                .orElseGet(() -> createUser(email,socialId,nickname,profileImgUrl)); //이거는 왜 유저 도메인에 안넣음
+                .orElseGet(() -> createUser(email,socialId,nickname,profileImgUrl));
     }
 
     private User createUser(String email, String socialId, String nickname, String profileImgUrl) {
