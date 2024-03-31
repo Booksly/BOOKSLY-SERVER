@@ -25,10 +25,10 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        //registrationId = google
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        //providerId = google, naver, kakao
+        String providerId = userRequest.getClientRegistration().getRegistrationId();
         //리소스 서버로부터 받아온 attributes로 userInfo 생성
-        OAuth2UserInfo userInfo = OAuthAttributes.of(registrationId, oAuth2User.getAttributes());
+        OAuth2UserInfo userInfo = OAuthAttributes.of(providerId, oAuth2User.getAttributes());
         User user = userService.getOrCreateUser(userInfo);
 
         return new PrincipalDetails(user, oAuth2User.getAttributes());
