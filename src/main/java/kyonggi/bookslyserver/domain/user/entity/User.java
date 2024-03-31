@@ -23,6 +23,7 @@ public class User extends BaseTimeEntity {
 
     @Column(name="social_id")
     private String socialId;
+    private String email;
 
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10) DEFAULT 'ROLE_USER'")

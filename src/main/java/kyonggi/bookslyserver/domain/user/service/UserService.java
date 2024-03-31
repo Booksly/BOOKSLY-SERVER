@@ -24,28 +24,28 @@ public class UserService {
      * @return 유저 객체
      */
     public User getOrCreateUser(OAuth2UserInfo userInfo) {
+        String socialId = userInfo.getIdByProvider();
         String email = userInfo.getEmail();
         String nickname = userInfo.getNickname();
         String profileImgUrl = userInfo.getProfileImgUrl();
 
-        return userRepository.findBySocialId(email)
+        return userRepository.findBySocialId(socialId)
                 .map(user -> {
                     user.updateUserInfo(nickname, profileImgUrl);
                     return user;
                 })
-                .orElseGet(() -> createUser(email,nickname,profileImgUrl));
+                .orElseGet(() -> createUser(email,socialId,nickname,profileImgUrl)); //이거는 왜 유저 도메인에 안넣음
     }
 
-    private User createUser(String email, String nickname, String profileImgUrl) {
+    private User createUser(String email, String socialId, String nickname, String profileImgUrl) {
         User createdUser = User.builder()
-                .socialId(email)
+                .email(email)
+                .socialId(socialId)
                 .nickname(nickname)
                 .profileImgUrl(profileImgUrl)
                 .build();
 
         return userRepository.save(createdUser);
     }
-
-
 
 }
