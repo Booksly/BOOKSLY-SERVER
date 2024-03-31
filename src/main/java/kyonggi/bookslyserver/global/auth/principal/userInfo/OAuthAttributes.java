@@ -14,8 +14,8 @@ public enum OAuthAttributes {
     )),
 
     NAVER("naver", attributes -> {
-
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+
         return new OAuth2UserInfo(
                 "naver_"+ response.get("id").toString(),
                 response.get("name").toString(),
@@ -25,16 +25,17 @@ public enum OAuthAttributes {
     }),
 
 
-//    KAKAO("kakao", attributes -> {
-//        Map<String, Object> account = (Map<String, Object>) attributes.get("kakao_account");
-//        Map<String, Object> profile = (Map<String, Object>) attributes.get("properties");
-//        return new OAuth2UserInfo(
-//                attributes.get("id").toString(),
-//                profile.get("nickname").toString(),
-//                profile.get("profile_image").toString(),
-//                account.get("email").toString()
-//        );
-//    })
+    KAKAO("kakao", attributes -> {
+        Map<String, Object> account = (Map<String, Object>) attributes.get("kakao_account");
+        Map<String, Object> profile = (Map<String, Object>) attributes.get("properties");
+
+        return new OAuth2UserInfo(
+                "kakao_" + attributes.get("id").toString(),
+                profile.get("nickname").toString(),
+                profile.get("profile_image").toString(),
+                account.get("email").toString()
+        );
+    })
     ;
     private final String providerId;
     private final Function<Map<String, Object>, OAuth2UserInfo> of;
