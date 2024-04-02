@@ -16,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -43,16 +42,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             accessToken = accessToken.replace(PREFIX, "");
 
             jwtProvider.validateAccessToken(accessToken);
-            String socialId = jwtProvider.extractSocialId(accessToken);
+            String loginId = jwtProvider.extractLoginId(accessToken);
 
-            setAuthentication(socialId);
+            setAuthentication(loginId);
             filterChain.doFilter(request, response);
         }
     }
 
 
     private void setAuthentication(String socialId) {
-        User user = userRepository.findBySocialId(socialId)
+        User user = userRepository.findByLoginId(socialId)
                 .orElseThrow(()-> new UnauthorizedException(ErrorCode.MEMBER_NOT_FOUND));
 
         // user를 세션에 저장하기 위해 authentication 객체를 생성한다.

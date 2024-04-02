@@ -1,11 +1,15 @@
 package kyonggi.bookslyserver.domain.user.entity;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.notice.entity.UserNotice;
+import kyonggi.bookslyserver.domain.reservation.entity.Reservation;
+import kyonggi.bookslyserver.domain.review.entity.Review;
 import kyonggi.bookslyserver.domain.user.constant.Role;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -13,20 +17,17 @@ import org.hibernate.annotations.DynamicUpdate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@DynamicUpdate
-@DynamicInsert
 public class User extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="social_id")
-    private String socialId;
+    @Column(name="login_id")
+    private String loginId;
     private String email;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(10) DEFAULT 'ROLE_USER'")
     private Role role;
 
     private String phoneNum;
@@ -34,6 +35,20 @@ public class User extends BaseTimeEntity {
     private String nickname;
 
     private String profileImgUrl;
+
+    private boolean isVerified;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<FavoriteShop> favoriteShops = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    private List<Reservation> reservations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserNotice> userNotices = new ArrayList<>();
 
     public void updateUserInfo(String nickname, String profileImageUrl) {
         this.nickname = nickname;
