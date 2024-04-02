@@ -42,9 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             accessToken = accessToken.replace(PREFIX, "");
 
             jwtProvider.validateAccessToken(accessToken);
-            String socialId = jwtProvider.extractSocialId(accessToken);
+            String loginId = jwtProvider.extractLoginId(accessToken);
 
-            setAuthentication(socialId);
+            setAuthentication(loginId);
             filterChain.doFilter(request, response);
         }
     }

@@ -2,9 +2,7 @@ package kyonggi.bookslyserver.global.auth.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.UnauthorizedException;
@@ -53,7 +51,7 @@ public class JwtProvider {
     }
 
 
-    public String extractSocialId(String token) {
+    public String extractLoginId(String token) {
         return JWT.require(Algorithm.HMAC512(SECRET)).build()
                 .verify(token)
                 .getClaim("loginId").asString();

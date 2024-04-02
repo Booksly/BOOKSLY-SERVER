@@ -1,5 +1,6 @@
 package kyonggi.bookslyserver.domain.user.service;
 
+import kyonggi.bookslyserver.domain.user.constant.Role;
 import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.auth.principal.userInfo.OAuth2UserInfo;
@@ -43,7 +44,10 @@ public class UserService {
                 .loginId(loginId)
                 .nickname(nickname)
                 .profileImgUrl(profileImgUrl)
+                .role(Role.ROLE_USER)
+                .isVerified(false)
                 .build();
+
 
         return userRepository.save(createdUser);
     }
