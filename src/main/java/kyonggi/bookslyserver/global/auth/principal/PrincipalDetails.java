@@ -37,7 +37,7 @@ public class PrincipalDetails implements OAuth2User {
         return user.getNickname();
     }
 
-    public String getSocialId() {
-        return user.getSocialId();
+    public String getLoginId() {
+        return user.getLoginId();
     }
 }

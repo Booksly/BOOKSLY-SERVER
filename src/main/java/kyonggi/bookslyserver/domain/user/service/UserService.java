@@ -24,23 +24,23 @@ public class UserService {
      * @return 유저 객체
      */
     public User getOrCreateUser(OAuth2UserInfo userInfo) {
-        String socialId = userInfo.getIdByProvider();
+        String loginId = userInfo.getIdByProvider();
         String email = userInfo.getEmail();
         String nickname = userInfo.getNickname();
         String profileImgUrl = userInfo.getProfileImgUrl();
 
-        return userRepository.findBySocialId(socialId)
+        return userRepository.findByLoginId(loginId)
                 .map(user -> {
                     user.updateUserInfo(nickname, profileImgUrl);
                     return user;
                 })
-                .orElseGet(() -> createUser(email,socialId,nickname,profileImgUrl));
+                .orElseGet(() -> createUser(email,loginId,nickname,profileImgUrl));
     }
 
-    private User createUser(String email, String socialId, String nickname, String profileImgUrl) {
+    private User createUser(String email, String loginId, String nickname, String profileImgUrl) {
         User createdUser = User.builder()
                 .email(email)
-                .socialId(socialId)
+                .loginId(loginId)
                 .nickname(nickname)
                 .profileImgUrl(profileImgUrl)
                 .build();

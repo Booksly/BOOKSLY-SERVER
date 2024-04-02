@@ -21,8 +21,8 @@ public class User extends BaseTimeEntity {
     @GeneratedValue
     private Long id;
 
-    @Column(name="social_id")
-    private String socialId;
+    @Column(name="login_id")
+    private String loginId;
     private String email;
 
     @Enumerated(value = EnumType.STRING)

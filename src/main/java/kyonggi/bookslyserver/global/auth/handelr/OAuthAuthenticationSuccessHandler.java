@@ -1,7 +1,6 @@
 package kyonggi.bookslyserver.global.auth.handelr;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kyonggi.bookslyserver.global.auth.jwt.JwtProvider;
@@ -29,8 +28,8 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-        String socialId = principal.getSocialId();
-        String accessToken = jwtProvider.createAccessToken(socialId);
+        String principalLoginId = principal.getLoginId();
+        String accessToken = jwtProvider.createAccessToken(principalLoginId);
         response.addHeader(Authorization, accessToken);
         log.info(accessToken);
         getRedirectStrategy().sendRedirect(request, response, "http://localhost:8080/api/user/test");
