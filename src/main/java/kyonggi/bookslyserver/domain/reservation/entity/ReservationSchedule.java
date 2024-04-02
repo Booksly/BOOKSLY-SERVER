@@ -1,9 +1,7 @@
 package kyonggi.bookslyserver.domain.reservation.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.event.entity.ClosingEvent;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
@@ -18,5 +16,9 @@ public class ReservationSchedule extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "closingEvent_id")
+    private ClosingEvent closingEvent;
 
 }
