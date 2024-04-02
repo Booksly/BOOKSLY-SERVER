@@ -34,6 +34,6 @@ public class TimeEventSchedule extends BaseTimeEntity {
 
     private int closeMin;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "timeEventSchedule")
     private TimeEvent timeEvent;
 }

@@ -29,13 +29,13 @@ public class TimeEvent extends BaseTimeEntity {
 
     private boolean isRecurringDays;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "timeEventSchdule_id")
     private TimeEventSchedule timeEventSchedule;
 
-    @OneToMany(mappedBy = "timeEvent")
+    @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WeeklyTimeEventDay> weeklyTimeEventDays = new ArrayList<>();
 
-    @OneToMany(mappedBy = "timeEvent")
+    @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL)
     private List<EmployeeTimeEvent> employeeTimeEvents = new ArrayList<>();
 }

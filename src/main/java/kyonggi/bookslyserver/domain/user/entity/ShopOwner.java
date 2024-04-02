@@ -26,14 +26,14 @@ public class ShopOwner extends BaseTimeEntity {
 
     private String businessNumber;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "shopOwner")
+    @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.ALL)
     private List<ShopOwnerNotice> ownerNotices = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shopOwner")
+    @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.ALL)
     private List<Shop> shops = new ArrayList<>();
 
     //==생성 메서드==//

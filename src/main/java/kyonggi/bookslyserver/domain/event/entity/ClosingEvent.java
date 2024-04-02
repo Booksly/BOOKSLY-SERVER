@@ -33,7 +33,7 @@ public class ClosingEvent extends BaseTimeEntity {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @OneToMany(mappedBy = "closingEvent")
+    @OneToMany(mappedBy = "closingEvent", cascade = CascadeType.ALL)
     private List<ClosingEventMenu> closingEventMenus = new ArrayList<>();
 
     @OneToMany(mappedBy = "closingEvent")
