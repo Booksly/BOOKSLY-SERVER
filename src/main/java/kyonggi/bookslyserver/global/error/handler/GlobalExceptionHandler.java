@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+
 
 @Slf4j
 @ControllerAdvice
@@ -25,7 +29,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(">>> handle: MethodArgumentNotValidException ", e);
-        final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.BAD_REQUEST);
+
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        e.getBindingResult().getFieldErrors().stream()
+                        .forEach(fieldError -> {
+                            String fieldName = fieldError.getField();
+                            String errorMessage = Optional.ofNullable(fieldError.getDefaultMessage()).orElse("");
+                            errors.merge(fieldName, errorMessage, (existingErrorMessage, newErrorMessage) -> existingErrorMessage + ", " + newErrorMessage);
+                        });
+
+        final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.BAD_REQUEST, errors);
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBaseResponse);
     }
 
