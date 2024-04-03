@@ -3,7 +3,7 @@ package kyonggi.bookslyserver.domain.user.service;
 import kyonggi.bookslyserver.domain.user.dto.request.SendSMSRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.response.SendSMSResponseDto;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
-import kyonggi.bookslyserver.domain.user.util.AuthUtil;
+import kyonggi.bookslyserver.global.util.AuthUtil;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.CustomNurigoException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;

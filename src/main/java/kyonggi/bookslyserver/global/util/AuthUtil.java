@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.domain.user.util;
+package kyonggi.bookslyserver.global.util;
 
 import jakarta.annotation.PostConstruct;
 import net.nurigo.sdk.NurigoApp;
