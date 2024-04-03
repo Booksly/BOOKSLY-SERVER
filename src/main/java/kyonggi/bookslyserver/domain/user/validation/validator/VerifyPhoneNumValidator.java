@@ -21,7 +21,6 @@ public class VerifyPhoneNumValidator implements ConstraintValidator<VerifyPhoneN
         if (phoneNumber.contains("-")) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(ErrorCode.HYPHEN_BAD_REQUEST.getMessage()).addConstraintViolation();
-            log.info("하이픈페이~");
             return false;
         }
 
