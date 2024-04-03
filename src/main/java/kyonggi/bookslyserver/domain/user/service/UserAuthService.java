@@ -7,6 +7,7 @@ import kyonggi.bookslyserver.global.util.AuthUtil;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.CustomNurigoException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.exception.NurigoBadRequestException;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
@@ -18,6 +19,7 @@ public class UserAuthService {
 
     private final UserRepository userRepository;
     private final AuthUtil authUtil;
+    private final RedisUtil redisUtil;
 
     public SendSMSResponseDto sendMessage(SendSMSRequestDto sendSMSRequestDto) {
 
@@ -31,6 +33,9 @@ public class UserAuthService {
         } catch (NurigoBadRequestException e) {
             throw new CustomNurigoException();
         }
+
+        //인증 시간 5분 설정
+        redisUtil.setDataExpire(String.valueOf(authCode), receivingNumber,  60 * 5L);
 
         return SendSMSResponseDto.builder()
                 .statusCode(messageSentResponse.getStatusCode())
