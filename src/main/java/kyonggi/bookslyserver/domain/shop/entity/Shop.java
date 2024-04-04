@@ -25,4 +25,8 @@ public class Shop extends BaseTimeEntity {
     @JoinColumn(name = "shopOwner_id")
     private ShopOwner shopOwner;
 
+    @ManyToOne
+    @JoinColumn(name="category_id")
+    private Category category;
+
 }
