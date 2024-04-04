@@ -14,11 +14,16 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@ToString(of = {"name", "selfIntro"})
 public class Employee extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="employee_id")
     private Long id;
+
+
+    private String profileImg_uri;
 
     private String name;
 
