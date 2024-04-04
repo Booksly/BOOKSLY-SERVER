@@ -25,8 +25,12 @@ public class Shop extends BaseTimeEntity {
     @JoinColumn(name = "shopOwner_id")
     private ShopOwner shopOwner;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="category_id")
     private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="address_id")
+    private Address address;
 
 }
