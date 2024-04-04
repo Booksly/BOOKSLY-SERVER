@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.entity;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.reservation.entity.ReservationSettings;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
@@ -24,5 +25,9 @@ public class Shop extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shopOwner_id")
     private ShopOwner shopOwner;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "reservationSettings_id", referencedColumnName = "id")
+    private ReservationSettings reservationSettings;
 
 }
