@@ -28,6 +28,7 @@ public class Menu extends BaseTimeEntity {
 
     private String menu_name;
 
+    @Lob
     private String description;
 
     private int price;
