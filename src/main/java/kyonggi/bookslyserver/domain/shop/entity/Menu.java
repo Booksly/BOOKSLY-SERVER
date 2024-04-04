@@ -22,6 +22,10 @@ public class Menu extends BaseTimeEntity {
     @JoinColumn(name="shop_id")
     private Shop shop;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="menu_category_id")
+    private MenuCategory menuCategory;
+
     private String menu_name;
 
     private String description;
