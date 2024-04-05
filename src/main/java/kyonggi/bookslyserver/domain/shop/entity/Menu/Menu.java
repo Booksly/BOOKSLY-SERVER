@@ -26,7 +26,7 @@ public class Menu extends BaseTimeEntity {
     @JoinColumn(name="menucategory_id")
     private MenuCategory menuCategory;
 
-    private String menu_name;
+    private String menuName;
 
     @Lob
     private String description;

@@ -17,11 +17,11 @@ public class Address extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String first_address;
+    private String firstAddress;
 
-    private String second_address;
+    private String secondAddress;
 
-    private String third_address;
+    private String thirdAddress;
 
 
 }

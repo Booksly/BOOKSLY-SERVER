@@ -24,7 +24,7 @@ public class ShopImage extends BaseTimeEntity {
     private Shop shop;
 
 
-    private String img_uri;
+    private String imgUri;
 
     private boolean isRepresentative;
 }

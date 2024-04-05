@@ -18,7 +18,7 @@ public class MenuImage extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String menuImg_uri;
+    private String menuImgUri;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="menu_id")

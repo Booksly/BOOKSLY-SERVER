@@ -36,30 +36,30 @@ public class Shop extends BaseTimeEntity {
 
     private String name;
 
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
-    private int total_visitors;
+    private int totalVisitors;
 
-    private int today_visitors;
+    private int todayVisitors;
 
-    private String store_number;
+    private String storeNumber;
 
-    private String instagram_url;
+    private String instagramUrl;
 
-    private String kakao_url;
+    private String kakaoUrl;
 
     @Lob
     private String description;
 
-    private String detail_address;
+    private String detailAddress;
 
     private boolean closed;
 
-    private String zip_code;
+    private String zipCode;
 
-    private String street_address;
+    private String streetAddress;
   
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "reservationSettings_id", referencedColumnName = "id")

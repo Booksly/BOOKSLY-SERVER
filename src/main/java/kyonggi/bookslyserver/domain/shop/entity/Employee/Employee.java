@@ -23,13 +23,13 @@ public class Employee extends BaseTimeEntity {
     private Long id;
 
 
-    private String profileImg_uri;
+    private String profileImgUri;
 
     private String name;
 
     private String selfIntro;
 
-    private int SchedulingCycle;
+    private int schedulingCycle;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id")
