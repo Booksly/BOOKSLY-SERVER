@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.entity.Shop;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 @Entity
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString(of = {"first_address", "second_address", "third_address"})
-public class Address {
+public class Address extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
