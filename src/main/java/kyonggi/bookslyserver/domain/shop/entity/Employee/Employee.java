@@ -20,7 +20,6 @@ public class Employee extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="employee_id")
     private Long id;
 
 

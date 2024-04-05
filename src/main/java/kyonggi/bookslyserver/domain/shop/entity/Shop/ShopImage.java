@@ -15,7 +15,6 @@ public class ShopImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="shopimage_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -11,7 +11,6 @@ import lombok.*;
 public class MenuCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="menu_category_id")
     private Long id;
 
     private String name;

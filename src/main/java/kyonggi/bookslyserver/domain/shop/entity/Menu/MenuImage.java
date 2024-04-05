@@ -14,7 +14,6 @@ public class MenuImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="menu_image_id")
     private Long id;
 
     private String menuImg_uri;
