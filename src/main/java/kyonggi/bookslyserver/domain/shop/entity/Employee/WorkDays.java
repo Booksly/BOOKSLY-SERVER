@@ -1,28 +1,22 @@
-package kyonggi.bookslyserver.domain.shop.entity;
-
+package kyonggi.bookslyserver.domain.shop.entity.Employee;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-
-public class ShopImage {
-
+public class WorkDays {
+    // 근무날짜 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="shopimage_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="shop_id")
-    private Shop shop;
-
-
-    private String img_uri;
-
-    private boolean isRepresentative;
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 }

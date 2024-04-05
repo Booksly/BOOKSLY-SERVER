@@ -2,7 +2,7 @@ package kyonggi.bookslyserver.domain.user.entity;
 
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.notice.entity.ShopOwnerNotice;
-import kyonggi.bookslyserver.domain.shop.entity.Shop;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.user.constant.Role;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;

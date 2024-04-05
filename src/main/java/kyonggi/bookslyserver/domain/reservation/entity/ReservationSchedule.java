@@ -2,8 +2,8 @@ package kyonggi.bookslyserver.domain.reservation.entity;
 
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.event.entity.ClosingEvent;
-import kyonggi.bookslyserver.domain.shop.entity.Shop;
-import kyonggi.bookslyserver.domain.shop.entity.WorkDays;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkDays;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 

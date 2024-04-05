@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.domain.shop.entity;
+package kyonggi.bookslyserver.domain.shop.entity.Shop;
 
 import jakarta.persistence.*;
 import lombok.*;

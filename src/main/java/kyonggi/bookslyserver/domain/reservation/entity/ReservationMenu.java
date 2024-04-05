@@ -1,7 +1,7 @@
 package kyonggi.bookslyserver.domain.reservation.entity;
 
 import jakarta.persistence.*;
-import kyonggi.bookslyserver.domain.shop.entity.Menu;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import lombok.*;
 
 @Entity

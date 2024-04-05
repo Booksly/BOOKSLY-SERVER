@@ -1,9 +1,10 @@
-package kyonggi.bookslyserver.domain.shop.entity;
+package kyonggi.bookslyserver.domain.shop.entity.Employee;
 
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import lombok.*;
-import org.springframework.web.service.annotation.GetExchange;
 
 @Entity
 @Getter
