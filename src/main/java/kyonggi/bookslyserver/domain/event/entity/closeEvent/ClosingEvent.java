@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.domain.event.entity;
+package kyonggi.bookslyserver.domain.event.entity.closeEvent;
 
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;

@@ -32,4 +32,12 @@ public class Menu extends BaseTimeEntity {
     private String description;
 
     private int price;
+
+    /**
+     * 추가필드
+     *  1. 메뉴 이미지 참조 필드 추가
+     *  2. 타임이벤트메뉴 참조 필드 추가
+     *  3. 마감임박이벤트메뉴 참조 필드 추가
+     *
+     */
 }

@@ -22,13 +22,38 @@ public class Shop extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="shop_id")
     private Long id;
+
+    private String name;
+
+    private int totalVisitors;
+
+    private int todayVisitors;
+
+    private String shopPhoneNumber;
+
+    private String instagramUrl;
+
+    private String kakaoUrl;
+
+    @Lob
+    private String introduction;
+
+    private String detailAddress;
+
+    private boolean isClosed;
+
+    private String zipCode;
+
+    private String streetAddress;
+  
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "reservationSettings_id", referencedColumnName = "id")
+    private ReservationSettings reservationSettings;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shopOwner_id")
     private ShopOwner shopOwner;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="category_id")
@@ -38,36 +63,11 @@ public class Shop extends BaseTimeEntity {
     @JoinColumn(name="address_id")
     private Address address;
 
-    private String name;
-
-    private LocalDateTime updated_at;
-
-    private LocalDateTime created_at;
-
-    private int total_visitors;
-
-    private int today_visitors;
-
-    private String store_number;
-
-    private String instagram_url;
-
-    private String kakao_url;
-
-    @Lob
-    private String description;
-
-    private String detail_address;
-
-    private boolean closed;
-
-    private String zip_code;
-
-    private String street_address;
-  
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "reservationSettings_id", referencedColumnName = "id")
-    private ReservationSettings reservationSettings;
-
+    /**
+     * 1. 영업 일정 테이블 연관관계 매핑 필드 추가
+     * 2. 가게 이미지 테이블 필드 추가
+     * 3. 리뷰 테이블 필드 추가
+     *
+     */
 
 }

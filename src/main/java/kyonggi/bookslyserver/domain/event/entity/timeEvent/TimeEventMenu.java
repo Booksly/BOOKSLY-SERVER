@@ -1,7 +1,8 @@
-package kyonggi.bookslyserver.domain.event.entity;
+package kyonggi.bookslyserver.domain.event.entity.timeEvent;
 
 import jakarta.persistence.*;
-import kyonggi.bookslyserver.domain.shop.entity.Employee;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
+import kyonggi.bookslyserver.domain.shop.entity.Menu;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
@@ -13,17 +14,17 @@ import static jakarta.persistence.FetchType.LAZY;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class EmployeeTimeEvent extends BaseTimeEntity {
+public class TimeEventMenu extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "timeEvent_id")
-    private TimeEvent timeEvent;
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
+    @JoinColumn(name = "timeEvent_id")
+    private TimeEvent timeEvent;
 }

@@ -33,7 +33,7 @@ public class ShopOwner extends BaseTimeEntity {
     @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.ALL)
     private List<ShopOwnerNotice> ownerNotices = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.ALL) //persist
     private List<Shop> shops = new ArrayList<>();
 
     //==생성 메서드==//
