@@ -1,7 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.entity;
 
 import jakarta.persistence.*;
-import kyonggi.bookslyserver.domain.shop.constant.categoryName;
+import kyonggi.bookslyserver.domain.shop.constant.CategoryName;
 import lombok.*;
 
 @Entity
@@ -16,7 +16,7 @@ public class Category {
 
 
     @Enumerated(EnumType.STRING)
-    private categoryName categoryName;
+    private CategoryName categoryName;
 
 
 }
