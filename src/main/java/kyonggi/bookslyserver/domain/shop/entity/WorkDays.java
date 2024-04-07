@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.entity;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 @Entity
@@ -9,7 +10,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class WorkDays {
+public class WorkDays extends BaseTimeEntity {
     // 근무날짜 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
