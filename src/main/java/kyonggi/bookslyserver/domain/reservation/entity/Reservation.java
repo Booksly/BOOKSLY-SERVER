@@ -34,12 +34,6 @@ public class Reservation extends BaseTimeEntity {
     @Column(columnDefinition = "tinyint(0) default 0")
     private boolean isCanceled;
 
-//    @Column(columnDefinition = "tinyint(0) default 0")
-//    private boolean isClosed;
-
-//    @Column(nullable = false)
-//    @Enumerated(EnumType.STRING)
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
