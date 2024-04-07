@@ -1,15 +1,12 @@
-package kyonggi.bookslyserver.domain.shop.entity;
+package kyonggi.bookslyserver.domain.shop.entity.Shop;
 
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSettings;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -46,6 +43,12 @@ public class Shop extends BaseTimeEntity {
     private String zipCode;
 
     private String streetAddress;
+
+    private LocalDateTime updatedAt;
+
+    private LocalDateTime createdAt;
+
+    private String storeNumber;
   
     @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "reservationSettings_id", referencedColumnName = "id")
@@ -63,11 +66,18 @@ public class Shop extends BaseTimeEntity {
     @JoinColumn(name="address_id")
     private Address address;
 
+
     /**
      * 1. 영업 일정 테이블 연관관계 매핑 필드 추가
      * 2. 가게 이미지 테이블 필드 추가
      * 3. 리뷰 테이블 필드 추가
      *
      */
+
+
+
+
+
+
 
 }
