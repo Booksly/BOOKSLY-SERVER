@@ -2,11 +2,14 @@ package kyonggi.bookslyserver.domain.shop.entity.Shop;
 
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSettings;
+import kyonggi.bookslyserver.domain.review.entity.Review;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -74,6 +77,11 @@ public class Shop extends BaseTimeEntity {
      *
      */
 
+    @OneToMany(mappedBy = "shop")
+    List<ShopImage> shopImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "shop")
+    List<Review> reviews = new ArrayList<>();
 
 
 
