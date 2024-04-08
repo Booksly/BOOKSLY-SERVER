@@ -34,7 +34,7 @@ public class TimeEvent extends BaseTimeEntity {
     private TimeEventSchedule timeEventSchedule;
 
     @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WeeklyTimeEventDay> weeklyTimeEventDays = new ArrayList<>();
+    private List<RepeatDayOfWeek> repeatDayOfWeeks = new ArrayList<>();
 
     @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL)
     private List<EmployeeTimeEvent> employeeTimeEvents = new ArrayList<>();
