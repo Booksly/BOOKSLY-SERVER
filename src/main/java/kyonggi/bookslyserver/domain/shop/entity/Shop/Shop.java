@@ -22,7 +22,7 @@ public class Shop extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long shop_id;
 
     private String name;
 
