@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.global.auth;
+package kyonggi.bookslyserver.global.config;
 
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.auth.handelr.CustomAccessDeniedHandler;
@@ -66,7 +66,7 @@ public class SecurityConfig {
                         .requestMatchers("api/user/need-login").authenticated()
 
                         // 인증이 필요없음 - 비회원 & 회원 접근 가능
-                        .requestMatchers( "/healthcheck","api/user/test").permitAll()
+                        .requestMatchers( "/healthcheck","api/user/test","api/auth/owner").permitAll()
                         .anyRequest().authenticated());
 
         /**
