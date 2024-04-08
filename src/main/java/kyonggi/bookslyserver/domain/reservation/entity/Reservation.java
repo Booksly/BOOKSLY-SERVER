@@ -5,7 +5,8 @@ import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -20,16 +21,16 @@ public class Reservation extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime reserveDate;
+    private LocalDate reservationDate;
 
     @Column(nullable = false)
-    private LocalDateTime reserveTime;
+    private LocalTime reservationTime;
 
     @Column(nullable = false)
     private Long price;
 
     @Column
-    private String request;
+    private String inquiry;
 
     @Column(columnDefinition = "tinyint(0) default 0")
     private boolean isCanceled;
