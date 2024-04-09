@@ -1,6 +1,9 @@
 package kyonggi.bookslyserver.domain.user.service;
 
+import jakarta.validation.Valid;
+import kyonggi.bookslyserver.domain.user.dto.request.OwnerVerifyRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.request.SendSMSRequestDto;
+import kyonggi.bookslyserver.domain.user.dto.response.OwnerVerifyResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.SendSMSResponseDto;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.util.AuthUtil;
@@ -49,5 +52,10 @@ public class UserAuthService {
         userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         return sendMessage(sendSMSRequestDto);
+    }
+
+    public OwnerVerifyResponseDto ownerVerifyByCode(OwnerVerifyRequestDto ownerVerifyRequestDto) {
+        String code = ownerVerifyRequestDto.code();
+        return null;
     }
 }
