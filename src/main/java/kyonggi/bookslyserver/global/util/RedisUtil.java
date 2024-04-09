@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -16,5 +17,10 @@ public class RedisUtil {
         ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
         Duration expireDuration = Duration.ofSeconds(duration);
         valueOperations.set(key, value, expireDuration);
+    }
+
+    public String getValues(String key) {
+        ValueOperations<String, String> values = stringRedisTemplate.opsForValue();
+        return values.get(key);
     }
 }
