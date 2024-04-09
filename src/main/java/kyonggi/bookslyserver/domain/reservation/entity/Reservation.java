@@ -41,8 +41,10 @@ public class Reservation extends BaseTimeEntity {
     @Column
     private String menuCategory; // 메뉴 소분류
 
+
     @Column
     private String eventTitle;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

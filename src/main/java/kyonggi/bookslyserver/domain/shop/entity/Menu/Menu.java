@@ -1,6 +1,7 @@
-package kyonggi.bookslyserver.domain.shop.entity;
+package kyonggi.bookslyserver.domain.shop.entity.Menu;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
@@ -15,7 +16,6 @@ public class Menu extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="menu_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -23,10 +23,10 @@ public class Menu extends BaseTimeEntity {
     private Shop shop;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="menu_category_id")
+    @JoinColumn(name="menucategory_id")
     private MenuCategory menuCategory;
 
-    private String menu_name;
+    private String menuName;
 
     @Lob
     private String description;

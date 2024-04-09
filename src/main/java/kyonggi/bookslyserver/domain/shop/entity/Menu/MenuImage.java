@@ -1,7 +1,9 @@
-package kyonggi.bookslyserver.domain.shop.entity;
+package kyonggi.bookslyserver.domain.shop.entity.Menu;
 
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
+import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 @Entity
@@ -9,14 +11,14 @@ import lombok.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MenuImage {
+@Builder
+public class MenuImage extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="menu_image_id")
     private Long id;
 
-    private String menuImg_uri;
+    private String menuImgUri;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="menu_id")

@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.domain.shop.entity;
+package kyonggi.bookslyserver.domain.shop.entity.Menu;
 
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
@@ -7,16 +7,13 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class WorkDays extends BaseTimeEntity {
-    // 근무날짜 테이블
+@Builder
+public class MenuCategory extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
+    private String name;
 }

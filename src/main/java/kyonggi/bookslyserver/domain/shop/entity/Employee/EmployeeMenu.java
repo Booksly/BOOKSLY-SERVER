@@ -1,20 +1,22 @@
-package kyonggi.bookslyserver.domain.shop.entity;
+package kyonggi.bookslyserver.domain.shop.entity.Employee;
 
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
+import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
-import org.springframework.web.service.annotation.GetExchange;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class EmployeeMenu {
+@Builder
+public class EmployeeMenu extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="employee_menu_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
