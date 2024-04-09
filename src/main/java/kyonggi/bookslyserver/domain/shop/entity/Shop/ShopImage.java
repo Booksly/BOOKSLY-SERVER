@@ -12,7 +12,6 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-
 public class ShopImage extends BaseTimeEntity {
 
     @Id
@@ -20,9 +19,8 @@ public class ShopImage extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id")
+    @JoinColumn(name="shop_id")
     private Shop shop;
-
 
     private String imgUri;
 

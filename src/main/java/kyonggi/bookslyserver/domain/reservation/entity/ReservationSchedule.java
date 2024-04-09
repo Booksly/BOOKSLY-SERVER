@@ -3,12 +3,16 @@ package kyonggi.bookslyserver.domain.reservation.entity;
 import jakarta.persistence.*;
 
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
-import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkDays;
-import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
-import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkDays;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkSchedule;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -24,6 +28,7 @@ public class ReservationSchedule extends BaseTimeEntity {
 
     @Column(nullable = false)
     private int startTime;
+
     @Column(nullable = false)
     private int endTime;
 
@@ -33,16 +38,17 @@ public class ReservationSchedule extends BaseTimeEntity {
     @Column(columnDefinition = "tinyint(0) default 0")
     private boolean isClosingEvent;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    private LocalDate workDate;
+
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "closingEvent_id")
     private ClosingEvent closingEvent;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workDays_id")
-    private WorkDays workDays;
-
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 }

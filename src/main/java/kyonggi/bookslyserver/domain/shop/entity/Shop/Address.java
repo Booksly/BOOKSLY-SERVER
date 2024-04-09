@@ -28,5 +28,4 @@ public class Address extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "address", cascade = CascadeType.PERSIST)
     private List<Shop> shops = new ArrayList<>();
-
 }

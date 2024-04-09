@@ -8,9 +8,11 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @ToString(of={""})
-public class businessSchedule extends BaseTimeEntity {
+public class BusinessSchedule extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,26 +25,10 @@ public class businessSchedule extends BaseTimeEntity {
 
     private String closeAt;
 
-    private boolean isholiday;
+    private boolean isHoliday;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id")
+    @JoinColumn(name="shop_id")
     private Shop shop;
-
-
-
-
-/*    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    @JoinColumn(name="businessDays_id")
-    private BusinessDays businessdays;
-
-    @ManyToOne
-    @JoinColumn(name="id")
-    private Shop shop;*/
-
 
 }

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
+import java.time.DayOfWeek;
+
 @Entity
 @Getter
 @Setter
@@ -16,7 +18,8 @@ public class RepeatDayOfWeek extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String repeatDay;
+    @Enumerated(EnumType.STRING)
+    private DayOfWeek repeatDay;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "timeEvent_id")

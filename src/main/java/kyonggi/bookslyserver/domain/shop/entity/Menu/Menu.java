@@ -1,9 +1,16 @@
 package kyonggi.bookslyserver.domain.shop.entity.Menu;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEventMenu;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEventMenu;
+import kyonggi.bookslyserver.domain.reservation.entity.ReservationMenu;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,14 +25,6 @@ public class Menu extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="shop_id")
-    private Shop shop;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="menucategory_id")
-    private MenuCategory menuCategory;
-
     private String menuName;
 
     @Lob
@@ -33,11 +32,26 @@ public class Menu extends BaseTimeEntity {
 
     private int price;
 
-    /**
-     * 추가필드
-     *  1. 메뉴 이미지 참조 필드 추가
-     *  2. 타임이벤트메뉴 참조 필드 추가
-     *  3. 마감임박이벤트메뉴 참조 필드 추가
-     *
-     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="shop_id")
+    private Shop shop;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="menuCategory_id")
+    private MenuCategory menuCategory;
+
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
+    private List<MenuImage> menuImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "menu")
+    private List<TimeEventMenu> timeEventMenus = new ArrayList<>();
+
+    @OneToMany(mappedBy = "menu")
+    private List<ClosingEventMenu> closingEventMenus = new ArrayList<>();
+
+    @OneToMany(mappedBy = "menu")
+    private List<EmployeeMenu> employeeMenus = new ArrayList<>();
+
+    @OneToMany(mappedBy = "menu")
+    private List<ReservationMenu> reservationMenus = new ArrayList<>();
 }

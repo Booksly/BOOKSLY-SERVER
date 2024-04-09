@@ -1,8 +1,11 @@
 package kyonggi.bookslyserver.domain.shop.entity.Shop;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSettings;
 import kyonggi.bookslyserver.domain.review.entity.Review;
+import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
@@ -11,13 +14,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString(of={"name", "store_number", "description"})
+@ToString(of = {"name", "store_number", "description"})
 public class Shop extends BaseTimeEntity {
 
     @Id
@@ -30,12 +35,11 @@ public class Shop extends BaseTimeEntity {
 
     private int todayVisitors;
 
-    private String shopPhoneNumber;
+    private String phoneNumber;
 
     private String instagramUrl;
 
     private String kakaoUrl;
-
     @Lob
     private String introduction;
 
@@ -47,55 +51,38 @@ public class Shop extends BaseTimeEntity {
 
     private String streetAddress;
 
+    private String businessNumber;
 
-    private LocalDateTime updatedAt;
+    private boolean isKakaoNotiEnabled;
 
-    private LocalDateTime createdAt;
-
-    private String storeNumber;
-  
-    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "reservationSettings_id", referencedColumnName = "id")
     private ReservationSettings reservationSettings;
 
-
-  
-
-    @Column
-    private boolean isKakaoNotiEnabled;
-
-
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "shopOwner_id")
     private ShopOwner shopOwner;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "address_id")
     private Address address;
 
-
-    /**
-     * 1. 영업 일정 테이블 연관관계 매핑 필드 추가
-     * 2. 가게 이미지 테이블 필드 추가
-     * 3. 리뷰 테이블 필드 추가
-     *
-     */
+    @OneToMany(mappedBy = "shop")
+    private List<ShopImage> shopImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "shop")
-    List<ShopImage> shopImages = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "shop")
-    List<Review> reviews = new ArrayList<>();
+    private List<BusinessSchedule> businessSchedules = new ArrayList<>();
 
+    @OneToMany(mappedBy = "shop")
+    private List<Menu> menus = new ArrayList<>();
 
-
-
-
-
+    @OneToMany(mappedBy = "shop")
+    private List<ReservationSchedule> reservationSchedules = new ArrayList<>();
 }
