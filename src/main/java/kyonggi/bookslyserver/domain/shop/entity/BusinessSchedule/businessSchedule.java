@@ -16,13 +16,33 @@ public class businessSchedule extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private DayName day;
+
+    private String openAt;
+
+    private String closeAt;
+
+    private boolean isholiday;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id")
+    private Shop shop;
+
+
+
+
+/*    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @ManyToOne
     @JoinColumn(name="businessDays_id")
     private BusinessDays businessdays;
 
     @ManyToOne
     @JoinColumn(name="id")
-    private Shop shop;
+    private Shop shop;*/
 
 
 }
