@@ -56,12 +56,16 @@ public class UserAuthService {
         return sendMessage(sendSMSRequestDto);
     }
 
-    public VerifyCodeResponseDto ownerVerifyByCode(VerifyCodeRequestDto verifyCodeRequestDto) {
-
+    private boolean verifyCode(VerifyCodeRequestDto verifyCodeRequestDto) {
         String code = verifyCodeRequestDto.code();
         String receivingNumber = redisUtil.getValues(code);
 
-        if (receivingNumber != null && receivingNumber.equals(verifyCodeRequestDto.receivingNumber())) {
+        return receivingNumber != null && receivingNumber.equals(verifyCodeRequestDto.receivingNumber());
+    }
+
+    public VerifyCodeResponseDto ownerVerifyByCode(VerifyCodeRequestDto verifyCodeRequestDto) {
+
+        if (verifyCode(verifyCodeRequestDto)) {
             return VerifyCodeResponseDto.builder()
                     .isVerify(true).build();}
 
@@ -71,16 +75,12 @@ public class UserAuthService {
 
     public VerifyCodeResponseDto userVerifyByCode(Long userId, VerifyCodeRequestDto verifyCodeRequestDto) {
 
-        String code = verifyCodeRequestDto.code();
-        String receivingNumber = redisUtil.getValues(code);
-
-        if (receivingNumber != null && receivingNumber.equals(verifyCodeRequestDto.receivingNumber())) {
-
+        if (verifyCode(verifyCodeRequestDto)) {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
             //본인인증 회원으로 전환
-            user.updateVerifiedInfo(receivingNumber);
+            user.updateVerifiedInfo(verifyCodeRequestDto.receivingNumber());
             return VerifyCodeResponseDto.builder()
                     .isVerify(true).build();}
 
