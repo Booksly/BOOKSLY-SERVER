@@ -54,4 +54,9 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
         this.profileImgUrl = profileImageUrl;
     }
+
+    public void updateVerifiedInfo(String phoneNum) {
+        this.phoneNum = phoneNum;
+        this.isVerified = true;
+    }
 }

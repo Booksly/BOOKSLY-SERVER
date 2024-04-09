@@ -1,10 +1,10 @@
 package kyonggi.bookslyserver.domain.user.service;
 
-import jakarta.validation.Valid;
-import kyonggi.bookslyserver.domain.user.dto.request.OwnerVerifyRequestDto;
+import kyonggi.bookslyserver.domain.user.dto.request.VerifyCodeRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.request.SendSMSRequestDto;
-import kyonggi.bookslyserver.domain.user.dto.response.OwnerVerifyResponseDto;
+import kyonggi.bookslyserver.domain.user.dto.response.VerifyCodeResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.SendSMSResponseDto;
+import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.util.AuthUtil;
 import kyonggi.bookslyserver.global.error.ErrorCode;
@@ -15,9 +15,11 @@ import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.exception.NurigoBadRequestException;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserAuthService {
 
     private final UserRepository userRepository;
@@ -54,16 +56,35 @@ public class UserAuthService {
         return sendMessage(sendSMSRequestDto);
     }
 
-    public OwnerVerifyResponseDto ownerVerifyByCode(OwnerVerifyRequestDto ownerVerifyRequestDto) {
+    public VerifyCodeResponseDto ownerVerifyByCode(VerifyCodeRequestDto verifyCodeRequestDto) {
 
-        String code = ownerVerifyRequestDto.code();
+        String code = verifyCodeRequestDto.code();
         String receivingNumber = redisUtil.getValues(code);
 
-        if (receivingNumber != null && receivingNumber.equals(ownerVerifyRequestDto.receivingNumber())) {
-            return OwnerVerifyResponseDto.builder()
+        if (receivingNumber != null && receivingNumber.equals(verifyCodeRequestDto.receivingNumber())) {
+            return VerifyCodeResponseDto.builder()
                     .isVerify(true).build();}
 
-        return OwnerVerifyResponseDto.builder()
+        return VerifyCodeResponseDto.builder()
+                .isVerify(false).build();
+    }
+
+    public VerifyCodeResponseDto userVerifyByCode(Long userId, VerifyCodeRequestDto verifyCodeRequestDto) {
+
+        String code = verifyCodeRequestDto.code();
+        String receivingNumber = redisUtil.getValues(code);
+
+        if (receivingNumber != null && receivingNumber.equals(verifyCodeRequestDto.receivingNumber())) {
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+            //본인인증 회원으로 전환
+            user.updateVerifiedInfo(receivingNumber);
+            return VerifyCodeResponseDto.builder()
+                    .isVerify(true).build();}
+
+        return VerifyCodeResponseDto.builder()
                 .isVerify(false).build();
     }
 }
