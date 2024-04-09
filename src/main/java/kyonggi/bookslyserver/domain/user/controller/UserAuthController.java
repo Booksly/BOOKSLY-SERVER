@@ -1,9 +1,9 @@
 package kyonggi.bookslyserver.domain.user.controller;
 
 import jakarta.validation.Valid;
-import kyonggi.bookslyserver.domain.user.dto.request.OwnerVerifyRequestDto;
+import kyonggi.bookslyserver.domain.user.dto.request.VerifyCodeRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.request.SendSMSRequestDto;
-import kyonggi.bookslyserver.domain.user.dto.response.OwnerVerifyResponseDto;
+import kyonggi.bookslyserver.domain.user.dto.response.VerifyCodeResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.SendSMSResponseDto;
 import kyonggi.bookslyserver.domain.user.service.UserAuthService;
 import kyonggi.bookslyserver.global.auth.UserId;
@@ -34,10 +34,10 @@ public class UserAuthController {
     }
 
     @PostMapping("/owner/verify")
-    public ResponseEntity<SuccessResponse<?>> ownerVerifyByCode(@RequestBody @Valid OwnerVerifyRequestDto ownerVerifyRequestDto) {
-        OwnerVerifyResponseDto ownerVerifyResponseDto = userAuthService.ownerVerifyByCode(ownerVerifyRequestDto);
+    public ResponseEntity<SuccessResponse<?>> ownerVerifyByCode(@RequestBody @Valid VerifyCodeRequestDto verifyCodeRequestDto) {
+        VerifyCodeResponseDto verifyCodeResponseDto = userAuthService.ownerVerifyByCode(verifyCodeRequestDto);
 
-        return SuccessResponse.ok(ownerVerifyResponseDto);
+        return SuccessResponse.ok(verifyCodeResponseDto);
     }
 
     @PostMapping("/user")
@@ -45,5 +45,12 @@ public class UserAuthController {
         SendSMSResponseDto sendSMSResponseDto = userAuthService.sendMessageToUser(userId, sendSMSRequestDto);
 
         return SuccessResponse.ok(sendSMSResponseDto);
+    }
+
+    @PostMapping("/user/verify")
+    public ResponseEntity<SuccessResponse<?>> userVerifyByCode(@UserId Long userId, @RequestBody @Valid VerifyCodeRequestDto verifyCodeRequestDto) {
+        VerifyCodeResponseDto userVerifyResponseDto = userAuthService.userVerifyByCode(userId, verifyCodeRequestDto);
+
+        return SuccessResponse.ok(userVerifyResponseDto);
     }
 }
