@@ -1,7 +1,6 @@
 package kyonggi.bookslyserver.domain.event.entity.timeEvent;
 
 import jakarta.persistence.*;
-import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
@@ -11,7 +10,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class WeeklyTimeEventDay extends BaseTimeEntity {
+public class RepeatDayOfWeek extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

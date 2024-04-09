@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule;
 
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
+import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 @Entity
@@ -9,7 +10,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of={""})
-public class businessSchedule {
+public class businessSchedule extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

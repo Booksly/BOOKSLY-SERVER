@@ -1,12 +1,10 @@
 package kyonggi.bookslyserver.domain.event.entity.timeEvent;
 
 import jakarta.persistence.*;
-<<<<<<< HEAD:src/main/java/kyonggi/bookslyserver/domain/event/entity/timeEvent/TimeEventMenu.java
+
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
-import kyonggi.bookslyserver.domain.shop.entity.Menu;
-=======
+
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
->>>>>>> feature/#20:src/main/java/kyonggi/bookslyserver/domain/event/entity/TimeEventMenu.java
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 

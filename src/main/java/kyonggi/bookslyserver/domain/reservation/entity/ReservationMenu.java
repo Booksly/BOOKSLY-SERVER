@@ -1,7 +1,12 @@
 package kyonggi.bookslyserver.domain.reservation.entity;
 
 import jakarta.persistence.*;
+
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
+
+
+import kyonggi.bookslyserver.global.common.BaseTimeEntity;
+
 import lombok.*;
 
 @Entity
@@ -10,7 +15,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ReservationMenu {
+public class ReservationMenu extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
