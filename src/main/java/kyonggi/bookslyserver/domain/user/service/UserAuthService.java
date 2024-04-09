@@ -55,7 +55,15 @@ public class UserAuthService {
     }
 
     public OwnerVerifyResponseDto ownerVerifyByCode(OwnerVerifyRequestDto ownerVerifyRequestDto) {
+
         String code = ownerVerifyRequestDto.code();
-        return null;
+        String receivingNumber = redisUtil.getValues(code);
+
+        if (receivingNumber != null && receivingNumber.equals(ownerVerifyRequestDto.receivingNumber())) {
+            return OwnerVerifyResponseDto.builder()
+                    .isVerify(true).build();}
+
+        return OwnerVerifyResponseDto.builder()
+                .isVerify(false).build();
     }
 }
