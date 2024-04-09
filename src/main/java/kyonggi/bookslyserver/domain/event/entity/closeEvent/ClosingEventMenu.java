@@ -1,12 +1,9 @@
-package kyonggi.bookslyserver.domain.reservation.entity;
+package kyonggi.bookslyserver.domain.event.entity.closeEvent;
 
 import jakarta.persistence.*;
-
+import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
-
-
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
-
 import lombok.*;
 
 @Entity
@@ -15,16 +12,18 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ReservationMenu extends BaseTimeEntity {
+public class ClosingEventMenu extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="menu_id")
-    private Menu menu;
+    @JoinColumn(name = "closingEvent_id")
+    private ClosingEvent closingEvent;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="reervation_id")
-    private Reservation reservation;
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
 }

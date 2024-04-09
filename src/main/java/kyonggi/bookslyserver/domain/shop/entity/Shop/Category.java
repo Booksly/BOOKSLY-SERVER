@@ -1,7 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.entity.Shop;
 
 import jakarta.persistence.*;
-import kyonggi.bookslyserver.domain.shop.constant.categoryName;
+import kyonggi.bookslyserver.domain.shop.constant.CategoryName;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
@@ -17,7 +17,7 @@ public class Category extends BaseTimeEntity {
 
 
     @Enumerated(EnumType.STRING)
-    private categoryName categoryName;
+    private CategoryName categoryName;
 
 
 }

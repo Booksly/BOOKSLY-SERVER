@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -23,5 +26,7 @@ public class Address extends BaseTimeEntity {
 
     private String thirdAddress;
 
+    @OneToMany(mappedBy = "address", cascade = CascadeType.PERSIST)
+    private List<Shop> shops = new ArrayList<>();
 
 }

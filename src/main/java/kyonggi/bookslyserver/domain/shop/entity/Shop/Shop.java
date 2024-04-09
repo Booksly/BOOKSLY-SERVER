@@ -47,6 +47,7 @@ public class Shop extends BaseTimeEntity {
 
     private String streetAddress;
 
+
     private LocalDateTime updatedAt;
 
     private LocalDateTime createdAt;
@@ -56,6 +57,15 @@ public class Shop extends BaseTimeEntity {
     @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "reservationSettings_id", referencedColumnName = "id")
     private ReservationSettings reservationSettings;
+
+
+  
+
+    @Column
+    private boolean isKakaoNotiEnabled;
+
+
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shopOwner_id")

@@ -1,8 +1,11 @@
-package kyonggi.bookslyserver.domain.event.entity;
+package kyonggi.bookslyserver.domain.event.entity.timeEvent;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -16,23 +19,9 @@ public class TimeEventSchedule extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int eventYear;
+    private LocalDateTime openEventDate;
 
-    private int openMonth;
-
-    private int openDay;
-
-    private int openHour;
-
-    private int openMin;
-
-    private int closeMonth;
-
-    private int closeDay;
-
-    private int closeHour;
-
-    private int closeMin;
+    private LocalDateTime closeEventDate;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "timeEventSchedule")
     private TimeEvent timeEvent;
