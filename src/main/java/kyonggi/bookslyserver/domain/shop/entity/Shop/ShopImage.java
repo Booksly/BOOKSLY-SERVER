@@ -20,7 +20,7 @@ public class ShopImage extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="shop_id")
+    @JoinColumn(name="id")
     private Shop shop;
 
 

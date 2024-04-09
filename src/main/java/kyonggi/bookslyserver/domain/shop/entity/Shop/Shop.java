@@ -22,7 +22,7 @@ public class Shop extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long shop_id;
+    private Long id;
 
     private String name;
 
@@ -62,11 +62,11 @@ public class Shop extends BaseTimeEntity {
     private ShopOwner shopOwner;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="category_id")
+    @JoinColumn(name="id")
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="address_id")
+    @JoinColumn(name="id")
     private Address address;
 
 
