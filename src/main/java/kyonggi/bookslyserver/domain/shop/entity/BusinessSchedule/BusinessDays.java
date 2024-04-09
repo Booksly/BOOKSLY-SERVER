@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BusinessDays {
+public class BusinessDays extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
