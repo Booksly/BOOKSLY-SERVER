@@ -26,6 +26,9 @@ public class ShopOwner extends BaseTimeEntity {
 
     private String businessNumber;
 
+    @Column(columnDefinition = "tinyint(0) default 0")
+    private boolean isKakaoNotiEnabled;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;

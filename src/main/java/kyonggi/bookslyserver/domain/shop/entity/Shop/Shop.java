@@ -53,8 +53,6 @@ public class Shop extends BaseTimeEntity {
 
     private String businessNumber;
 
-    private boolean isKakaoNotiEnabled;
-
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "reservationSettings_id", referencedColumnName = "id")
     private ReservationSettings reservationSettings;

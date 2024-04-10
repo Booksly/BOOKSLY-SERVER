@@ -38,7 +38,7 @@ public class User extends BaseTimeEntity {
 
     private boolean isVerified;
 
-    @Column
+    @Column(columnDefinition = "tinyint(0) default 0")
     private boolean isKakaoNotiEnabled;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
