@@ -1,8 +1,10 @@
 package kyonggi.bookslyserver.domain.reservation.entity;
 
 import jakarta.persistence.*;
-import kyonggi.bookslyserver.domain.shop.entity.Employee;
-import kyonggi.bookslyserver.domain.shop.entity.Shop;
+
+import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
+import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 @Entity
@@ -11,7 +13,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class EmployeeReservation {
+public class EmployeeReservation extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

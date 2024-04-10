@@ -38,6 +38,9 @@ public class User extends BaseTimeEntity {
 
     private boolean isVerified;
 
+    @Column(columnDefinition = "tinyint(0) default 0")
+    private boolean isKakaoNotiEnabled;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<FavoriteShop> favoriteShops = new ArrayList<>();
 

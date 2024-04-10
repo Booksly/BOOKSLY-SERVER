@@ -1,28 +1,29 @@
-package kyonggi.bookslyserver.domain.event.entity;
+package kyonggi.bookslyserver.domain.shop.entity.Employee;
+
 
 import jakarta.persistence.*;
-import kyonggi.bookslyserver.domain.shop.entity.Menu;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 @Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ClosingEventMenu extends BaseTimeEntity {
+@Builder
+public class EmployeeMenu extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "closingEvent_id")
-    private ClosingEvent closingEvent;
+    @JoinColumn(name="employee_id")
+    private Employee employee;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
+    @JoinColumn(name="menu_id")
     private Menu menu;
-
 }

@@ -2,7 +2,7 @@ package kyonggi.bookslyserver.domain.user.entity;
 
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.notice.entity.ShopOwnerNotice;
-import kyonggi.bookslyserver.domain.shop.entity.Shop;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.user.constant.Role;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
@@ -26,6 +26,9 @@ public class ShopOwner extends BaseTimeEntity {
 
     private String businessNumber;
 
+    @Column(columnDefinition = "tinyint(0) default 0")
+    private boolean isKakaoNotiEnabled;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
@@ -33,7 +36,7 @@ public class ShopOwner extends BaseTimeEntity {
     @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.ALL)
     private List<ShopOwnerNotice> ownerNotices = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.ALL) //persist
     private List<Shop> shops = new ArrayList<>();
 
     //==생성 메서드==//

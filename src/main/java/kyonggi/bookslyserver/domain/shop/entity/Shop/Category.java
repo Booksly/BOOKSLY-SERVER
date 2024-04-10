@@ -1,24 +1,20 @@
-package kyonggi.bookslyserver.domain.event.entity;
+package kyonggi.bookslyserver.domain.shop.entity.Shop;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.shop.constant.CategoryName;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class WeeklyTimeEventDay extends BaseTimeEntity {
-
+public class Category extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String repeatDay;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "timeEvent_id")
-    private TimeEvent timeEvent;
+    @Enumerated(EnumType.STRING)
+    private CategoryName categoryName;
 }

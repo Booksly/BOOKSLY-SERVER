@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.domain.event.entity;
+package kyonggi.bookslyserver.domain.event.entity.timeEvent;
 
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
@@ -30,11 +30,11 @@ public class TimeEvent extends BaseTimeEntity {
     private boolean isRecurringDays;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "timeEventSchdule_id")
+    @JoinColumn(name = "timeEventSchedule_id")
     private TimeEventSchedule timeEventSchedule;
 
     @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WeeklyTimeEventDay> weeklyTimeEventDays = new ArrayList<>();
+    private List<RepeatDayOfWeek> repeatDayOfWeeks = new ArrayList<>();
 
     @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL)
     private List<EmployeeTimeEvent> employeeTimeEvents = new ArrayList<>();

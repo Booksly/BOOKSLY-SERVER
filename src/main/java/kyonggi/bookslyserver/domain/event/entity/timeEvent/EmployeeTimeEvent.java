@@ -1,7 +1,11 @@
-package kyonggi.bookslyserver.domain.event.entity;
+package kyonggi.bookslyserver.domain.event.entity.timeEvent;
 
 import jakarta.persistence.*;
-import kyonggi.bookslyserver.domain.shop.entity.Employee;
+
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
+
+import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
+
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
