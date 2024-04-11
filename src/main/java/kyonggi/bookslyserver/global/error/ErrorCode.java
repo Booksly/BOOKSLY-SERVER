@@ -32,7 +32,7 @@ public enum ErrorCode implements BaseErrorCode{
     INVALID_REFRESH_TOKEN_VALUE(HttpStatus.UNAUTHORIZED, "리프레시 토큰의 값이 올바르지 않습니다."),
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었습니다. 다시 로그인해 주세요."),
     NOT_MATCH_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "일치하지 않는 리프레시 토큰입니다."),
-    VERIFY_IDENTITY(HttpStatus.UNAUTHORIZED,"본인 인증이 필요합니다."),
+    VERIFY_IDENTITY(HttpStatus.UNAUTHORIZED,"false여서는 안됩니다.본인 인증이 필요합니다. "),
 
     /**
      * 403 Forbidden
