@@ -8,7 +8,6 @@ import kyonggi.bookslyserver.global.auth.handelr.JwtAuthenticationEntryPoint;
 import kyonggi.bookslyserver.global.auth.jwt.JwtAuthenticationFilter;
 import kyonggi.bookslyserver.global.auth.jwt.JwtProvider;
 import kyonggi.bookslyserver.global.auth.principal.PrincipalOAuth2UserService;
-import kyonggi.bookslyserver.global.config.CorsConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +18,6 @@ import org.springframework.security.config.annotation.web.configurers.RememberMe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -38,7 +36,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         /**
-         * JWT 사용 설정
+         * 시큐리티 설정
          */
         http
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -57,17 +55,16 @@ public class SecurityConfig {
                         .successHandler(oAuth2AuthenticationSuccessHandler));
 
         /**
-         * 접근 허용 uri 추가
+         * 접근 허용 uri 설정
          */
         http
                 .authorizeHttpRequests((authz) -> authz
 
                         //인증이 필요한 uri - 회원만 접근 가능
-                        .requestMatchers("api/user/need-login").authenticated()
+                        .requestMatchers("/api/user/need-login","/api/auth/user/**").authenticated()
 
-                        // 인증이 필요없음 - 비회원 & 회원 접근 가능
-                        .requestMatchers( "/healthcheck","api/user/test","api/auth/owner").permitAll()
-                        .anyRequest().authenticated());
+                        // 그 외 요청, 인증이 필요없음 - 비회원 & 회원 접근 가능
+                        .anyRequest().permitAll());
 
         /**
          * 에러 발생 처리
