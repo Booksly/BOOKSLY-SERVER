@@ -13,16 +13,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-@Getter
 @Component
 @Slf4j
 public class JwtProvider {
 
-    private static final String PREFIX = "Bearer ";
+    public static final String PREFIX = "Bearer ";
+    public static final String Authorization ="Authorization";
     @Value("${jwt.secret}")
     private String SECRET;
     @Value("${jwt.access-token-expire-time}")
     private long ACCESS_TOKEN_EXPIRE_TIME;
+
 
     /**
      * @param loginId 토큰에 담아줄 정보
