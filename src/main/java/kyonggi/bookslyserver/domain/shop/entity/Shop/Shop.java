@@ -2,7 +2,7 @@ package kyonggi.bookslyserver.domain.shop.entity.Shop;
 
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
-import kyonggi.bookslyserver.domain.reservation.entity.ReservationSettings;
+import kyonggi.bookslyserver.domain.reservation.entity.ReservationSetting;
 import kyonggi.bookslyserver.domain.review.entity.Review;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
@@ -10,7 +10,6 @@ import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,10 +51,6 @@ public class Shop extends BaseTimeEntity {
     private String streetAddress;
 
     private String businessNumber;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "reservationSettings_id", referencedColumnName = "id")
-    private ReservationSettings reservationSettings;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "shopOwner_id")
