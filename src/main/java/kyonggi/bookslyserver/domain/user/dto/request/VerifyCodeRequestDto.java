@@ -5,6 +5,6 @@ import kyonggi.bookslyserver.domain.user.validation.annotation.VerifyPhoneNum;
 
 public record VerifyCodeRequestDto(
         @NotNull String code,
-        @VerifyPhoneNum String receivingNumber
+        @NotNull @VerifyPhoneNum String receivingNumber
 ) {
 }
