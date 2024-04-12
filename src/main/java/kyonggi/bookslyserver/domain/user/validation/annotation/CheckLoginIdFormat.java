@@ -3,7 +3,6 @@ package kyonggi.bookslyserver.domain.user.validation.annotation;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import kyonggi.bookslyserver.domain.user.validation.validator.CheckLoginIdFormatValidator;
-import kyonggi.bookslyserver.domain.user.validation.validator.NotFalseValidator;
 
 import java.lang.annotation.*;
 
