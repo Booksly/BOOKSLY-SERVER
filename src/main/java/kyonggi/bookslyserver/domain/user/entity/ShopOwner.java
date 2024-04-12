@@ -26,9 +26,6 @@ public class ShopOwner extends BaseTimeEntity {
 
     private String businessNumber;
 
-    @Column(columnDefinition = "tinyint(0) default 0")
-    private boolean isKakaoNotiEnabled;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
@@ -40,18 +37,19 @@ public class ShopOwner extends BaseTimeEntity {
     private List<Shop> shops = new ArrayList<>();
 
     //==생성 메서드==//
-    public static ShopOwner createShopOwner(String loginId, String password, String email, String phoneNum, String profileImgUrl) {
+    public static ShopOwner createShopOwner(String loginId, String password, String email, String phoneNum, String businessNumber) {
 
-        User shopUser = User.builder()
+        User ownerUser = User.builder()
                 .role(Role.ROLE_ADMIN)
                 .isVerified(true)
                 .loginId(loginId)
                 .email(email)
-                .phoneNum(phoneNum)
-                .profileImgUrl(profileImgUrl).build();
+                .isKakaoNotiEnabled(false)
+                .phoneNum(phoneNum).build();
 
         return ShopOwner.builder()
                 .password(password)
-                .user(shopUser).build();
+                .businessNumber(businessNumber)
+                .user(ownerUser).build();
     }
 }
