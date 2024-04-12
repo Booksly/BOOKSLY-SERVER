@@ -17,20 +17,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
+import static kyonggi.bookslyserver.global.auth.jwt.JwtProvider.Authorization;
+import static kyonggi.bookslyserver.global.auth.jwt.JwtProvider.PREFIX;
+
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
-    private String accessHeader = "Authorization";
-    private static final String PREFIX = "Bearer ";
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String accessToken = request.getHeader(accessHeader);
+        String accessToken = request.getHeader(Authorization);
 
         if (accessToken == null) {
             filterChain.doFilter(request, response);

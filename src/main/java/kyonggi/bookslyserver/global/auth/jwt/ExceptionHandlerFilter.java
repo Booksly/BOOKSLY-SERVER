@@ -57,6 +57,5 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         response.setCharacterEncoding("utf-8");
         response.setStatus(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus().value());
         response.getWriter().write(objectMapper.writeValueAsString(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR)));
-        log.info("이중 에러 잡기~");
     }
 }

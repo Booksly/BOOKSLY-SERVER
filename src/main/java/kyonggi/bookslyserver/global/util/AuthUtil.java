@@ -10,6 +10,7 @@ import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
@@ -20,7 +21,7 @@ public class AuthUtil {
     @Value("${coolsms.api.key}")
     private String apiKey;
     @Value("${coolsms.api.secret}")
-    private String apiSecretKey;
+    private  String apiSecretKey;
     @Value("${coolsms.sendFrom.phoneNum}")
     private String sendFromNum;
 
