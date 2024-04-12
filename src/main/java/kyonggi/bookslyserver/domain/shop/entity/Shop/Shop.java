@@ -52,10 +52,6 @@ public class Shop extends BaseTimeEntity {
 
     private String businessNumber;
 
-//    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "reservationSettings_id", referencedColumnName = "id")
-//    private ReservationSetting reservationSetting;
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "shopOwner_id")
     private ShopOwner shopOwner;

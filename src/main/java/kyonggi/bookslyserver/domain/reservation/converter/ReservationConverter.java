@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.reservation.converter;
 
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveRequestDTO;
+import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSetting;
 import lombok.RequiredArgsConstructor;
 
@@ -13,6 +14,12 @@ public class ReservationConverter {
                 .reservationCycle(requestDTO.getCycle())
                 .maxCapacity(requestDTO.getMaxCapacity())
                 .isAutoConfirmation(requestDTO.isAuto())
+                .build();
+    }
+    public static ReserveResponseDTO.reservationSettingResultDTO toReservationSettingResultDTO(ReservationSetting reservationSetting){
+        return ReserveResponseDTO.reservationSettingResultDTO.builder()
+                .shopId(reservationSetting.getShop().getId())
+                .reservationSettingId(reservationSetting.getId())
                 .build();
     }
 }
