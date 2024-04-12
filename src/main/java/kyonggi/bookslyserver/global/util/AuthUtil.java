@@ -2,9 +2,7 @@ package kyonggi.bookslyserver.global.util;
 
 import jakarta.annotation.PostConstruct;
 import net.nurigo.sdk.NurigoApp;
-import net.nurigo.sdk.message.exception.NurigoApiKeyException;
 import net.nurigo.sdk.message.exception.NurigoBadRequestException;
-import net.nurigo.sdk.message.exception.NurigoException;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;

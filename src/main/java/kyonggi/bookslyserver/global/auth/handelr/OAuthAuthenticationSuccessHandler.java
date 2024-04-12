@@ -14,15 +14,15 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+import static kyonggi.bookslyserver.global.auth.jwt.JwtProvider.Authorization;
+
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-
     private final JwtProvider jwtProvider;
-    private String Authorization ="Authorization";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {

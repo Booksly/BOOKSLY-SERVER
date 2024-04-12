@@ -6,7 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kyonggi.bookslyserver.global.error.ErrorCode;
-import kyonggi.bookslyserver.global.error.dto.ErrorResponse;
+import kyonggi.bookslyserver.global.error.dto.ErrorResponseDto;
 import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import kyonggi.bookslyserver.global.error.exception.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +42,10 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         response.setCharacterEncoding("utf-8");
         if (e instanceof UnauthorizedException ue) {
             response.setStatus(ue.getErrorCode().getHttpStatus().value());
-            response.getWriter().write(objectMapper.writeValueAsString(ErrorResponse.of(ue.getErrorCode())));
+            response.getWriter().write(objectMapper.writeValueAsString(ue.getErrorCode().getErrorReason()));
         } else if (e instanceof InvalidValueException ie) {
             response.setStatus(ie.getErrorCode().getHttpStatus().value());
-            response.getWriter().write(objectMapper.writeValueAsString(ErrorResponse.of(ie.getErrorCode())));
+            response.getWriter().write(objectMapper.writeValueAsString(ie.getErrorCode().getErrorReason()));
         }
     }
 
@@ -56,7 +56,6 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
         response.setStatus(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus().value());
-        response.getWriter().write(objectMapper.writeValueAsString(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR)));
-        log.info("이중 에러 잡기~");
+        response.getWriter().write(objectMapper.writeValueAsString(ErrorCode.INTERNAL_SERVER_ERROR.getErrorReason()));
     }
 }

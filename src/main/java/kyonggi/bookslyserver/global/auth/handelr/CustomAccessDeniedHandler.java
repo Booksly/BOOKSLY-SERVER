@@ -5,7 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kyonggi.bookslyserver.global.error.ErrorCode;
-import kyonggi.bookslyserver.global.error.dto.ErrorResponse;
+import kyonggi.bookslyserver.global.error.dto.ErrorResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -29,6 +29,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
         response.setStatus(ErrorCode.FORBIDDEN.getHttpStatus().value());
-        response.getWriter().write(objectMapper.writeValueAsString(ErrorResponse.of(ErrorCode.FORBIDDEN)));
+        response.getWriter().write(objectMapper.writeValueAsString(ErrorCode.FORBIDDEN.getErrorReason()));
     }
 }

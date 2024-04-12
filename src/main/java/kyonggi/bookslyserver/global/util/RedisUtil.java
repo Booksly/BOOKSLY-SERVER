@@ -6,7 +6,6 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor

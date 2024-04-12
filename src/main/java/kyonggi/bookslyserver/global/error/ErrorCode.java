@@ -1,5 +1,7 @@
 package kyonggi.bookslyserver.global.error;
 
+import kyonggi.bookslyserver.global.error.dto.ErrorResponseDto;
+import kyonggi.bookslyserver.global.error.dto.FieldErrorResponseDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +9,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum ErrorCode {
+public enum ErrorCode implements BaseErrorCode{
 
     /**
      * 400 Bad Request
@@ -61,4 +63,23 @@ public enum ErrorCode {
 
     private final HttpStatus httpStatus;
     private final String message;
+
+    @Override
+    public ErrorResponseDto getErrorReason() {
+        return ErrorResponseDto.builder()
+                .status(httpStatus)
+                .code(httpStatus.value())
+                .message(message)
+                .build();
+    }
+
+    @Override
+    public FieldErrorResponseDto getFieldErrorReason(Object result) {
+        return FieldErrorResponseDto.builder()
+                .status(httpStatus)
+                .code(httpStatus.value())
+                .message(message)
+                .result(result)
+                .build();
+    }
 }
