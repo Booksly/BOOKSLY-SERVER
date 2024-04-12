@@ -23,16 +23,16 @@ public class VerifyPhoneNumValidator implements ConstraintValidator<VerifyPhoneN
             return false;
         }
 
+        if (phoneNumber.contains("-")) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(ErrorCode.HYPHEN_BAD_REQUEST.getMessage()).addConstraintViolation();
+            return false;
+        }
+
         // 전화번호 길이 검사
         if(!(phoneNumber.length() == 10 || phoneNumber.length() == 11)) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(ErrorCode.PHONE_NUM_LENGTH_BAD_REQUEST.getMessage()).addConstraintViolation();
-            return false;
-        }
-
-        if (phoneNumber.contains("-")) {
-            context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(ErrorCode.HYPHEN_BAD_REQUEST.getMessage()).addConstraintViolation();
             return false;
         }
 

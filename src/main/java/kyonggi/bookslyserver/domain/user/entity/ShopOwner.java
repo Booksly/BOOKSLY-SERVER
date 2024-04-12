@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.notice.entity.ShopOwnerNotice;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.user.constant.Role;
+import kyonggi.bookslyserver.domain.user.dto.request.JoinOwnerRequestDto;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
@@ -26,9 +27,6 @@ public class ShopOwner extends BaseTimeEntity {
 
     private String businessNumber;
 
-    @Column(columnDefinition = "tinyint(0) default 0")
-    private boolean isKakaoNotiEnabled;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
@@ -36,22 +34,22 @@ public class ShopOwner extends BaseTimeEntity {
     @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.ALL)
     private List<ShopOwnerNotice> ownerNotices = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.ALL) //persist
+    @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.PERSIST)
     private List<Shop> shops = new ArrayList<>();
 
     //==생성 메서드==//
-    public static ShopOwner createShopOwner(String loginId, String password, String email, String phoneNum, String profileImgUrl) {
-
-        User shopUser = User.builder()
+    public static ShopOwner createShopOwner(JoinOwnerRequestDto joinOwnerRequestDto) {
+        User ownerUser = User.builder()
                 .role(Role.ROLE_ADMIN)
                 .isVerified(true)
-                .loginId(loginId)
-                .email(email)
-                .phoneNum(phoneNum)
-                .profileImgUrl(profileImgUrl).build();
+                .loginId(joinOwnerRequestDto.loginId())
+                .email(joinOwnerRequestDto.email())
+                .isKakaoNotiEnabled(false)
+                .phoneNum(joinOwnerRequestDto.phoneNum()).build();
 
         return ShopOwner.builder()
-                .password(password)
-                .user(shopUser).build();
+                .password(joinOwnerRequestDto.password())
+                .businessNumber(joinOwnerRequestDto.businessNumber())
+                .user(ownerUser).build();
     }
 }
