@@ -18,7 +18,7 @@ public class AuthUtil {
     @Value("${coolsms.api.key}")
     private String apiKey;
     @Value("${coolsms.api.secret}")
-    private  String apiSecretKey;
+    private String apiSecretKey;
     @Value("${coolsms.sendFrom.phoneNum}")
     private String sendFromNum;
 
