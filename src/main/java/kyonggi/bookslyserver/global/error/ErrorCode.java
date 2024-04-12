@@ -18,6 +18,8 @@ public enum ErrorCode implements BaseErrorCode{
     NURIGO_BAD_REQUEST(HttpStatus.BAD_REQUEST, "본인 인증 요청 정보를 다시 확인해주세요."),
     HYPHEN_BAD_REQUEST(HttpStatus.BAD_REQUEST, "하이픈을 제외한 숫자만 입력해주세요"),
     PHONE_NUM_LENGTH_BAD_REQUEST(HttpStatus.BAD_REQUEST,"핸드폰 번호는 10자리 또는 11자리만 입력 가능합니다."),
+    MUST_INCLUDE_NUMBER(HttpStatus.BAD_REQUEST,"아이디에는 숫자를 포함해야 합니다."),
+    ID_LENGTH_BAD_REQUEST(HttpStatus.BAD_REQUEST,"아이디는 최소 6글자여야 합니다."),
 
 
     /**
