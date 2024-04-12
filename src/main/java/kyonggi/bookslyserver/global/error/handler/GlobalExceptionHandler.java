@@ -37,16 +37,11 @@ public class GlobalExceptionHandler {
         e.getBindingResult().getFieldErrors().stream()
                         .forEach(fieldError -> {
                             String fieldName = fieldError.getField();
-                            log.info("뭐가 나올려나 ~ "+fieldError.getCode());
                             String errorMessage = Optional.ofNullable(fieldError.getDefaultMessage()).orElse("");
                             errors.merge(fieldName, errorMessage, (existingErrorMessage, newErrorMessage) -> existingErrorMessage + ", " + newErrorMessage);
                         });
 
-        HttpStatusCode statusCode = e.getStatusCode();
-        log.info("상태코드:"+statusCode);
-
         final FieldErrorResponseDto fieldErrorReason = ErrorCode.BAD_REQUEST.getFieldErrorReason(errors);
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fieldErrorReason);
     }
 
