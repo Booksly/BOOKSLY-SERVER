@@ -15,6 +15,10 @@ public class NotFalseValidator implements ConstraintValidator<NotFalse, Boolean>
 
     @Override
     public boolean isValid(Boolean verify, ConstraintValidatorContext context) {
+        if (verify == null) {
+            return false;
+        }
+
         if (!verify) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(ErrorCode.VERIFY_IDENTITY.getMessage()).addConstraintViolation();
