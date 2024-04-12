@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.notice.entity.ShopOwnerNotice;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.user.constant.Role;
+import kyonggi.bookslyserver.domain.user.dto.request.JoinOwnerRequestDto;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
@@ -33,23 +34,22 @@ public class ShopOwner extends BaseTimeEntity {
     @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.ALL)
     private List<ShopOwnerNotice> ownerNotices = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.ALL) //persist
+    @OneToMany(mappedBy = "shopOwner", cascade = CascadeType.PERSIST)
     private List<Shop> shops = new ArrayList<>();
 
     //==생성 메서드==//
-    public static ShopOwner createShopOwner(String loginId, String password, String email, String phoneNum, String businessNumber) {
-
+    public static ShopOwner createShopOwner(JoinOwnerRequestDto joinOwnerRequestDto) {
         User ownerUser = User.builder()
                 .role(Role.ROLE_ADMIN)
                 .isVerified(true)
-                .loginId(loginId)
-                .email(email)
+                .loginId(joinOwnerRequestDto.loginId())
+                .email(joinOwnerRequestDto.email())
                 .isKakaoNotiEnabled(false)
-                .phoneNum(phoneNum).build();
+                .phoneNum(joinOwnerRequestDto.phoneNum()).build();
 
         return ShopOwner.builder()
-                .password(password)
-                .businessNumber(businessNumber)
+                .password(joinOwnerRequestDto.password())
+                .businessNumber(joinOwnerRequestDto.businessNumber())
                 .user(ownerUser).build();
     }
 }
