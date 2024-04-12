@@ -8,7 +8,7 @@ public record JoinOwnerRequestDto(
         @NotNull String loginId,
         @NotNull String password,
         @NotNull String businessNumber,
-        @VerifyPhoneNum String phoneNum,
-        @NotFalse Boolean isVerify,
+        @NotNull @VerifyPhoneNum String phoneNum,
+        @NotNull @NotFalse Boolean isVerify,
         @NotNull String email
 ) { }
