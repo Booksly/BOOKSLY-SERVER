@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.reservation.entity;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ReservationSettings extends BaseTimeEntity {
+public class ReservationSetting extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,4 +30,8 @@ public class ReservationSettings extends BaseTimeEntity {
 
     @Column(columnDefinition = "VARCHAR")
     private String notice;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "shop_id",referencedColumnName = "id")
+    private Shop shop;
 }
