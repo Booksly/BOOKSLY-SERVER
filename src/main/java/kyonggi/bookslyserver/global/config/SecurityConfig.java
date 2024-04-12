@@ -4,7 +4,7 @@ import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.auth.handelr.CustomAccessDeniedHandler;
 import kyonggi.bookslyserver.global.auth.handelr.OAuthAuthenticationSuccessHandler;
 import kyonggi.bookslyserver.global.auth.jwt.ExceptionHandlerFilter;
-import kyonggi.bookslyserver.global.auth.handelr.JwtAuthenticationEntryPoint;
+import kyonggi.bookslyserver.global.auth.handelr.CustomAuthenticationEntryPoint;
 import kyonggi.bookslyserver.global.auth.jwt.JwtAuthenticationFilter;
 import kyonggi.bookslyserver.global.auth.jwt.JwtProvider;
 import kyonggi.bookslyserver.global.auth.principal.PrincipalOAuth2UserService;
@@ -29,7 +29,7 @@ public class SecurityConfig {
     private final OAuthAuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
     private final UserRepository userRepository;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
@@ -71,7 +71,7 @@ public class SecurityConfig {
          */
         http
                 .exceptionHandling(exceptionHandlingConfigurer ->
-                        exceptionHandlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                        exceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint))
                 .exceptionHandling(exceptionHandlingConfigurer->
                         exceptionHandlingConfigurer.accessDeniedHandler(customAccessDeniedHandler));
 
