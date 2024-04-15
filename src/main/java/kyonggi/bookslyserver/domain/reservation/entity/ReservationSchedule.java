@@ -9,6 +9,7 @@ import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -25,10 +26,10 @@ public class ReservationSchedule extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private int startTime;
+    private LocalTime startTime;
 
     @Column(nullable = false)
-    private int endTime;
+    private LocalTime endTime;
 
     @Column(columnDefinition = "tinyint(0) default 0")
     private boolean isClosed;

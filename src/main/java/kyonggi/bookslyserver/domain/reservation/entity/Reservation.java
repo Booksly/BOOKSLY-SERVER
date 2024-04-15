@@ -21,12 +21,6 @@ public class Reservation extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDate reservationDate;
-
-    @Column(nullable = false)
-    private LocalTime reservationTime;
-
-    @Column(nullable = false)
     private Long price;
 
     @Column
