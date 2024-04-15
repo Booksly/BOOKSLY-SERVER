@@ -2,7 +2,6 @@ package kyonggi.bookslyserver.domain.shop.entity.Employee;
 
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.EmployeeTimeEvent;
-import kyonggi.bookslyserver.domain.reservation.entity.EmployeeReservation;
 import kyonggi.bookslyserver.domain.review.entity.Review;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
@@ -38,9 +37,6 @@ public class Employee extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "employee")
     private List<Review> reviews = new ArrayList<>();
-
-    @OneToMany(mappedBy = "employee")
-    private List<EmployeeReservation> employeeReservations = new ArrayList<>();
 
     @OneToMany(mappedBy = "employee")
     private List<EmployeeMenu> employeeMenus = new ArrayList<>();

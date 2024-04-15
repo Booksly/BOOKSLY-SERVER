@@ -35,16 +35,24 @@ public class Reservation extends BaseTimeEntity {
     @Column(columnDefinition = "tinyint(0) default 0")
     private boolean isCanceled;
     
+    @Column(columnDefinition = "tinyint(0) default 0")
+    private boolean isConfirmed;
+
+    @Column(columnDefinition = "tinyint(0) default 0")
+    private boolean isRefused;
+
     @Column
     private String menuName; // 메뉴
     
     @Column
     private String menuCategory; // 메뉴 소분류
 
-
     @Column
     private String eventTitle;
 
+    @OneToOne
+    @JoinColumn(name = "reservationSchedule_id")
+    private ReservationSchedule reservationSchedule;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
