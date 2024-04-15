@@ -5,12 +5,11 @@ import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
-import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkSchedule;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -27,10 +26,10 @@ public class ReservationSchedule extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private int startTime;
+    private LocalTime startTime;
 
     @Column(nullable = false)
-    private int endTime;
+    private LocalTime endTime;
 
     @Column(columnDefinition = "tinyint(0) default 0")
     private boolean isClosed;
