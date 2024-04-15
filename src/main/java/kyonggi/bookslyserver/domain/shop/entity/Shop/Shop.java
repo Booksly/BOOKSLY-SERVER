@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSetting;
 import kyonggi.bookslyserver.domain.review.entity.Review;
+import kyonggi.bookslyserver.domain.shop.constant.CategoryName;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
@@ -39,6 +40,7 @@ public class Shop extends BaseTimeEntity {
     private String instagramUrl;
 
     private String kakaoUrl;
+
     @Lob
     private String introduction;
 
@@ -52,30 +54,46 @@ public class Shop extends BaseTimeEntity {
 
     private String businessNumber;
 
-    @ManyToOne(fetch = LAZY)
+    @Embedded
+    private TimeUnit timeUnit;
+
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "shopOwner_id")
     private ShopOwner shopOwner;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
 
-    @OneToMany(mappedBy = "shop")
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private List<ShopImage> shopImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shop")
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shop")
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private List<BusinessSchedule> businessSchedules = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shop")
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private List<Menu> menus = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shop")
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private List<ReservationSchedule> reservationSchedules = new ArrayList<>();
+
+    public void getBusinessSchedule(BusinessSchedule businessSchedule){
+        this.businessSchedules.add(businessSchedule);
+        businessSchedule.setShop(this);
+    }
+
+    public void getShopImage(ShopImage shopImage){
+        this.shopImages.add(shopImage);
+        shopImage.setShop(this);
+    }
+
+
+
 }
