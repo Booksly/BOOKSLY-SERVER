@@ -31,4 +31,11 @@ public class BusinessSchedule extends BaseTimeEntity {
     @JoinColumn(name="shop_id")
     private Shop shop;
 
+    public void update(DayName day, String openAt, String closeAt, boolean isHoliday){
+        this.day = day;
+        this.openAt = openAt;
+        this.closeAt = closeAt;
+        this.isHoliday = isHoliday;
+    }
+
 }
