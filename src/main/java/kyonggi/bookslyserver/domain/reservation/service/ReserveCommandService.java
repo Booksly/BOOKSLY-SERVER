@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 @Slf4j
@@ -32,9 +34,18 @@ public class ReserveCommandService {
                 || (request.isAuto() && request.getMaxCapacity() == null)){
             throw new InvalidValueException();
         }
-
-        ReservationSetting reservationSetting= ReservationConverter.toReservationSetting(request);
-        reservationSetting.setShop(shop);
+        
+        ReservationSetting reservationSetting;
+        // 존재 여부 확인
+        Optional<ReservationSetting> existingSetting=reservationSettingRepository.findByShop(shop);
+        
+        if (existingSetting.isPresent()){
+            reservationSetting=ReservationConverter.updateReservationSetting(request,existingSetting.get());
+        }
+        else {
+            reservationSetting= ReservationConverter.toReservationSetting(request);
+            reservationSetting.setShop(shop);
+        }
         return ReservationConverter.toReservationSettingResultDTO(reservationSettingRepository.save(reservationSetting));
     }
 }
