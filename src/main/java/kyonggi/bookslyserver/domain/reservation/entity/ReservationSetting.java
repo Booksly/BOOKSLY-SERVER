@@ -17,14 +17,14 @@ public class ReservationSetting extends BaseTimeEntity {
     private Long id;
 
     @Column
-    private int registerMin;
+    private Integer registerMin;
     @Column
-    private int registerHr;
+    private Integer registerHr;
     @Column(columnDefinition = "tinyint(0) default 0")
     private boolean isAutoConfirmation;
 
     @Column
-    private int maxCapacity;
+    private Integer maxCapacity;
     @Column(nullable = false)
     private int reservationCycle;
 
