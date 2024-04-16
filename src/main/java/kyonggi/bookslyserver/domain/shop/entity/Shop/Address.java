@@ -30,8 +30,14 @@ public class Address extends BaseTimeEntity {
     private List<Shop> shops = new ArrayList<>();
 
     public void update(String firstAddress, String secondAddress, String thirdAddress){
-        this.firstAddress = firstAddress;
-        this.secondAddress = secondAddress;
-        this.thirdAddress = thirdAddress;
+        if(firstAddress != null) {
+            this.firstAddress = firstAddress;
+        }
+        if(secondAddress != null) {
+            this.secondAddress = secondAddress;
+        }
+        if(thirdAddress != null) {
+            this.thirdAddress = thirdAddress;
+        }
     }
 }
