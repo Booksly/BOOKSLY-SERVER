@@ -17,7 +17,5 @@ public class Category extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private CategoryName categoryName;
-/*    public Category(CategoryName categoryName){
-        this.categoryName = categoryName;
-    }*/
+
 }
