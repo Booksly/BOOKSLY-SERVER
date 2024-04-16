@@ -2,8 +2,14 @@ package kyonggi.bookslyserver.domain.reservation.converter;
 
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveRequestDTO;
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
+import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSetting;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import lombok.RequiredArgsConstructor;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @RequiredArgsConstructor
 public class ReservationConverter {
@@ -30,6 +36,14 @@ public class ReservationConverter {
         return ReserveResponseDTO.reservationSettingResultDTO.builder()
                 .shopId(reservationSetting.getShop().getId())
                 .reservationSettingId(reservationSetting.getId())
+                .build();
+    }
+    public static ReservationSchedule toReservationSchedule(LocalTime startTime, LocalDate finalDate, Duration interval, Employee employee){
+        return ReservationSchedule.builder()
+                .startTime(startTime)
+                .endTime(startTime.plus(interval))
+                .workDate(finalDate)
+                .employee(employee)
                 .build();
     }
 }
