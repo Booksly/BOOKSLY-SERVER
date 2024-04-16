@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 @Slf4j
@@ -28,13 +30,20 @@ public class ReserveCommandService {
         Shop shop=shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        if ((request.getRegisterMin() == null && request.getRegisterHr() == null)
-                || (request.isAuto() && request.getMaxCapacity() == null)){
-            throw new InvalidValueException();
+        if ((request.getRegisterMin() == null && request.getRegisterHr() == null)) throw new InvalidValueException(ErrorCode.TIME_SETTING_BAD_REQUEST);
+        if((request.isAuto() && request.getMaxCapacity() == null)) throw new InvalidValueException(ErrorCode.AUTO_SETTING_BAD_REQUEST);
+        
+        ReservationSetting reservationSetting;
+        // 존재 여부 확인
+        Optional<ReservationSetting> existingSetting=reservationSettingRepository.findByShop(shop);
+        
+        if (existingSetting.isPresent()){
+            reservationSetting=ReservationConverter.updateReservationSetting(request,existingSetting.get());
         }
-
-        ReservationSetting reservationSetting= ReservationConverter.toReservationSetting(request);
-        reservationSetting.setShop(shop);
+        else {
+            reservationSetting= ReservationConverter.toReservationSetting(request);
+            reservationSetting.setShop(shop);
+        }
         return ReservationConverter.toReservationSettingResultDTO(reservationSettingRepository.save(reservationSetting));
     }
 }

@@ -14,7 +14,17 @@ public class ReservationConverter {
                 .reservationCycle(requestDTO.getCycle())
                 .maxCapacity(requestDTO.getMaxCapacity())
                 .isAutoConfirmation(requestDTO.isAuto())
+                .notice(requestDTO.getNotice())
                 .build();
+    }
+    public static ReservationSetting updateReservationSetting(ReserveRequestDTO.reserveSettingRequestDTO request, ReservationSetting reservationSetting){
+        reservationSetting.setRegisterMin(request.getRegisterMin());
+        reservationSetting.setRegisterHr(request.getRegisterHr());
+        reservationSetting.setAutoConfirmation(request.isAuto());
+        reservationSetting.setMaxCapacity(request.getMaxCapacity());
+        reservationSetting.setReservationCycle(request.getCycle());
+        reservationSetting.setNotice(request.getNotice());
+        return reservationSetting;
     }
     public static ReserveResponseDTO.reservationSettingResultDTO toReservationSettingResultDTO(ReservationSetting reservationSetting){
         return ReserveResponseDTO.reservationSettingResultDTO.builder()
