@@ -14,6 +14,7 @@ public class ReservationConverter {
                 .reservationCycle(requestDTO.getCycle())
                 .maxCapacity(requestDTO.getMaxCapacity())
                 .isAutoConfirmation(requestDTO.isAuto())
+                .notice(requestDTO.getNotice())
                 .build();
     }
     public static ReserveResponseDTO.reservationSettingResultDTO toReservationSettingResultDTO(ReservationSetting reservationSetting){
