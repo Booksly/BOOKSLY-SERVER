@@ -30,10 +30,8 @@ public class ReserveCommandService {
         Shop shop=shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        if ((request.getRegisterMin() == null && request.getRegisterHr() == null)
-                || (request.isAuto() && request.getMaxCapacity() == null)){
-            throw new InvalidValueException();
-        }
+        if ((request.getRegisterMin() == null && request.getRegisterHr() == null)) throw new InvalidValueException(ErrorCode.TIME_SETTING_BAD_REQUEST);
+        if((request.isAuto() && request.getMaxCapacity() == null)) throw new InvalidValueException(ErrorCode.AUTO_SETTING_BAD_REQUEST);
         
         ReservationSetting reservationSetting;
         // 존재 여부 확인
