@@ -50,7 +50,7 @@ public enum ErrorCode implements BaseErrorCode{
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 회원입니다."),
     ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "엔티티를 찾을 수 없습니다."),
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND,"요청한 리소스를 찾을 수 없습니다."),
-
+    SETTING_NOT_FOUND(HttpStatus.NOT_FOUND,"예약 설정을 먼저 완료해주세요"),
 
     /**
      * 405 Method Not Allowed

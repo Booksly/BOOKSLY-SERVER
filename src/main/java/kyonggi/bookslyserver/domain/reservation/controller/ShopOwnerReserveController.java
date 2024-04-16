@@ -17,4 +17,12 @@ public class ShopOwnerReserveController {
             (@RequestParam("shopId")Long shopId, @ModelAttribute ReserveRequestDTO.reserveSettingRequestDTO request){
         return SuccessResponse.created(reserveCommandService.setReservationSetting(request,shopId));
     }
+    
+    /*
+    * 임시 uri api 테스트 시에만 사용 바람
+    */
+    @GetMapping("/createResSch")
+    public ResponseEntity<SuccessResponse<?>> createReservationSchedule(@RequestParam("employeeId")Long employeeId){
+        return SuccessResponse.created(reserveCommandService.createEmployeeReservationSchedule(employeeId));
+    }
 }
