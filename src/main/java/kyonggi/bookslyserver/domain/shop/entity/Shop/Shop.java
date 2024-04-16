@@ -121,6 +121,33 @@ public class Shop extends BaseTimeEntity {
                 .build();
     }
 
+    public void update(Shop shop, ShopCreateRequestDto requestDto){
+        int business_flag = 0;
+        int shopImage_flag = 0;
+
+        this.name = requestDto.getName();
+        this.phoneNumber = requestDto.getPhoneNumber();
+        this.address.update(requestDto.getFirstAddress(), requestDto.getSecondAddress(), requestDto.getThirdAddress());
+        this.detailAddress = requestDto.getDetailAddress();
+        this.kakaoUrl = requestDto.getKakaoUrl();
+        this.instagramUrl = requestDto.getInstagramUrl();
+        this.introduction = requestDto.getIntroduction();
+
+        for(BusinessSchedule businessSchedule : requestDto.getBusinessScheduleList()){
+            this.businessSchedules
+                    .get(business_flag)
+                    .update(businessSchedule.getDay(), businessSchedule.getOpenAt(), businessSchedule.getCloseAt(), businessSchedule.isHoliday());
+            business_flag++;
+        }
+
+        for(ShopImage shopImage : requestDto.getShopImageList()){
+            this.shopImages
+                    .get(shopImage_flag)
+                    .update(shopImage.getImgUri(), shopImage.isRepresentative());
+        }
+        this.timeUnit = requestDto.getTimeUnit();
+    }
+
 
 
 }

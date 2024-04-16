@@ -3,6 +3,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.ShopCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,14 @@ public class ShopApiController {
         ShopCreateResponseDto result = shopService.join(id, requestDto);
         return result;
     }
+
+    //가게 수정
+    @PutMapping("/api/shop/{id}/update")
+    public ShopCreateResponseDto updateShop(@PathVariable("id") Long id, @RequestBody @Validated ShopCreateRequestDto requestDto){
+        ShopCreateResponseDto result = shopService.update(id, requestDto);
+        return result;
+    }
+
 
 
 

@@ -59,5 +59,16 @@ public class ShopService {
         return new ShopCreateResponseDto(shop);
     }
 
+    @Transactional
+    public ShopCreateResponseDto update(Long id, ShopCreateRequestDto requestDto){
+        Optional<Shop> shop = shopRepository.findById(id);
+
+        if(!shop.isPresent()){
+            throw new NullPointerException("해당 id의 shop 엔티티가 없음");
+        }
+        shop.get().update(shop.get(), requestDto);
+        return new ShopCreateResponseDto(shop.get());
+    }
+
 
 }
