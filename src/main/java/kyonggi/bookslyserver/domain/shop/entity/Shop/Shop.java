@@ -125,13 +125,27 @@ public class Shop extends BaseTimeEntity {
         int business_flag = 0;
         int shopImage_flag = 0;
 
-        this.name = requestDto.getName();
-        this.phoneNumber = requestDto.getPhoneNumber();
+        if(requestDto.getName() != null) {
+            this.name = requestDto.getName();
+        }
+        if(requestDto.getPhoneNumber() != null) {
+            this.phoneNumber = requestDto.getPhoneNumber();
+        }
+
         this.address.update(requestDto.getFirstAddress(), requestDto.getSecondAddress(), requestDto.getThirdAddress());
-        this.detailAddress = requestDto.getDetailAddress();
-        this.kakaoUrl = requestDto.getKakaoUrl();
-        this.instagramUrl = requestDto.getInstagramUrl();
-        this.introduction = requestDto.getIntroduction();
+
+        if(requestDto.getDetailAddress() != null) {
+            this.detailAddress = requestDto.getDetailAddress();
+        }
+        if(requestDto.getKakaoUrl() != null) {
+            this.kakaoUrl = requestDto.getKakaoUrl();
+        }
+        if(requestDto.getInstagramUrl() != null) {
+            this.instagramUrl = requestDto.getInstagramUrl();
+        }
+        if(requestDto.getIntroduction() != null) {
+            this.introduction = requestDto.getIntroduction();
+        }
 
         for(BusinessSchedule businessSchedule : requestDto.getBusinessScheduleList()){
             this.businessSchedules
@@ -144,6 +158,7 @@ public class Shop extends BaseTimeEntity {
             this.shopImages
                     .get(shopImage_flag)
                     .update(shopImage.getImgUri(), shopImage.isRepresentative());
+            shopImage_flag++;
         }
         this.timeUnit = requestDto.getTimeUnit();
     }

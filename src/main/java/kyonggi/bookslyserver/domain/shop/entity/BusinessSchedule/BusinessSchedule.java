@@ -32,10 +32,18 @@ public class BusinessSchedule extends BaseTimeEntity {
     private Shop shop;
 
     public void update(DayName day, String openAt, String closeAt, boolean isHoliday){
-        this.day = day;
-        this.openAt = openAt;
-        this.closeAt = closeAt;
-        this.isHoliday = isHoliday;
+        if(day != null) {
+            this.day = day;
+        }
+        if(openAt != null) {
+            this.openAt = openAt;
+        }
+        if(closeAt != null) {
+            this.closeAt = closeAt;
+        }
+        if(isHoliday != this.isHoliday) {
+            this.isHoliday = isHoliday;
+        }
     }
 
 }
