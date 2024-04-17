@@ -29,9 +29,15 @@ public class Address extends BaseTimeEntity {
     @OneToMany(mappedBy = "address", cascade = CascadeType.PERSIST)
     private List<Shop> shops = new ArrayList<>();
 
-/*    public Address(String firstAddress, String secondAddress, String thirdAddress){
-        this.firstAddress=firstAddress;
-        this.secondAddress=secondAddress;
-        this.thirdAddress=thirdAddress;
-    }*/
+    public void update(String firstAddress, String secondAddress, String thirdAddress){
+        if(firstAddress != null) {
+            this.firstAddress = firstAddress;
+        }
+        if(secondAddress != null) {
+            this.secondAddress = secondAddress;
+        }
+        if(thirdAddress != null) {
+            this.thirdAddress = thirdAddress;
+        }
+    }
 }

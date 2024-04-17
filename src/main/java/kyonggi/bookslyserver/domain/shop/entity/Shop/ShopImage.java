@@ -25,4 +25,13 @@ public class ShopImage extends BaseTimeEntity {
     private String imgUri;
 
     private boolean isRepresentative;
+
+    public void update(String imgUri, boolean isRepresentative){
+        if(imgUri != null) {
+            this.imgUri = imgUri;
+        }
+        if(isRepresentative != this.isRepresentative) {
+            this.isRepresentative = isRepresentative;
+        }
+    }
 }

@@ -13,11 +13,14 @@ import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
 import kyonggi.bookslyserver.domain.shop.repository.BusinessScheduleRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
+import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
+import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,40 +32,12 @@ public class ShopService {
     private final BusinessScheduleRepository businessScheduleRepository;
 
     private final ShopImageRepository shopImageRepository;
+
+    private final ShopOwnerRepository shopOwnerRepository;
     @Transactional
-    public ShopCreateResponseDto join(ShopCreateRequestDto requestDto) {
-        Category category;
+    public ShopCreateResponseDto join(Long ownerId, ShopCreateRequestDto requestDto) {
 
-        if (requestDto.getCategory().equals("HAIR")) {
-            category = Category.builder().categoryName(CategoryName.HAIR).build();
-        } else if (requestDto.getCategory().equals("NAIL")) {
-            category = Category.builder().categoryName(CategoryName.NAIL).build();
-        } else if (requestDto.getCategory().equals("MAKEUP")) {
-            category = Category.builder().categoryName(CategoryName.MAKEUP).build();
-        } else if (requestDto.getCategory().equals("EYEBROW")) {
-            category = Category.builder().categoryName(CategoryName.EYEBROW).build();
-        } else if (requestDto.getCategory().equals("MASSAGE")) {
-            category = Category.builder().categoryName(CategoryName.MASSAGE).build();
-        } else if (requestDto.getCategory().equals("WAXING")) {
-            category = Category.builder().categoryName(CategoryName.WAXING).build();
-        } else {
-            category = Category.builder().categoryName(CategoryName.ETC).build();
-        }
-
-        Shop shop = Shop.builder()
-                .name(requestDto.getName())
-                .phoneNumber(requestDto.getPhoneNumber())
-                .businessNumber(requestDto.getBusinessNumber())
-                .category(category)
-                .address(Address.builder().firstAddress(requestDto.getFirstAddress()).secondAddress(requestDto.getSecondAddress()).thirdAddress(requestDto.getThirdAddress()).build())
-                .detailAddress(requestDto.getDetailAddress())
-                .kakaoUrl(requestDto.getKakaoUrl())
-                .instagramUrl(requestDto.getInstagramUrl())
-                .introduction(requestDto.getIntroduction())
-                .businessSchedules(new ArrayList<>())
-                .shopImages(new ArrayList<>())
-                .timeUnit(requestDto.getTimeUnit())
-                .build();
+        Shop shop = Shop.createShop(requestDto);
 
         shopRepository.save(shop);
 
@@ -74,14 +49,26 @@ public class ShopService {
 
         List<ShopImage> shopImages = requestDto.getShopImageList();
         for(ShopImage shopImage : shopImages){
-            System.out.println("================================================================");
-            System.out.println(shopImage.isRepresentative());
-            System.out.println("================================================================");
             shop.getShopImage(shopImage);
             shopImageRepository.save(shopImage);
         }
 
+        Optional<ShopOwner> owner = shopOwnerRepository.findById(ownerId);
+        shop.getShopOwner(owner);
 
         return new ShopCreateResponseDto(shop);
     }
+
+    @Transactional
+    public ShopCreateResponseDto update(Long id, ShopCreateRequestDto requestDto){
+        Optional<Shop> shop = shopRepository.findById(id);
+
+        if(!shop.isPresent()){
+            throw new NullPointerException("해당 id의 shop 엔티티가 없음");
+        }
+        shop.get().update(shop.get(), requestDto);
+        return new ShopCreateResponseDto(shop.get());
+    }
+
+
 }
