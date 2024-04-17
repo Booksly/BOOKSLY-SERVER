@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,7 +23,7 @@ public class Reservation extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private Long price;
+    private int price;
 
     @Column
     private String inquiry;
@@ -34,13 +36,13 @@ public class Reservation extends BaseTimeEntity {
 
     @Column(columnDefinition = "tinyint(0) default 0")
     private boolean isRefused;
-
+/*
     @Column
     private String menuName; // 메뉴
     
     @Column
     private String menuCategory; // 메뉴 소분류
-
+*/
     @Column
     private String eventTitle;
 
@@ -51,4 +53,8 @@ public class Reservation extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "reservation",cascade = CascadeType.ALL)
+    private List<ReservationMenu> reservationMenus=new ArrayList<>();
+
 }

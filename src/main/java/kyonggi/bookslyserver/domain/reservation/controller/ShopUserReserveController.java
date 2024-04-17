@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class ShopUserReserveController {
     private final ReserveCommandService reserveCommandService;
 
-    /*
+    /**
      * 직원별, 날짜별 가능한 시간대 조회
      */
     @GetMapping("/time")
@@ -23,4 +23,8 @@ public class ShopUserReserveController {
         return SuccessResponse.ok(reserveCommandService.getAvailableReservationTimes(employeeId,date));
     }
 
+    @PostMapping("")
+    public ResponseEntity<SuccessResponse<?>> createReservation(@RequestParam("userId")Long userId,@RequestBody ReserveRequestDTO.reservationRequestDTO request){
+        return SuccessResponse.created(reserveCommandService.createReservation(userId, request));
+    }
 }

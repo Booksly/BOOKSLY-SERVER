@@ -14,7 +14,7 @@ public class ShopOwnerReserveController {
     private final ReserveCommandService reserveCommandService;
     @PostMapping("/setting")
     public ResponseEntity<SuccessResponse<?>> setReservationSetting
-            (@RequestParam("shopId")Long shopId, @ModelAttribute ReserveRequestDTO.reserveSettingRequestDTO request){
+            (@RequestParam("shopId")Long shopId, @ModelAttribute ReserveRequestDTO.reservationSettingRequestDTO request){
         return SuccessResponse.created(reserveCommandService.setReservationSetting(request,shopId));
     }
     
