@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -38,6 +39,10 @@ public class ReserveCommandService {
     private final ShopRepository shopRepository;
     private final EmployeeRepository employeeRepository;
     private final ReservationScheduleRepository reservationScheduleRepository;
+
+    /**
+     * reservation setting 생성 로직
+     */
     public ReserveResponseDTO.reservationSettingResultDTO setReservationSetting(ReserveRequestDTO.reserveSettingRequestDTO request, Long shopId){
         Shop shop=shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
@@ -58,7 +63,9 @@ public class ReserveCommandService {
         }
         return ReservationConverter.toReservationSettingResultDTO(reservationSettingRepository.save(reservationSetting));
     }
-
+    /**
+     * 직원별 reservation Schedule 생성 로직
+     */
     public String createEmployeeReservationSchedule(Long employeeId){
 
         Employee employee=employeeRepository.findById(employeeId).orElseThrow(()->new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
@@ -100,5 +107,15 @@ public class ReserveCommandService {
             }
         }else throw new EntityNotFoundException(ErrorCode.SETTING_NOT_FOUND);
         return "생성 완료!";
+    }
+    /**
+     * 예약 가능 시간대 조회
+     */
+    public List<ReserveResponseDTO.availableTimesResultDTO> getAvailableReservationTimes(Long employeeId,LocalDate date){
+        Employee employee=employeeRepository.findById(employeeId).orElseThrow(()->new EntityNotFoundException(ErrorCode.EMPLOYEE_NOT_FOUND));
+        return reservationScheduleRepository.findByEmployeeAndWorkDate(employee,date)
+                .stream()
+                .map(ReservationConverter::toAvailableTimesResultDTO)
+                .collect(Collectors.toList());
     }
 }

@@ -46,4 +46,11 @@ public class ReservationConverter {
                 .employee(employee)
                 .build();
     }
+    public static ReserveResponseDTO.availableTimesResultDTO toAvailableTimesResultDTO(ReservationSchedule reservationSchedule){
+        return ReserveResponseDTO.availableTimesResultDTO.builder()
+                .reservationScheduleId(reservationSchedule.getId())
+                .time(reservationSchedule.getStartTime())
+                .isClosed(reservationSchedule.isClosed())
+                .build();
+    }
 }
