@@ -52,4 +52,9 @@ public class ShopOwner extends BaseTimeEntity {
                 .businessNumber(joinOwnerRequestDto.businessNumber())
                 .user(ownerUser).build();
     }
+
+    public void deleteShop(Shop shop){
+        this.shops.remove(shop);
+    }
+
 }
