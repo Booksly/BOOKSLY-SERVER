@@ -30,6 +30,7 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -152,6 +153,7 @@ public class ReserveCommandService {
                 .inquiry(requestDTO.getInquiry())
                 .eventTitle(requestDTO.getEventTitle())
                 .user(userRepository.findById(userId).orElseThrow(()->new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND)))
+                .reservationMenus(new ArrayList<>())
                 .build();
         reservationRepository.save(newReservation);
         /**
@@ -160,12 +162,13 @@ public class ReserveCommandService {
         requestDTO.getReservationMenuRequestDTOS().forEach(menuDto -> {
             EmployeeMenu employeeMenu = employeeMenuRepository.findById(menuDto.getEmpMenuId())
                     .orElseThrow(() -> new EntityNotFoundException(ErrorCode.EMPLOYEE_MENU_NOT_FOUND));
-            reservationMenuRepository.save(
+            newReservation.getReservationMenus().add(
+                    reservationMenuRepository.save(
                     ReservationMenu.builder()
                             .reservation(newReservation)
                             .menu(employeeMenu.getMenu())
                             .build()
-            );
+            ));
         });
         return ReservationConverter.toCreateReservationResultDTO(newReservation);
     }
