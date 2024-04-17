@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.reservation.converter;
 
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveRequestDTO;
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
+import kyonggi.bookslyserver.domain.reservation.entity.Reservation;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSetting;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
@@ -14,7 +15,7 @@ import java.time.LocalTime;
 
 @RequiredArgsConstructor
 public class ReservationConverter {
-    public static ReservationSetting toReservationSetting(ReserveRequestDTO.reserveSettingRequestDTO requestDTO){
+    public static ReservationSetting toReservationSetting(ReserveRequestDTO.reservationSettingRequestDTO requestDTO){
         return ReservationSetting.builder()
                 .registerMin(requestDTO.getRegisterMin())
                 .registerHr(requestDTO.getRegisterHr())
@@ -24,7 +25,7 @@ public class ReservationConverter {
                 .notice(requestDTO.getNotice())
                 .build();
     }
-    public static ReservationSetting updateReservationSetting(ReserveRequestDTO.reserveSettingRequestDTO request, ReservationSetting reservationSetting){
+    public static ReservationSetting updateReservationSetting(ReserveRequestDTO.reservationSettingRequestDTO request, ReservationSetting reservationSetting){
         reservationSetting.setRegisterMin(request.getRegisterMin());
         reservationSetting.setRegisterHr(request.getRegisterHr());
         reservationSetting.setAutoConfirmation(request.isAuto());
@@ -55,4 +56,7 @@ public class ReservationConverter {
                 .isClosed(reservationSchedule.isClosed())
                 .build();
     }
+//    public static Reservation toReservation(ReserveRequestDTO.reservationRequestDTO requestDTO){
+//
+//    }
 }
