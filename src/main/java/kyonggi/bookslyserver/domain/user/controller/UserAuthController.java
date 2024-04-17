@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("/api/auth/verify")
 @RestController
 @Validated
 @Slf4j
@@ -26,14 +26,21 @@ public class UserAuthController {
 
     private final UserAuthService userAuthService;
 
-    @PostMapping("/owner")
+    @PostMapping("/owner/send-sms")
     public ResponseEntity<SuccessResponse<?>> sendSMSToOwner(@RequestBody @Valid SendSMSRequestDto sendSMSRequestDto) {
         SendSMSResponseDto sendSMSResponseDto = userAuthService.sendMessage(sendSMSRequestDto);
 
         return SuccessResponse.ok(sendSMSResponseDto);
     }
 
-    @PostMapping("/owner/verify")
+    @PostMapping("/user/send-sms")
+    public ResponseEntity<SuccessResponse<?>> sendSMSToUser(@UserId Long userId, @RequestBody @Valid SendSMSRequestDto sendSMSRequestDto) {
+        SendSMSResponseDto sendSMSResponseDto = userAuthService.sendMessageToUser(userId, sendSMSRequestDto);
+
+        return SuccessResponse.ok(sendSMSResponseDto);
+    }
+
+    @PostMapping("/owner")
     public ResponseEntity<SuccessResponse<?>> ownerVerifyByCode(@RequestBody @Valid VerifyCodeRequestDto verifyCodeRequestDto) {
         VerifyCodeResponseDto verifyCodeResponseDto = userAuthService.ownerVerifyByCode(verifyCodeRequestDto);
 
@@ -41,13 +48,6 @@ public class UserAuthController {
     }
 
     @PostMapping("/user")
-    public ResponseEntity<SuccessResponse<?>> sendSMSToUser(@UserId Long userId, @RequestBody @Valid SendSMSRequestDto sendSMSRequestDto) {
-        SendSMSResponseDto sendSMSResponseDto = userAuthService.sendMessageToUser(userId, sendSMSRequestDto);
-
-        return SuccessResponse.ok(sendSMSResponseDto);
-    }
-
-    @PostMapping("/user/verify")
     public ResponseEntity<SuccessResponse<?>> userVerifyByCode(@UserId Long userId, @RequestBody @Valid VerifyCodeRequestDto verifyCodeRequestDto) {
         VerifyCodeResponseDto userVerifyResponseDto = userAuthService.userVerifyByCode(userId, verifyCodeRequestDto);
 
