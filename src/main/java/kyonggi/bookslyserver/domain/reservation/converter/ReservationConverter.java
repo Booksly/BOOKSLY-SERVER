@@ -56,7 +56,9 @@ public class ReservationConverter {
                 .isClosed(reservationSchedule.isClosed())
                 .build();
     }
-//    public static Reservation toReservation(ReserveRequestDTO.reservationRequestDTO requestDTO){
-//
-//    }
+    public static ReserveResponseDTO.createReservationResultDTO toCreateReservationResultDTO(Reservation reservation){
+        return ReserveResponseDTO.createReservationResultDTO.builder()
+                .reservationId(reservation.getId())
+                .build();
+    }
 }

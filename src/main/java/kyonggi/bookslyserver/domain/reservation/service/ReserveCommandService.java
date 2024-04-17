@@ -129,7 +129,7 @@ public class ReserveCommandService {
     /**
      *  예약하기
      */
-    public Long createReservation(Long userId, ReserveRequestDTO.reservationRequestDTO requestDTO){
+    public ReserveResponseDTO.createReservationResultDTO createReservation(Long userId, ReserveRequestDTO.reservationRequestDTO requestDTO){
         /**
          *  가격 계산
          */
@@ -139,9 +139,13 @@ public class ReserveCommandService {
                     return employeeMenu.getMenu().getPrice();
                 }).sum();
         if (requestDTO.isEvent()){
+            if (requestDTO.getDiscount()==null) throw new InvalidValueException(ErrorCode.DISCOUNT_SETTING_BAD_REQUEST);
             double dc=(100-requestDTO.getDiscount())/100.0;
             totalPrice=(int)(totalPrice*dc);
         }
+        /**
+         * Reservation 생성
+         */
         Reservation newReservation=Reservation.builder()
                 .price(totalPrice)
                 .reservationSchedule(reservationScheduleRepository.findById(requestDTO.getReservationScheduleId()).get())
@@ -150,6 +154,9 @@ public class ReserveCommandService {
                 .user(userRepository.findById(userId).orElseThrow(()->new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND)))
                 .build();
         reservationRepository.save(newReservation);
+        /**
+         *  Reservation Menu 생성
+         */
         requestDTO.getReservationMenuRequestDTOS().forEach(menuDto -> {
             EmployeeMenu employeeMenu = employeeMenuRepository.findById(menuDto.getEmpMenuId())
                     .orElseThrow(() -> new EntityNotFoundException(ErrorCode.EMPLOYEE_MENU_NOT_FOUND));
@@ -160,6 +167,6 @@ public class ReserveCommandService {
                             .build()
             );
         });
-        return newReservation.getId();
+        return ReservationConverter.toCreateReservationResultDTO(newReservation);
     }
 }
