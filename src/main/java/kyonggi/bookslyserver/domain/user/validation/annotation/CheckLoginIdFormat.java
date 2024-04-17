@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CheckLoginIdFormat {
-    String message() default "아이디는 필수 입력값입니다.";
+    String message() default "아이디는 필수 입력값입니다";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
