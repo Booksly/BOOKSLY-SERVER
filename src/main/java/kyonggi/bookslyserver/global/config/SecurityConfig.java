@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authz) -> authz
 
                         //인증이 필요한 uri - 회원만 접근 가능
-                        .requestMatchers("/api/user/need-login","/api/auth/user/**").authenticated()
+                        .requestMatchers("/api/user/need-login","/api/auth/verify/user/**").authenticated()
 
                         // 그 외 요청, 인증이 필요없음 - 비회원 & 회원 접근 가능
                         .anyRequest().permitAll());
