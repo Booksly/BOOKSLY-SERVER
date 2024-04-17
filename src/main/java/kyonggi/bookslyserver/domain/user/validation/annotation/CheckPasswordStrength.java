@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CheckPasswordStrength {
-    String message() default "비밀번호는 필수 입력값입니다.";
+    String message() default "비밀번호는 필수 입력값입니다";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

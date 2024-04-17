@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NotFalse {
-    String message() default "본인 인증이 필요합니다.";
+    String message() default "본인 인증이 필요합니다";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
