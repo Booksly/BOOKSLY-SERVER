@@ -71,6 +71,15 @@ public class ShopService {
         return new ShopCreateResponseDto(shop.get());
     }
 
+    @Transactional
+    public void delete(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+        ShopOwner owner = shop.get().getShopOwner();
+        owner.deleteShop(shop.get());
+        shopRepository.deleteById(id);
+    }
+
+
 
 
 
