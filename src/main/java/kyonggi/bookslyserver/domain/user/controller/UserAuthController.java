@@ -1,15 +1,11 @@
 package kyonggi.bookslyserver.domain.user.controller;
 
 import jakarta.validation.Valid;
-import kyonggi.bookslyserver.domain.user.dto.request.VerifyCodeRequestDto;
-import kyonggi.bookslyserver.domain.user.dto.request.SendSMSRequestDto;
-import kyonggi.bookslyserver.domain.user.dto.response.VerifyCodeResponseDto;
-import kyonggi.bookslyserver.domain.user.dto.response.SendSMSResponseDto;
-import kyonggi.bookslyserver.domain.user.service.UserAuthService;
-import kyonggi.bookslyserver.global.auth.UserId;
+import kyonggi.bookslyserver.domain.user.dto.request.JoinOwnerRequestDto;
+import kyonggi.bookslyserver.domain.user.dto.response.JoinOwnerResponseDto;
+import kyonggi.bookslyserver.domain.user.service.ShopOwnerService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,40 +13,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequiredArgsConstructor
-@RequestMapping("/api/auth/verify")
+@RequestMapping("/api/auth")
 @RestController
+@RequiredArgsConstructor
 @Validated
-@Slf4j
 public class UserAuthController {
 
-    private final UserAuthService userAuthService;
-
-    @PostMapping("/owner/send-sms")
-    public ResponseEntity<SuccessResponse<?>> sendSMSToOwner(@RequestBody @Valid SendSMSRequestDto sendSMSRequestDto) {
-        SendSMSResponseDto sendSMSResponseDto = userAuthService.sendMessage(sendSMSRequestDto);
-
-        return SuccessResponse.ok(sendSMSResponseDto);
-    }
-
-    @PostMapping("/user/send-sms")
-    public ResponseEntity<SuccessResponse<?>> sendSMSToUser(@UserId Long userId, @RequestBody @Valid SendSMSRequestDto sendSMSRequestDto) {
-        SendSMSResponseDto sendSMSResponseDto = userAuthService.sendMessageToUser(userId, sendSMSRequestDto);
-
-        return SuccessResponse.ok(sendSMSResponseDto);
-    }
+    private final ShopOwnerService shopOwnerService;
 
     @PostMapping("/owner")
-    public ResponseEntity<SuccessResponse<?>> ownerVerifyByCode(@RequestBody @Valid VerifyCodeRequestDto verifyCodeRequestDto) {
-        VerifyCodeResponseDto verifyCodeResponseDto = userAuthService.ownerVerifyByCode(verifyCodeRequestDto);
-
-        return SuccessResponse.ok(verifyCodeResponseDto);
-    }
-
-    @PostMapping("/user")
-    public ResponseEntity<SuccessResponse<?>> userVerifyByCode(@UserId Long userId, @RequestBody @Valid VerifyCodeRequestDto verifyCodeRequestDto) {
-        VerifyCodeResponseDto userVerifyResponseDto = userAuthService.userVerifyByCode(userId, verifyCodeRequestDto);
-
-        return SuccessResponse.ok(userVerifyResponseDto);
+    public ResponseEntity<SuccessResponse<?>> join(@RequestBody @Valid JoinOwnerRequestDto joinOwnerRequestDto) {
+        JoinOwnerResponseDto joinOwnerResponseDto = shopOwnerService.join(joinOwnerRequestDto);
+        return SuccessResponse.created(joinOwnerResponseDto);
     }
 }
