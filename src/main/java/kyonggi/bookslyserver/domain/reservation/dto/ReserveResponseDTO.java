@@ -26,4 +26,12 @@ public class ReserveResponseDTO {
         @JsonProperty("isClosed")
         private boolean isClosed;
     }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class createReservationResultDTO{
+        private Long reservationId;
+    }
 }

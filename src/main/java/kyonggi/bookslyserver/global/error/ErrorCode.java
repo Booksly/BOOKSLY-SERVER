@@ -24,6 +24,7 @@ public enum ErrorCode implements BaseErrorCode{
     PASSWORD_LENGTH_BAD_REQUEST(HttpStatus.BAD_REQUEST,"비밀번호는 최소 8글자여야 합니다"),
     TIME_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST,"시간 또는 분 설정을 해주세요"),
     AUTO_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST,"마감 예약 인원을 설정해주세요"),
+    DISCOUNT_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST,"할인율 설정이 되어있지 않습니다"),
 
     /**
      * 401 Unauthorized
