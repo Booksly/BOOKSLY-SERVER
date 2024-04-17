@@ -29,6 +29,11 @@ public class ShopApiController {
         return result;
     }
 
+    //가게 삭제
+    @DeleteMapping("/api/shop/{id}/delete")
+    public void deleteShop(@PathVariable("id") Long id){
+        shopService.delete(id);
+    }
 
 
 
