@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/api/owner")
+@RequestMapping("/api/auth")
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -21,7 +21,7 @@ public class ShopOwnerController {
 
     private final ShopOwnerService shopOwnerService;
 
-    @PostMapping("/")
+    @PostMapping("/owner")
     public ResponseEntity<SuccessResponse<?>> join(@RequestBody @Valid JoinOwnerRequestDto joinOwnerRequestDto) {
         JoinOwnerResponseDto joinOwnerResponseDto = shopOwnerService.join(joinOwnerRequestDto);
         return SuccessResponse.created(joinOwnerResponseDto);
