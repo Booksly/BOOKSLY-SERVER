@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface VerifyPhoneNum {
-    String message() default "전화번호를 올바르게 입력해주세요.";
+    String message() default "전화번호를 올바르게 입력해주세요";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
