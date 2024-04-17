@@ -99,7 +99,7 @@ public class ReserveCommandService {
                                     LocalTime endTime=ws.getEndTime();
 
                                     while (startTime.plus(interval).isBefore(endTime)||startTime.plus(interval).equals(endTime)){
-                                        reservationScheduleRepository.save(ReservationConverter.toReservationSchedule(startTime,finalDate,interval,employee));
+                                        reservationScheduleRepository.save(ReservationConverter.toReservationSchedule(startTime,finalDate,interval,employee,shop));
                                         startTime=startTime.plus(interval);
                                     }
                                 }
