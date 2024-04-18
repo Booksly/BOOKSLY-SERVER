@@ -16,21 +16,21 @@ public class ShopApiController {
     private final ShopService shopService;
 
     //가게 등록
-    @PostMapping("/api/shop/create/{shopOwnerId}")
+    @PostMapping("/api/shop/{shopOwnerId}")
     public ShopCreateResponseDto createShop(@PathVariable("shopOwnerId") Long id, @RequestBody @Validated ShopCreateRequestDto requestDto){
         ShopCreateResponseDto result = shopService.join(id, requestDto);
         return result;
     }
 
     //가게 수정
-    @PutMapping("/api/shop/{id}/update")
+    @PutMapping("/api/shop/{shopId}")
     public ShopCreateResponseDto updateShop(@PathVariable("id") Long id, @RequestBody @Validated ShopCreateRequestDto requestDto){
         ShopCreateResponseDto result = shopService.update(id, requestDto);
         return result;
     }
 
     //가게 삭제
-    @DeleteMapping("/api/shop/{id}/delete")
+    @DeleteMapping("/api/shop/{shopId}")
     public void deleteShop(@PathVariable("id") Long id){
         shopService.delete(id);
     }
