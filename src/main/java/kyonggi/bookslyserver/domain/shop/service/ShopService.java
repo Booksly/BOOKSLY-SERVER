@@ -15,6 +15,7 @@ import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
+import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +66,7 @@ public class ShopService {
         Optional<Shop> shop = shopRepository.findById(id);
 
         if(!shop.isPresent()){
-            throw new NullPointerException("해당 id의 shop 엔티티가 없음");
+            throw new EntityNotFoundException();
         }
         shop.get().update(shop.get(), requestDto);
         return new ShopCreateResponseDto(shop.get());
