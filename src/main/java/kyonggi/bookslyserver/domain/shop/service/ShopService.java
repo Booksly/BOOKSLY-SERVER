@@ -56,6 +56,7 @@ public class ShopService {
         Optional<ShopOwner> owner = shopOwnerRepository.findById(ownerId);
         shop.getShopOwner(owner);
 
+
         return new ShopCreateResponseDto(shop);
     }
 
@@ -69,6 +70,17 @@ public class ShopService {
         shop.get().update(shop.get(), requestDto);
         return new ShopCreateResponseDto(shop.get());
     }
+
+    @Transactional
+    public void delete(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+        ShopOwner owner = shop.get().getShopOwner();
+        owner.deleteShop(shop.get());
+        shopRepository.deleteById(id);
+    }
+
+
+
 
 
 }

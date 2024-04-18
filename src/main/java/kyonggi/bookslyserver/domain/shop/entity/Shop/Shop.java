@@ -59,7 +59,7 @@ public class Shop extends BaseTimeEntity {
     @Embedded
     private TimeUnit timeUnit;
 
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "shopOwner_id")
     private ShopOwner shopOwner;
 
