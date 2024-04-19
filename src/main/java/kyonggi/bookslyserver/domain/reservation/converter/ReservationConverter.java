@@ -40,11 +40,13 @@ public class ReservationConverter {
                 .reservationSettingId(reservationSetting.getId())
                 .build();
     }
-    public static ReservationSchedule toReservationSchedule(LocalTime startTime, LocalDate finalDate, Duration interval, Employee employee, Shop shop){
+    public static ReservationSchedule toReservationSchedule(LocalTime startTime, LocalDate finalDate, Duration interval, Employee employee, Shop shop,boolean isAutoConfirmed,Integer maxCapacity){
         return ReservationSchedule.builder()
                 .startTime(startTime)
                 .endTime(startTime.plus(interval))
                 .workDate(finalDate)
+                .isAutoConfirmed(isAutoConfirmed)
+                .reservedCapacity(maxCapacity)
                 .employee(employee)
                 .shop(shop)
                 .build();

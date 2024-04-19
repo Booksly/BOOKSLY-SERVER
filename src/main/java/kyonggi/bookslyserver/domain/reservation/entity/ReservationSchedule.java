@@ -1,5 +1,6 @@
 package kyonggi.bookslyserver.domain.reservation.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
@@ -38,6 +39,12 @@ public class ReservationSchedule extends BaseTimeEntity {
     private boolean isClosingEvent;
 
     private LocalDate workDate;
+
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private Integer reservedCapacity;
+
+    @Column(nullable=false, columnDefinition = "tinyint(0)")
+    private boolean isAutoConfirmed;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "closingEvent_id")
