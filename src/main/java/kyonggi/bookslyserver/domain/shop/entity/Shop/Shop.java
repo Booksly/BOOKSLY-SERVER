@@ -150,14 +150,14 @@ public class Shop extends BaseTimeEntity {
         for(BusinessSchedule businessSchedule : requestDto.getBusinessScheduleList()){
             this.businessSchedules
                     .get(business_flag)
-                    .update(businessSchedule.getDay(), businessSchedule.getOpenAt(), businessSchedule.getCloseAt(), businessSchedule.isHoliday());
+                    .update(businessSchedule.getDay(), businessSchedule.getOpenAt(), businessSchedule.getCloseAt(), businessSchedule.getIsHoliday());
             business_flag++;
         }
 
         for(ShopImage shopImage : requestDto.getShopImageList()){
             this.shopImages
                     .get(shopImage_flag)
-                    .update(shopImage.getImgUri(), shopImage.isRepresentative());
+                    .update(shopImage.getImgUri(), shopImage.getIsRepresentative());
             shopImage_flag++;
         }
         this.timeUnit = requestDto.getTimeUnit();

@@ -40,4 +40,5 @@ public class ShopCreateRequestDto {
 
     private TimeUnit timeUnit;
 
+
 }

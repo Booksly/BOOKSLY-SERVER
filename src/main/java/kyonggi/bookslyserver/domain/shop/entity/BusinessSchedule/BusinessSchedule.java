@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule;
 
 import jakarta.persistence.*;
+import kotlinx.serialization.descriptors.PrimitiveKind;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
@@ -25,7 +26,7 @@ public class BusinessSchedule extends BaseTimeEntity {
 
     private String closeAt;
 
-    private boolean isHoliday;
+    private Boolean isHoliday;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="shop_id")
