@@ -20,6 +20,7 @@ public class MenuCategory extends BaseTimeEntity {
 
     private String name;
 
-    @OneToMany(mappedBy = "menuCategory")
+    @OneToMany(mappedBy = "menuCategory", cascade = CascadeType.ALL)
     private List<Menu> menus = new ArrayList<>();
+
 }
