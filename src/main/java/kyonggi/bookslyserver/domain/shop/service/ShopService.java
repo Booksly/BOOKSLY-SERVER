@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.constant.CategoryName;
 import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.ShopCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.ShopRegisterDto;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Address;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Category;
@@ -36,7 +37,7 @@ public class ShopService {
 
     private final ShopOwnerRepository shopOwnerRepository;
     @Transactional
-    public ShopCreateResponseDto join(Long ownerId, ShopCreateRequestDto requestDto) {
+    public ShopRegisterDto join(Long ownerId, ShopCreateRequestDto requestDto) {
 
         Shop shop = Shop.createShop(requestDto);
 
@@ -58,7 +59,7 @@ public class ShopService {
         shop.getShopOwner(owner);
 
 
-        return new ShopCreateResponseDto(shop);
+        return new ShopRegisterDto(shop);
     }
 
     @Transactional
