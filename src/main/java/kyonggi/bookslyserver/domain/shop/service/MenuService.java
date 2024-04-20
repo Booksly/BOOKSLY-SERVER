@@ -47,24 +47,10 @@ public class MenuService {
         menuCategoryRepository.save(menuCategory);
         menuRepository.save(menu);
         return MenuCreateResponseDto.builder().id(menu.getId()).build();
-
-/*        //
-        List<MenuImage> menuImageList = new ArrayList<>();
-        for(String img : requestDto.menuImgUri()){
-            menuImageList.add(MenuImage.builder().menuImgUri(img).build());
-        }
-        Menu menu = Menu.createEntity(requestDto, menuImageList);
-        Optional<Shop> shop = shopRepository.findById(id);
-        if(!shop.isPresent()){
-            throw new EntityNotFoundException();
-        }
-        menu.register(shop.get());
-        menuRepository.save(menu);
-
-        return MenuCreateResponseDto.builder().id(menu.getId()).build();*/
+        
     }
 
-/*    @Transactional
+    @Transactional
     public MenuUpdateResponseDto update(Long id, MenuCreateRequestDto requestDto){
         Optional<Menu> menu = menuRepository.findById(id);
         if(!menu.isPresent()){
@@ -75,11 +61,7 @@ public class MenuService {
             menuImageRepository.delete(menu.get().getMenuImages().get(i).getMenuImgUri());
             menu.get().getMenuImages().remove(i);
         }
-*//*
-        for(MenuImage menuImage : menu.get().getMenuImages()){
-            menuImage.getMenu().getMenuImages().remove(menuImage);
-            menuImageRepository.delete(menuImage.getMenuImgUri());
-        }*//*
+
 
         List<String> images = menu.get().update(requestDto);
 
@@ -90,6 +72,6 @@ public class MenuService {
                 .description(menu.get().getDescription())
                 .menuCategory(menu.get().getMenuCategory().getName())
                 .images(images).build();
-    }*/
+    }
 
 }

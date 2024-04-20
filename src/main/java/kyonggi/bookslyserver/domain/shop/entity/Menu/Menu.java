@@ -78,28 +78,27 @@ public class Menu extends BaseTimeEntity {
     }
 
 
-/*
+
     public List<String> update(MenuCreateRequestDto requestDto){
         this.menuName = requestDto.menuName();
         this.price = requestDto.price();
         this.description = requestDto.description();
-        this.menuCategory = changeCategory(requestDto.menuCategory());
+        changeCategory(requestDto.menuCategory());
 
         for(int i = requestDto.menuImgUri().size() - 1; i >= 0; i--){
             this.menuImages.add(MenuImage.builder().menuImgUri(requestDto.menuImgUri().get(i)).build());
         }
 
-
         for(int j = 0; j < this.menuImages.size(); j++){
             this.menuImages.get(j).setMenu(this);
         }
+
         return requestDto.menuImgUri();
     }
-*/
 
-    public void changeCategory(MenuCategory menuCategory){
-        menuCategory.getMenus().add(this);
-        this.menuCategory = menuCategory;
+
+    public void changeCategory(String menuCategory){
+        this.menuCategory.setName(menuCategory);
 
     }
 
