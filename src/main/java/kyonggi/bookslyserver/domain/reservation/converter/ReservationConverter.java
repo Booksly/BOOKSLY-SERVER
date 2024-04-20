@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 @RequiredArgsConstructor
 public class ReservationConverter {
@@ -40,15 +41,16 @@ public class ReservationConverter {
                 .reservationSettingId(reservationSetting.getId())
                 .build();
     }
-    public static ReservationSchedule toReservationSchedule(LocalTime startTime, LocalDate finalDate, Duration interval, Employee employee, Shop shop,boolean isAutoConfirmed,Integer maxCapacity){
+    public static ReservationSchedule toReservationSchedule(LocalTime startTime, LocalDate finalDate, Duration interval, Employee employee, Shop shop,boolean isAutoConfirmed){
         return ReservationSchedule.builder()
                 .startTime(startTime)
                 .endTime(startTime.plus(interval))
                 .workDate(finalDate)
                 .isAutoConfirmed(isAutoConfirmed)
-                .reservedCapacity(maxCapacity)
+                .reservedCapacity(0)
                 .employee(employee)
                 .shop(shop)
+                .reservations(new ArrayList<>())
                 .build();
     }
     public static ReserveResponseDTO.availableTimesResultDTO toAvailableTimesResultDTO(ReservationSchedule reservationSchedule){

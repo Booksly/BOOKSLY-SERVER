@@ -99,7 +99,6 @@ public class ReserveCommandService {
             LocalDate endDate=startDate.plusDays(cycle-1);
 
             boolean isAutoConfirmed=reservationSetting.isAutoConfirmation();
-            Integer maxCapacity=reservationSetting.getMaxCapacity();
 
             for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
                 DayOfWeek dayOfWeek=date.getDayOfWeek();
@@ -112,7 +111,7 @@ public class ReserveCommandService {
                                     LocalTime endTime=ws.getEndTime();
 
                                     while (startTime.plus(interval).isBefore(endTime)||startTime.plus(interval).equals(endTime)){
-                                        reservationScheduleRepository.save(ReservationConverter.toReservationSchedule(startTime,finalDate,interval,employee,shop,isAutoConfirmed,maxCapacity));
+                                        reservationScheduleRepository.save(ReservationConverter.toReservationSchedule(startTime,finalDate,interval,employee,shop,isAutoConfirmed));
                                         startTime=startTime.plus(interval);
                                     }
                                 }
@@ -161,6 +160,7 @@ public class ReserveCommandService {
                 .user(userRepository.findById(userId).orElseThrow(()->new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND)))
                 .reservationMenus(new ArrayList<>())
                 .build();
+        reservationSchedule.getReservations().add(newReservation);
         reservationRepository.save(newReservation);
         /**
          *  Reservation Menu 생성
@@ -176,12 +176,20 @@ public class ReserveCommandService {
                             .build()
             ));
         });
+        
+        if(reservationSchedule.isAutoConfirmed()) autoReservationClose(reservationSchedule);
+
         return ReservationConverter.toCreateReservationResultDTO(newReservation);
     }
     /**
      * 자동 예약 마감
      */
-    public String autoReservationClose(){
-         return null;
+    public void autoReservationClose(ReservationSchedule reservationSchedule){
+
+        ReservationSetting reservationSetting=reservationSettingRepository.findByShop(reservationSchedule.getShop()).get();
+        if (reservationSetting.getMaxCapacity()==reservationSchedule.getReservations().size())
+            reservationSchedule.setClosed(true); // 예약 close
+
+        reservationScheduleRepository.save(reservationSchedule);
     }
 }

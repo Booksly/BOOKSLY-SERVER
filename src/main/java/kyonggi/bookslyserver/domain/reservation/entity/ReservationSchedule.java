@@ -11,6 +11,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -40,9 +42,6 @@ public class ReservationSchedule extends BaseTimeEntity {
 
     private LocalDate workDate;
 
-    @Column(columnDefinition = "INT DEFAULT 0")
-    private Integer reservedCapacity;
-
     @Column(nullable=false, columnDefinition = "tinyint(0)")
     private boolean isAutoConfirmed;
 
@@ -57,4 +56,7 @@ public class ReservationSchedule extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
+    
+    @OneToMany(mappedBy = "reservationSchedule",cascade = CascadeType.ALL)
+    private List<Reservation> reservations=new ArrayList<>(); // 이 사이즈가 reservedCapacity의 역할을 하게 될거임
 }
