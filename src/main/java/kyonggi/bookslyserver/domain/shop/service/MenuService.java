@@ -53,10 +53,15 @@ public class MenuService {
             throw new EntityNotFoundException();
         }
 
+        for(int i = menu.get().getMenuImages().size() - 1; i >= 0; i--){
+            menuImageRepository.delete(menu.get().getMenuImages().get(i).getMenuImgUri());
+            menu.get().getMenuImages().remove(i);
+        }
+/*
         for(MenuImage menuImage : menu.get().getMenuImages()){
             menuImage.getMenu().getMenuImages().remove(menuImage);
             menuImageRepository.delete(menuImage.getMenuImgUri());
-        }
+        }*/
 
         List<String> images = menu.get().update(requestDto);
 

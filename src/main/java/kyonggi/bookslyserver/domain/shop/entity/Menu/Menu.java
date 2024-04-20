@@ -83,9 +83,14 @@ public class Menu extends BaseTimeEntity {
         this.description = requestDto.description();
         this.menuCategory = changeCategory(requestDto.menuCategory());
 
-        for(int i = 0; i < requestDto.menuImgUri().size(); i++){
+        for(int i = requestDto.menuImgUri().size() - 1; i >= 0; i--){
             this.menuImages.add(MenuImage.builder().menuImgUri(requestDto.menuImgUri().get(i)).build());
         }
+
+/*        for(int i = 0; i < requestDto.menuImgUri().size(); i++){
+            this.menuImages.add(MenuImage.builder().menuImgUri(requestDto.menuImgUri().get(i)).build());
+        }*/
+
         for(int j = 0; j < this.menuImages.size(); j++){
             this.menuImages.get(j).setMenu(this);
         }
