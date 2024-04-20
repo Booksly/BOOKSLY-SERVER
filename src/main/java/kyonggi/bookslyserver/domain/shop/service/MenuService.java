@@ -2,8 +2,8 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.MenuCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.MenuUpdateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuImage;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;

@@ -1,9 +1,10 @@
 package kyonggi.bookslyserver.domain.shop.controller;
 
 
+
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.MenuCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.MenuUpdateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import kyonggi.bookslyserver.domain.shop.service.MenuService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;

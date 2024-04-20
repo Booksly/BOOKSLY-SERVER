@@ -2,13 +2,10 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 
 import jakarta.transaction.Transactional;
-import kyonggi.bookslyserver.domain.shop.constant.CategoryName;
 import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.ShopCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.ShopRegisterDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
-import kyonggi.bookslyserver.domain.shop.entity.Shop.Address;
-import kyonggi.bookslyserver.domain.shop.entity.Shop.Category;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
 import kyonggi.bookslyserver.domain.shop.repository.BusinessScheduleRepository;
@@ -20,7 +17,6 @@ import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
