@@ -159,6 +159,7 @@ public class ReserveCommandService {
                 .eventTitle(requestDTO.getEventTitle())
                 .user(userRepository.findById(userId).orElseThrow(()->new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND)))
                 .reservationMenus(new ArrayList<>())
+                .isConfirmed(reservationSchedule.isAutoConfirmed())
                 .build();
         reservationSchedule.getReservations().add(newReservation);
         reservationRepository.save(newReservation);

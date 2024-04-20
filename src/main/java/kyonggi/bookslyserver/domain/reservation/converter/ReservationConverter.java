@@ -47,7 +47,6 @@ public class ReservationConverter {
                 .endTime(startTime.plus(interval))
                 .workDate(finalDate)
                 .isAutoConfirmed(isAutoConfirmed)
-                .reservedCapacity(0)
                 .employee(employee)
                 .shop(shop)
                 .reservations(new ArrayList<>())
