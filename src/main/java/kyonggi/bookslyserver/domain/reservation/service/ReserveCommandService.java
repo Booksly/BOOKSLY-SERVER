@@ -150,7 +150,8 @@ public class ReserveCommandService {
         /**
          * Reservation 생성
          */
-        ReservationSchedule reservationSchedule=reservationScheduleRepository.findById(requestDTO.getReservationScheduleId()).get();
+        ReservationSchedule reservationSchedule=reservationScheduleRepository.findById(requestDTO.getReservationScheduleId())
+                .orElseThrow(()->new EntityNotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
 
         Reservation newReservation=Reservation.builder()
                 .price(totalPrice)
@@ -192,5 +193,18 @@ public class ReserveCommandService {
             reservationSchedule.setClosed(true); // 예약 close
 
         reservationScheduleRepository.save(reservationSchedule);
+    }
+    /**
+     *  시간대 수동 마감
+     */
+    public String closeOrOpenReservationSchedule(Long reservationScheduleId){
+        ReservationSchedule reservationSchedule=reservationScheduleRepository.findById(reservationScheduleId)
+                .orElseThrow(()->new EntityNotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
+        reservationSchedule.setClosed(!reservationSchedule.isClosed());
+        if (reservationSchedule.isClosed()) {
+            return "시간대 마감 완료";
+        } else {
+            return "시간대 오픈 완료";
+        }
     }
 }

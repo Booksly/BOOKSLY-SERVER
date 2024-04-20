@@ -17,7 +17,10 @@ public class ShopOwnerReserveController {
             (@RequestParam("shopId")Long shopId, @ModelAttribute ReserveRequestDTO.reservationSettingRequestDTO request){
         return SuccessResponse.created(reserveCommandService.setReservationSetting(request,shopId));
     }
-    
+    @GetMapping("/closeTime")
+    public ResponseEntity<SuccessResponse<?>> closeReservationSchedule(@RequestParam("scheduleId") Long reservationScheduleId){
+        return SuccessResponse.ok(reserveCommandService.closeOrOpenReservationSchedule(reservationScheduleId));
+    }
     /*
     * 임시 uri api 테스트 시에만 사용 바람
     */
