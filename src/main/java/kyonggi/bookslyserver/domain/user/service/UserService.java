@@ -3,7 +3,10 @@ package kyonggi.bookslyserver.domain.user.service;
 import kyonggi.bookslyserver.domain.user.constant.Role;
 import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
-import kyonggi.bookslyserver.global.auth.principal.userInfo.OAuth2UserInfo;
+import kyonggi.bookslyserver.global.auth.principal.user.userInfo.OAuth2UserInfo;
+import kyonggi.bookslyserver.global.error.ErrorCode;
+import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -50,6 +53,12 @@ public class UserService {
 
 
         return userRepository.save(createdUser);
+    }
+
+    @Transactional(readOnly = false)
+    public User findUserByLoginId(String loginId) {
+
+        return userRepository.findByLoginId(loginId).get();
     }
 
 }

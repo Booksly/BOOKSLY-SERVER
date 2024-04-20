@@ -7,6 +7,7 @@ import kyonggi.bookslyserver.domain.user.constant.Role;
 import kyonggi.bookslyserver.domain.user.dto.request.JoinOwnerRequestDto;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class ShopOwner extends BaseTimeEntity {
     private List<Shop> shops = new ArrayList<>();
 
     //==생성 메서드==//
-    public static ShopOwner createShopOwner(JoinOwnerRequestDto joinOwnerRequestDto) {
+    public static ShopOwner createShopOwner(JoinOwnerRequestDto joinOwnerRequestDto, BCryptPasswordEncoder passwordEncoder) {
         User ownerUser = User.builder()
                 .role(Role.ROLE_ADMIN)
                 .isVerified(true)
@@ -48,9 +49,13 @@ public class ShopOwner extends BaseTimeEntity {
                 .phoneNum(joinOwnerRequestDto.phoneNum()).build();
 
         return ShopOwner.builder()
-                .password(joinOwnerRequestDto.password())
+                .password(passwordEncoder.encode(joinOwnerRequestDto.password()))
                 .businessNumber(joinOwnerRequestDto.businessNumber())
                 .user(ownerUser).build();
+    }
+
+    public void addUser(User user) {
+        this.user = user;
     }
 
     public void deleteShop(Shop shop){
