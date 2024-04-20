@@ -37,7 +37,7 @@ public class ShopCreateResponseDto {
         instagramUrl = shop.getInstagramUrl();
 
         for(ShopImage shopImage : shop.getShopImages()){
-            if(shopImage.isRepresentative()){
+            if(shopImage.getIsRepresentative()){
                 mainImage = shopImage.getImgUri();
             }
         }

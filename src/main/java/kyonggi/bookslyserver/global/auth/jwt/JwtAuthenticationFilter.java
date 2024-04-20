@@ -25,6 +25,7 @@ import java.io.IOException;
 import static kyonggi.bookslyserver.global.util.JwtUtil.Authorization;
 import static kyonggi.bookslyserver.global.util.JwtUtil.PREFIX;
 
+
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {

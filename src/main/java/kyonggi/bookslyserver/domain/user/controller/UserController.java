@@ -19,7 +19,7 @@ public class UserController {
         return SuccessResponse.ok("임시 리다이렉트 페이지");
     }
 
-    @GetMapping("/need-login")
+    @GetMapping("/need-login-test")
     public ResponseEntity<SuccessResponse<?>> needLogin(@UserId Long userId) {
         return SuccessResponse.ok("유저 아이디 = " + userId);
     }

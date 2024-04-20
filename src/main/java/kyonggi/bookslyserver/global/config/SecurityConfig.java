@@ -9,14 +9,13 @@ import kyonggi.bookslyserver.global.auth.jwt.ExceptionHandlerFilter;
 import kyonggi.bookslyserver.global.auth.handelr.CustomAuthenticationEntryPoint;
 import kyonggi.bookslyserver.global.auth.jwt.IdPasswordAuthenticationFilter;
 import kyonggi.bookslyserver.global.auth.jwt.JwtAuthenticationFilter;
-import kyonggi.bookslyserver.global.util.JwtUtil;
 import kyonggi.bookslyserver.global.auth.principal.user.OAuthPrincipalService;
+import kyonggi.bookslyserver.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -32,7 +31,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
     private final CorsConfig corsConfig;
-    private final JwtUtil jwtProvider;
+    private final JwtUtil jwtUtil;
     private final OAuthPrincipalService oauthPrincipalService;
     private final OAuthAuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
@@ -82,12 +81,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authz) -> authz
 
                         //인증이 필요한 uri - 일반 회원만 접근 가능
-                        .requestMatchers("/api/user/need-login","/api/auth/verify/user/**").hasRole("USER")
+                        .requestMatchers("/api/user/need-login-test","/api/auth/verify/user/**").hasRole("USER")
                         //인증이 필요한 uri - 기업 회원만 접근 가능
                         .requestMatchers("/api/owner").hasRole("ADMIN")
                         // 그 외 요청, 인증이 필요없음 - 비회원도 접근 가능
-                        .anyRequest()
-                        .permitAll());
+                        .anyRequest().permitAll());
 
         /**
          * 에러 발생 처리
@@ -109,7 +107,7 @@ public class SecurityConfig {
         http
                 .addFilter(corsConfig.corsFilter())
                 .addFilter(idPasswordAuthenticationFilter)
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider,userService,shopOwnerService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil,userService,shopOwnerService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class);
 
         return http.build();

@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.constant.CategoryName;
 import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.ShopCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.ShopRegisterDto;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Address;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Category;
@@ -15,6 +16,7 @@ import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
+import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +37,7 @@ public class ShopService {
 
     private final ShopOwnerRepository shopOwnerRepository;
     @Transactional
-    public ShopCreateResponseDto join(Long ownerId, ShopCreateRequestDto requestDto) {
+    public ShopRegisterDto join(Long ownerId, ShopCreateRequestDto requestDto) {
 
         Shop shop = Shop.createShop(requestDto);
 
@@ -56,8 +58,7 @@ public class ShopService {
         Optional<ShopOwner> owner = shopOwnerRepository.findById(ownerId);
         shop.getShopOwner(owner);
 
-
-        return new ShopCreateResponseDto(shop);
+        return new ShopRegisterDto(shop);
     }
 
     @Transactional
@@ -65,7 +66,7 @@ public class ShopService {
         Optional<Shop> shop = shopRepository.findById(id);
 
         if(!shop.isPresent()){
-            throw new NullPointerException("해당 id의 shop 엔티티가 없음");
+            throw new EntityNotFoundException();
         }
         shop.get().update(shop.get(), requestDto);
         return new ShopCreateResponseDto(shop.get());
