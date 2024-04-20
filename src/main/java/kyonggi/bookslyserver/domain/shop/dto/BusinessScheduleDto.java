@@ -15,7 +15,7 @@ public class BusinessScheduleDto {
         day = b.getDay();
         openAt = b.getOpenAt();
         closeAt = b.getCloseAt();
-        isHoliday = b.isHoliday();
+        isHoliday = b.getIsHoliday();
     }
 
 }
