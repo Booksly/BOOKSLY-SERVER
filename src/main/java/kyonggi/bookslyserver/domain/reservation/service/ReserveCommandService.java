@@ -150,6 +150,7 @@ public class ReserveCommandService {
         /**
          * Reservation 생성
          */
+
         ReservationSchedule reservationSchedule=reservationScheduleRepository.findById(requestDTO.getReservationScheduleId())
                 .orElseThrow(()->new EntityNotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
 
@@ -178,7 +179,7 @@ public class ReserveCommandService {
                             .build()
             ));
         });
-        
+
         if(reservationSchedule.isAutoConfirmed()) autoReservationClose(reservationSchedule);
 
         return ReservationConverter.toCreateReservationResultDTO(newReservation);

@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.global.auth.principal;
+package kyonggi.bookslyserver.global.auth.principal.user;
 
 import kyonggi.bookslyserver.domain.user.entity.User;
 import lombok.Data;
@@ -10,16 +10,16 @@ import java.util.Collection;
 import java.util.Map;
 
 @Data
-public class PrincipalDetails implements OAuth2User {
+public class OAuthPrincipalDetails implements OAuth2User {
 
     private User user;
     private Map<String, Object> attributes;
 
-    public PrincipalDetails(User user) {
+    public OAuthPrincipalDetails(User user) {
         this.user = user;
     }
 
-    public PrincipalDetails(User user,Map<String, Object> attributes) {
+    public OAuthPrincipalDetails(User user, Map<String, Object> attributes) {
         this.user = user;
         this.attributes = attributes;
     }

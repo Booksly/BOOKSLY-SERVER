@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.global.auth.principal.userInfo;
+package kyonggi.bookslyserver.global.auth.principal.user.userInfo;
 
 import java.util.Arrays;
 import java.util.Map;

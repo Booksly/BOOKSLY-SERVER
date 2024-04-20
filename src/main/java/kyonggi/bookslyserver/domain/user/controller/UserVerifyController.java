@@ -6,7 +6,7 @@ import kyonggi.bookslyserver.domain.user.dto.request.SendSMSRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.response.VerifyCodeResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.SendSMSResponseDto;
 import kyonggi.bookslyserver.domain.user.service.UserAuthService;
-import kyonggi.bookslyserver.global.auth.UserId;
+import kyonggi.bookslyserver.global.auth.principal.user.UserId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -30,6 +30,7 @@ public enum ErrorCode implements BaseErrorCode{
      * 401 Unauthorized
      */
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
+    LOGIN_FAILURE(HttpStatus.UNAUTHORIZED,"아이디 또는 비밀번호가 틀렸습니다."),
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "액세스 토큰의 형식이 올바르지 않습니다. Bearer 타입을 확인해 주세요."),
     INVALID_ACCESS_TOKEN_VALUE(HttpStatus.UNAUTHORIZED, "액세스 토큰의 값이 올바르지 않습니다."),
     EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "액세스 토큰이 만료되었습니다. 재발급 받아주세요."),
@@ -55,6 +56,7 @@ public enum ErrorCode implements BaseErrorCode{
     EMPLOYEE_NOT_FOUND(HttpStatus.NOT_FOUND,"해당하는 직원을 찾을 수 없습니다"),
     EMPLOYEE_MENU_NOT_FOUND(HttpStatus.NOT_FOUND,"직원 메뉴를 찾을 수 없습니다"),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND,"해당하는 시간대가 없습니다"),
+
     /**
      * 405 Method Not Allowed
      */

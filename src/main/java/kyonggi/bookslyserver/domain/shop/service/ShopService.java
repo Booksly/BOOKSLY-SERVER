@@ -58,7 +58,6 @@ public class ShopService {
         Optional<ShopOwner> owner = shopOwnerRepository.findById(ownerId);
         shop.getShopOwner(owner);
 
-
         return new ShopRegisterDto(shop);
     }
 

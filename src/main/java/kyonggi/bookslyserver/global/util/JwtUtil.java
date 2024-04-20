@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.global.auth.jwt;
+package kyonggi.bookslyserver.global.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -15,7 +15,7 @@ import java.util.Date;
 
 @Component
 @Slf4j
-public class JwtProvider {
+public class JwtUtil {
 
     public static final String PREFIX = "Bearer ";
     public static final String Authorization ="Authorization";

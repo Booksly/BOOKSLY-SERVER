@@ -1,9 +1,10 @@
-package kyonggi.bookslyserver.global.auth.principal;
+package kyonggi.bookslyserver.global.auth.principal.user;
 
 import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.domain.user.service.UserService;
-import kyonggi.bookslyserver.global.auth.principal.userInfo.OAuth2UserInfo;
-import kyonggi.bookslyserver.global.auth.principal.userInfo.OAuthAttributes;
+import kyonggi.bookslyserver.global.auth.principal.user.OAuthPrincipalDetails;
+import kyonggi.bookslyserver.global.auth.principal.user.userInfo.OAuth2UserInfo;
+import kyonggi.bookslyserver.global.auth.principal.user.userInfo.OAuthAttributes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
+public class OAuthPrincipalService extends DefaultOAuth2UserService {
 
     private final UserService userService;
 
@@ -31,6 +32,6 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2UserInfo userInfo = OAuthAttributes.of(providerId, oAuth2User.getAttributes());
         User user = userService.getOrCreateUser(userInfo);
 
-        return new PrincipalDetails(user, oAuth2User.getAttributes());
+        return new OAuthPrincipalDetails(user, oAuth2User.getAttributes());
     }
 }

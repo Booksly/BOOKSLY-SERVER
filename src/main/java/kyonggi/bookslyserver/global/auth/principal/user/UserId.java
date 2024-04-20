@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.global.auth;
+package kyonggi.bookslyserver.global.auth.principal.user;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

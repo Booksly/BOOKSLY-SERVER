@@ -41,6 +41,7 @@ public class ReservationConverter {
                 .reservationSettingId(reservationSetting.getId())
                 .build();
     }
+
     public static ReservationSchedule toReservationSchedule(LocalTime startTime, LocalDate finalDate, Duration interval, Employee employee, Shop shop,boolean isAutoConfirmed){
         return ReservationSchedule.builder()
                 .startTime(startTime)

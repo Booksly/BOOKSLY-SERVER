@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.global.auth.principal.userInfo;
+package kyonggi.bookslyserver.global.auth.principal.user.userInfo;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

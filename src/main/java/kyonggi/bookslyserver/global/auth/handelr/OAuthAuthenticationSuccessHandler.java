@@ -3,8 +3,8 @@ package kyonggi.bookslyserver.global.auth.handelr;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kyonggi.bookslyserver.global.auth.jwt.JwtProvider;
-import kyonggi.bookslyserver.global.auth.principal.PrincipalDetails;
+import kyonggi.bookslyserver.global.util.JwtUtil;
+import kyonggi.bookslyserver.global.auth.principal.user.OAuthPrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static kyonggi.bookslyserver.global.auth.jwt.JwtProvider.Authorization;
+import static kyonggi.bookslyserver.global.util.JwtUtil.Authorization;
 
 
 @Component
@@ -22,14 +22,14 @@ import static kyonggi.bookslyserver.global.auth.jwt.JwtProvider.Authorization;
 @Slf4j
 public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final JwtProvider jwtProvider;
+    private final JwtUtil jwtUtil;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+        OAuthPrincipalDetails principal = (OAuthPrincipalDetails) authentication.getPrincipal();
         String principalLoginId = principal.getLoginId();
-        String accessToken = jwtProvider.createAccessToken(principalLoginId);
+        String accessToken = jwtUtil.createAccessToken(principalLoginId);
         response.addHeader(Authorization, accessToken);
         log.info(accessToken);
         getRedirectStrategy().sendRedirect(request, response, "http://localhost:8080/api/user/test");

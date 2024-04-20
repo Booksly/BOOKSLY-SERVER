@@ -17,6 +17,7 @@ public class ShopOwnerReserveController {
             (@RequestParam("shopId")Long shopId, @ModelAttribute ReserveRequestDTO.reservationSettingRequestDTO request){
         return SuccessResponse.created(reserveCommandService.setReservationSetting(request,shopId));
     }
+
     @GetMapping("/closeTime")
     public ResponseEntity<SuccessResponse<?>> closeReservationSchedule(@RequestParam("scheduleId") Long reservationScheduleId){
         return SuccessResponse.ok(reserveCommandService.closeOrOpenReservationSchedule(reservationScheduleId));
