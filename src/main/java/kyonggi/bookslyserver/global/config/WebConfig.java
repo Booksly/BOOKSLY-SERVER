@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.global.config;
 
-import kyonggi.bookslyserver.global.auth.UserIdArgumentResolver;
+import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerIdArgumentResolver;
+import kyonggi.bookslyserver.global.auth.principal.user.UserIdArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -13,9 +14,11 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
 
     private final UserIdArgumentResolver userIdArgumentResolver;
+    private final OwnerIdArgumentResolver ownerIdArgumentResolver;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(userIdArgumentResolver);
+        resolvers.add(ownerIdArgumentResolver);
     }
 }
