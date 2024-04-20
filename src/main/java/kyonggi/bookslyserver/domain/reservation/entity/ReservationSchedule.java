@@ -1,5 +1,6 @@
 package kyonggi.bookslyserver.domain.reservation.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
@@ -10,6 +11,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -39,6 +42,9 @@ public class ReservationSchedule extends BaseTimeEntity {
 
     private LocalDate workDate;
 
+    @Column(nullable=false, columnDefinition = "tinyint(0)")
+    private boolean isAutoConfirmed;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "closingEvent_id")
     private ClosingEvent closingEvent;
@@ -50,4 +56,7 @@ public class ReservationSchedule extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
+    
+    @OneToMany(mappedBy = "reservationSchedule",cascade = CascadeType.ALL)
+    private List<Reservation> reservations=new ArrayList<>(); // 이 사이즈가 reservedCapacity의 역할을 하게 될거임
 }

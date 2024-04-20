@@ -6,6 +6,7 @@ import kyonggi.bookslyserver.domain.reservation.dto.ReserveRequestDTO;
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
 import kyonggi.bookslyserver.domain.reservation.entity.Reservation;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationMenu;
+import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSetting;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationMenuRepository;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationRepository;
@@ -96,7 +97,9 @@ public class ReserveCommandService {
             Duration interval= Duration.ofHours(registerHr).plusMinutes(registerMin);
             int cycle=reservationSetting.getReservationCycle();
             LocalDate endDate=startDate.plusDays(cycle-1);
-            
+
+            boolean isAutoConfirmed=reservationSetting.isAutoConfirmation();
+
             for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
                 DayOfWeek dayOfWeek=date.getDayOfWeek();
                 final LocalDate finalDate=date;
@@ -108,7 +111,7 @@ public class ReserveCommandService {
                                     LocalTime endTime=ws.getEndTime();
 
                                     while (startTime.plus(interval).isBefore(endTime)||startTime.plus(interval).equals(endTime)){
-                                        reservationScheduleRepository.save(ReservationConverter.toReservationSchedule(startTime,finalDate,interval,employee,shop));
+                                        reservationScheduleRepository.save(ReservationConverter.toReservationSchedule(startTime,finalDate,interval,employee,shop,isAutoConfirmed));
                                         startTime=startTime.plus(interval);
                                     }
                                 }
@@ -147,14 +150,19 @@ public class ReserveCommandService {
         /**
          * Reservation 생성
          */
+        ReservationSchedule reservationSchedule=reservationScheduleRepository.findById(requestDTO.getReservationScheduleId())
+                .orElseThrow(()->new EntityNotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
+
         Reservation newReservation=Reservation.builder()
                 .price(totalPrice)
-                .reservationSchedule(reservationScheduleRepository.findById(requestDTO.getReservationScheduleId()).get())
+                .reservationSchedule(reservationSchedule)
                 .inquiry(requestDTO.getInquiry())
                 .eventTitle(requestDTO.getEventTitle())
                 .user(userRepository.findById(userId).orElseThrow(()->new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND)))
                 .reservationMenus(new ArrayList<>())
+                .isConfirmed(reservationSchedule.isAutoConfirmed())
                 .build();
+        reservationSchedule.getReservations().add(newReservation);
         reservationRepository.save(newReservation);
         /**
          *  Reservation Menu 생성
@@ -170,6 +178,33 @@ public class ReserveCommandService {
                             .build()
             ));
         });
+        
+        if(reservationSchedule.isAutoConfirmed()) autoReservationClose(reservationSchedule);
+
         return ReservationConverter.toCreateReservationResultDTO(newReservation);
+    }
+    /**
+     * 자동 예약 마감
+     */
+    public void autoReservationClose(ReservationSchedule reservationSchedule){
+
+        ReservationSetting reservationSetting=reservationSettingRepository.findByShop(reservationSchedule.getShop()).get();
+        if (reservationSetting.getMaxCapacity()==reservationSchedule.getReservations().size())
+            reservationSchedule.setClosed(true); // 예약 close
+
+        reservationScheduleRepository.save(reservationSchedule);
+    }
+    /**
+     *  시간대 수동 마감
+     */
+    public String closeOrOpenReservationSchedule(Long reservationScheduleId){
+        ReservationSchedule reservationSchedule=reservationScheduleRepository.findById(reservationScheduleId)
+                .orElseThrow(()->new EntityNotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
+        reservationSchedule.setClosed(!reservationSchedule.isClosed());
+        if (reservationSchedule.isClosed()) {
+            return "시간대 마감 완료";
+        } else {
+            return "시간대 오픈 완료";
+        }
     }
 }
