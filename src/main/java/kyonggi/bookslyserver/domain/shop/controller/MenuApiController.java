@@ -24,10 +24,17 @@ public class MenuApiController {
         return SuccessResponse.ok(result);
     }
 
+
     @PutMapping("/api/menu/{menuId}")
     public ResponseEntity<SuccessResponse<?>> updateMenu(@PathVariable("menuId") Long id, @RequestBody @Validated MenuCreateRequestDto requestDto){
         MenuUpdateResponseDto result = menuService.update(id, requestDto);
         return SuccessResponse.ok(result);
     }
+
+    @DeleteMapping("/api/menu/{menuId}")
+    public void delete(@PathVariable("menuId") Long id){
+        menuService.delete(id);
+    }
+
 
 }

@@ -33,27 +33,27 @@ public class Menu extends BaseTimeEntity {
 
     private int price;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="shop_id")
     private Shop shop;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="menuCategory_id")
     private MenuCategory menuCategory;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<MenuImage> menuImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<TimeEventMenu> timeEventMenus = new ArrayList<>();
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<ClosingEventMenu> closingEventMenus = new ArrayList<>();
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<EmployeeMenu> employeeMenus = new ArrayList<>();
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<ReservationMenu> reservationMenus = new ArrayList<>();
 
     //==생성메서드==//
@@ -77,33 +77,45 @@ public class Menu extends BaseTimeEntity {
         this.shop = shop;
     }
 
+
+
     public List<String> update(MenuCreateRequestDto requestDto){
         this.menuName = requestDto.menuName();
         this.price = requestDto.price();
         this.description = requestDto.description();
-        this.menuCategory = changeCategory(requestDto.menuCategory());
+        changeCategory(requestDto.menuCategory());
 
         for(int i = requestDto.menuImgUri().size() - 1; i >= 0; i--){
             this.menuImages.add(MenuImage.builder().menuImgUri(requestDto.menuImgUri().get(i)).build());
         }
 
-/*        for(int i = 0; i < requestDto.menuImgUri().size(); i++){
-            this.menuImages.add(MenuImage.builder().menuImgUri(requestDto.menuImgUri().get(i)).build());
-        }*/
-
         for(int j = 0; j < this.menuImages.size(); j++){
             this.menuImages.get(j).setMenu(this);
         }
+
         return requestDto.menuImgUri();
     }
 
-    public MenuCategory changeCategory(String name){
-        this.menuCategory.setName(name);
-        return this.menuCategory;
+
+    public void changeCategory(String menuCategory){
+        this.menuCategory.setName(menuCategory);
+
     }
 
 
+    public static Menu createEntity(Shop shop, MenuCreateRequestDto requestDto){
+        List<MenuImage> images = new ArrayList<>();
+        for(String img : requestDto.menuImgUri()){
+                images.add(MenuImage.builder().menuImgUri(img).build());
+        }
+        return Menu.builder().menuName(requestDto.menuName()).price(requestDto.price()).description(requestDto.description()).menuImages(images).shop(shop).build();
+    }
 
+    public void addImg(List<MenuImage> images){
+        for(MenuImage menuImage : images){
+            menuImage.setMenu(this);
+        }
+    }
 
 
 }
