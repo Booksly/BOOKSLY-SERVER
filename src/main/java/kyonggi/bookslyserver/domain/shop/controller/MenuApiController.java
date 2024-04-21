@@ -31,10 +31,9 @@ public class MenuApiController {
         return SuccessResponse.ok(result);
     }
 
-
-/*
     @DeleteMapping("/api/menu/{menuId}")
-    public ResponseEntity<SuccessResponse<?>> deleteMenu(@PathVariable("menuId") Long id, )
-*/
+    public void delete(@PathVariable("menuId") Long id){
+        menuService.delete(id);
+    }
 
 }
