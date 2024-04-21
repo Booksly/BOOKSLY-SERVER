@@ -44,16 +44,16 @@ public class Menu extends BaseTimeEntity {
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<MenuImage> menuImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<TimeEventMenu> timeEventMenus = new ArrayList<>();
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<ClosingEventMenu> closingEventMenus = new ArrayList<>();
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<EmployeeMenu> employeeMenus = new ArrayList<>();
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<ReservationMenu> reservationMenus = new ArrayList<>();
 
     //==생성메서드==//
