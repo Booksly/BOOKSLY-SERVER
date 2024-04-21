@@ -74,6 +74,20 @@ public class MenuService {
                 .images(images).build();
     }
 
+    @Transactional
+    public void delete(Long id){
+        Optional<Menu> menu = menuRepository.findById(id);
+        if(!menu.isPresent()){
+            throw new EntityNotFoundException();
+        }
+
+        if(menu.get().getMenuCategory().getMenus().size() == 1){
+            menuCategoryRepository.delete(menu.get().getMenuCategory());
+        }
+        else{
+            menuRepository.delete(menu.get());
+        }
+    }
 
 
 }
