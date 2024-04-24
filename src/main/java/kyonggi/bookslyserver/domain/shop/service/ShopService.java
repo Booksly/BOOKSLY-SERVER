@@ -40,13 +40,11 @@ public class ShopService {
         List<BusinessSchedule> businessScheduleList = requestDto.getBusinessScheduleList();
         for(BusinessSchedule businessSchedule : businessScheduleList){
             shop.getBusinessSchedule(businessSchedule);
-            businessScheduleRepository.save(businessSchedule);
         }
 
         List<ShopImage> shopImages = requestDto.getShopImageList();
         for(ShopImage shopImage : shopImages){
             shop.getShopImage(shopImage);
-            shopImageRepository.save(shopImage);
         }
 
         Optional<ShopOwner> owner = shopOwnerRepository.findById(ownerId);
