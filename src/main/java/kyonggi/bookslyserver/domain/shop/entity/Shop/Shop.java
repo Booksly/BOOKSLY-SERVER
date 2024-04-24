@@ -63,11 +63,11 @@ public class Shop extends BaseTimeEntity {
     @JoinColumn(name = "shopOwner_id")
     private ShopOwner shopOwner;
 
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "address_id")
     private Address address;
 
