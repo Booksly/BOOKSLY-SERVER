@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 
 
+import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
@@ -34,6 +35,12 @@ public class MenuApiController {
     @DeleteMapping("/api/menu/{menuId}")
     public void delete(@PathVariable("menuId") Long id){
         menuService.delete(id);
+    }
+
+    @PostMapping("/api/menuCategory/{shopId}")
+    public ResponseEntity<SuccessResponse<?>> createMenuCategory(@PathVariable("shopId") Long id, @RequestBody @Validated MenuCategoryCreateDto requestDto){
+        Long result = menuService.createCategory(id, requestDto);
+        return SuccessResponse.ok(result);
     }
 
 
