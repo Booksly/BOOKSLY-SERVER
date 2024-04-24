@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.entity.Menu;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
@@ -34,6 +35,10 @@ public class MenuCategory extends BaseTimeEntity {
 
     public static MenuCategory createEntity(MenuCreateRequestDto requestDto){
         return MenuCategory.builder().name(requestDto.menuCategory()).menus(new ArrayList<>()).build();
+    }
+
+    public static MenuCategory createEntity(MenuCategoryCreateDto requestDto, Shop shop){
+        return MenuCategory.builder().name(requestDto.categoryName()).shop(shop).build();
     }
 
     public void addMenu(Menu menu){

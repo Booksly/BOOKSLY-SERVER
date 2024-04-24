@@ -12,6 +12,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,11 +65,11 @@ public class Shop extends BaseTimeEntity {
     @JoinColumn(name = "shopOwner_id")
     private ShopOwner shopOwner;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
 
@@ -107,6 +108,9 @@ public class Shop extends BaseTimeEntity {
         this.shopOwner.getShops().add(this);
     }
 
+    public void getMenuCategory(MenuCategory menuCategory){
+        this.menuCategories.add(menuCategory);
+    }
 
     public static Shop createShop(ShopCreateRequestDto requestDto){
         return Shop.builder()

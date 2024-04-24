@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.service;
 
 import jakarta.transaction.Transactional;
+import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
@@ -89,5 +90,19 @@ public class MenuService {
         }
     }
 
+    @Transactional
+    public Long createCategory(Long id, MenuCategoryCreateDto requestDto){
+        Optional<Shop> shop = shopRepository.findById(id);
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException();
+        }
+        MenuCategory menuCategory = MenuCategory.createEntity(requestDto, shop.get());
+        shop.get().getMenuCategory(menuCategory);
+        menuCategoryRepository.save(menuCategory);
+        System.out.println("========================================================");
+        System.out.println(shop.get().getMenuCategories().size());
+        System.out.println("=======================================================");
+        return menuCategory.getId();
+    }
 
 }
