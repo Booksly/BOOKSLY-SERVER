@@ -24,9 +24,13 @@ public class MenuCategory extends BaseTimeEntity {
 
     private String name;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name="shop_id")
+    private Shop shop;
+
     @OneToMany(mappedBy = "menuCategory", cascade = CascadeType.ALL)
     private List<Menu> menus = new ArrayList<>();
-    
+
 
     public static MenuCategory createEntity(MenuCreateRequestDto requestDto){
         return MenuCategory.builder().name(requestDto.menuCategory()).menus(new ArrayList<>()).build();

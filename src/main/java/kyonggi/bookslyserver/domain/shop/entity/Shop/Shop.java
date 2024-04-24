@@ -8,6 +8,7 @@ import kyonggi.bookslyserver.domain.shop.constant.CategoryName;
 import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
@@ -70,6 +71,9 @@ public class Shop extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "address_id")
     private Address address;
+
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
+    private List<MenuCategory> menuCategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private List<ShopImage> shopImages = new ArrayList<>();
