@@ -43,12 +43,17 @@ public class MenuService {
             throw new EntityNotFoundException();
         }
         Menu menu = Menu.createEntity(shop.get(), requestDto);
+        MenuCategory menuCategory = MenuCategory.createEntity(shop.get(), requestDto);
+
+        shop.get().getMenuCategories().add(menuCategory);
         shop.get().getMenus().add(menu);
-        MenuCategory menuCategory = MenuCategory.createEntity(requestDto);
+
         menuCategory.addMenu(menu);
         menu.addImg(menu.getMenuImages());
+
         menuCategoryRepository.save(menuCategory);
         menuRepository.save(menu);
+
         return MenuCreateResponseDto.builder().id(menu.getId()).build();
 
     }

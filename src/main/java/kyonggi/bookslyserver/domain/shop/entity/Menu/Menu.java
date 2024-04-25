@@ -106,9 +106,9 @@ public class Menu extends BaseTimeEntity {
     public static Menu createEntity(Shop shop, MenuCreateRequestDto requestDto){
         List<MenuImage> images = new ArrayList<>();
         for(String img : requestDto.menuImgUri()){
-                images.add(MenuImage.builder().menuImgUri(img).build());
+            images.add(MenuImage.builder().menuImgUri(img).build());
         }
-        return Menu.builder().menuName(requestDto.menuName()).price(requestDto.price()).description(requestDto.description()).menuImages(images).shop(shop).build();
+        return Menu.builder().menuName(requestDto.menuName()).price(requestDto.price()).description(requestDto.description()).shop(shop).menuImages(images).build();
     }
 
     public void addImg(List<MenuImage> images){
