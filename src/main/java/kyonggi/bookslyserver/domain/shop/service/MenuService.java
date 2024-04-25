@@ -102,6 +102,14 @@ public class MenuService {
         return menuCategory.getId();
     }
 
-
+    @Transactional
+    public MenuCategoryCreateDto updateCategory(Long id, MenuCategoryCreateDto requestDto){
+        Optional<MenuCategory> menuCategory = menuCategoryRepository.findById(id);
+        if(!menuCategory.isPresent()){
+            throw new EntityNotFoundException();
+        }
+        menuCategory.get().setName(requestDto.categoryName());
+        return MenuCategoryCreateDto.builder().categoryName(menuCategory.get().getName()).build();
+    }
 
 }
