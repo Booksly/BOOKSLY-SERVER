@@ -99,10 +99,17 @@ public class MenuService {
         MenuCategory menuCategory = MenuCategory.createEntity(requestDto, shop.get());
         shop.get().getMenuCategory(menuCategory);
         menuCategoryRepository.save(menuCategory);
-        System.out.println("========================================================");
-        System.out.println(shop.get().getMenuCategories().size());
-        System.out.println("=======================================================");
         return menuCategory.getId();
+    }
+
+    @Transactional
+    public MenuCategoryCreateDto updateCategory(Long id, MenuCategoryCreateDto requestDto){
+        Optional<MenuCategory> menuCategory = menuCategoryRepository.findById(id);
+        if(!menuCategory.isPresent()){
+            throw new EntityNotFoundException();
+        }
+        menuCategory.get().setName(requestDto.categoryName());
+        return MenuCategoryCreateDto.builder().categoryName(menuCategory.get().getName()).build();
     }
 
 }

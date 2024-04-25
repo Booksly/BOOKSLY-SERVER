@@ -43,5 +43,10 @@ public class MenuApiController {
         return SuccessResponse.ok(result);
     }
 
+    @PutMapping("/api/menuCategory/{categoryId}")
+    public ResponseEntity<SuccessResponse<?>> updateMenuCategory(@PathVariable("categoryId") Long id, @RequestBody @Validated MenuCategoryCreateDto requestDto){
+        MenuCategoryCreateDto result = menuService.updateCategory(id, requestDto);
+        return SuccessResponse.ok(result);
+    }
 
 }
