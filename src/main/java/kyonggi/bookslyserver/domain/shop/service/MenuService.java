@@ -13,6 +13,8 @@ import kyonggi.bookslyserver.domain.shop.repository.MenuCategoryRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
+import kyonggi.bookslyserver.global.error.ErrorCode;
+import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -110,6 +112,21 @@ public class MenuService {
         }
         menuCategory.get().setName(requestDto.categoryName());
         return MenuCategoryCreateDto.builder().categoryName(menuCategory.get().getName()).build();
+    }
+
+    @Transactional
+    public void deleteCategory(Long id){
+        Optional<MenuCategory> menuCategory = menuCategoryRepository.findById(id);
+        if(!menuCategory.isPresent()){
+            throw new EntityNotFoundException();
+        }
+        if(!menuCategory.get().getMenus().isEmpty()){
+            throw new BusinessException(ErrorCode.MENU_ALREADY_EXIST);
+        }
+        else{
+            menuCategory.get().getShop().getMenuCategories().remove(menuCategory.get());
+            menuCategoryRepository.delete(menuCategory.get().getId());
+        }
     }
 
 }
