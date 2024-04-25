@@ -49,4 +49,8 @@ public class MenuApiController {
         return SuccessResponse.ok(result);
     }
 
+    @DeleteMapping("/api/menuCategory/{categoryId}")
+    public void deleteMenuCategory(@PathVariable("categoryId") Long id){
+        menuService.deleteCategory(id);
+    }
 }
