@@ -43,5 +43,4 @@ public class MenuApiController {
         return SuccessResponse.ok(result);
     }
 
-
 }

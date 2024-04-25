@@ -99,9 +99,6 @@ public class MenuService {
         MenuCategory menuCategory = MenuCategory.createEntity(requestDto, shop.get());
         shop.get().getMenuCategory(menuCategory);
         menuCategoryRepository.save(menuCategory);
-        System.out.println("========================================================");
-        System.out.println(shop.get().getMenuCategories().size());
-        System.out.println("=======================================================");
         return menuCategory.getId();
     }
 
