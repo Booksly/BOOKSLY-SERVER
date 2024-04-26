@@ -3,6 +3,7 @@ package kyonggi.bookslyserver.domain.user.controller;
 import jakarta.validation.Valid;
 import kyonggi.bookslyserver.domain.user.dto.request.VerifyCodeRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.request.SendSMSRequestDto;
+import kyonggi.bookslyserver.domain.user.dto.response.CheckVerificationStatusResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.VerifyCodeResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.SendSMSResponseDto;
 import kyonggi.bookslyserver.domain.user.service.UserAuthService;
@@ -12,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/auth/verify")
@@ -52,5 +50,12 @@ public class UserVerifyController {
         VerifyCodeResponseDto userVerifyResponseDto = userAuthService.userVerifyByCode(userId, verifyCodeRequestDto);
 
         return SuccessResponse.ok(userVerifyResponseDto);
+    }
+
+    @GetMapping("/user/status")
+    public ResponseEntity<SuccessResponse<?>> checkVerificationStatus(@UserId Long userId) {
+        CheckVerificationStatusResponseDto verificationStatusResponseDto = userAuthService.checkVerificationStatus(userId);
+
+        return SuccessResponse.ok(verificationStatusResponseDto);
     }
 }
