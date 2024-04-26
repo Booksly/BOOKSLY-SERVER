@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.user.service;
 
 import kyonggi.bookslyserver.domain.user.dto.request.VerifyCodeRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.request.SendSMSRequestDto;
+import kyonggi.bookslyserver.domain.user.dto.response.CheckVerificationStatusResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.VerifyCodeResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.SendSMSResponseDto;
 import kyonggi.bookslyserver.domain.user.entity.User;
@@ -86,5 +87,12 @@ public class UserAuthService {
 
         return VerifyCodeResponseDto.builder()
                 .isVerify(false).build();
+    }
+
+    public CheckVerificationStatusResponseDto checkVerificationStatus(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        if (user.isVerified()) return CheckVerificationStatusResponseDto.builder().isVerify(true).build();
+
+        return CheckVerificationStatusResponseDto.builder().isVerify(false).build();
     }
 }
