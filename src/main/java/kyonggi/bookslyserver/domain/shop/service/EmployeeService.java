@@ -42,6 +42,8 @@ public class EmployeeService {
 
         employeeRepository.save(employee);
 
+        shop.get().getEmployees().add(employee);
+
         if(!requestDto.menus().isEmpty()){
             for(String menuName : requestDto.menus()){
                 Menu menu = menuRepository.findByMenuName(menuName);
