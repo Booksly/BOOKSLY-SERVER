@@ -12,6 +12,7 @@ import kyonggi.bookslyserver.domain.shop.repository.EmployeeMenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
+import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,9 @@ public class EmployeeService {
     @Transactional
     public Long join(Long id, EmployeeCreateRequestDto requestDto){
         Optional<Shop> shop = shopRepository.findById(id);
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException();
+        }
 
         Employee employee = Employee.createEntity(shop.get(), requestDto);
 
@@ -49,7 +53,6 @@ public class EmployeeService {
             WorkSchedule workSchedule = WorkSchedule.createEntity(employee, employeeWorkScheduleDto);
             employee.getWorkSchedules().add(workSchedule);
         }
-
         return employee.getId();
     }
 
