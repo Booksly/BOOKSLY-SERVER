@@ -26,4 +26,10 @@ public class EmployeeMenu extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="menu_id")
     private Menu menu;
+
+    public static EmployeeMenu createEntity(Employee employee, Menu menu){
+        return EmployeeMenu.builder()
+                .employee(employee)
+                .menu(menu).build();
+    }
 }
