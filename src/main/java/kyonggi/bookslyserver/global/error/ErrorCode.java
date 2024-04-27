@@ -26,6 +26,7 @@ public enum ErrorCode implements BaseErrorCode{
     AUTO_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST,"마감 예약 인원을 설정해주세요"),
     DISCOUNT_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST,"할인율 설정이 되어있지 않습니다"),
     MENU_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "카테고리에 메뉴가 존재합니다. 해당 카테고리를 삭제할 수 없습니다."),
+    RESERVATION_CLOSED_BAD_REQUEST(HttpStatus.BAD_REQUEST,"예약 인원이 마감된 시간대 입니다."),
 
     /**
      * 401 Unauthorized

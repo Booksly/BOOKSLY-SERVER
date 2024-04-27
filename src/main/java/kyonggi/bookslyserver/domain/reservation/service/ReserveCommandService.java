@@ -134,6 +134,10 @@ public class ReserveCommandService {
      *  예약하기
      */
     public ReserveResponseDTO.createReservationResultDTO createReservation(Long userId, ReserveRequestDTO.reservationRequestDTO requestDTO){
+        if(reservationScheduleRepository.findById(requestDTO.getReservationScheduleId()).get().isClosed()){
+            throw new InvalidValueException(ErrorCode.RESERVATION_CLOSED_BAD_REQUEST);
+        }
+
         /**
          *  가격 계산
          */

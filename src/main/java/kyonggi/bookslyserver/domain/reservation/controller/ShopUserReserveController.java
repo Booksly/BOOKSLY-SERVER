@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.reservation.controller;
 
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveRequestDTO;
 import kyonggi.bookslyserver.domain.reservation.service.ReserveCommandService;
+import kyonggi.bookslyserver.global.auth.principal.user.UserId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class ShopUserReserveController {
     }
 
     @PostMapping("")
-    public ResponseEntity<SuccessResponse<?>> createReservation(@RequestParam("userId")Long userId,@RequestBody ReserveRequestDTO.reservationRequestDTO request){
+    public ResponseEntity<SuccessResponse<?>> createReservation(@UserId Long userId, @RequestBody ReserveRequestDTO.reservationRequestDTO request){
         return SuccessResponse.created(reserveCommandService.createReservation(userId, request));
     }
 }
