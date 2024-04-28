@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.reservation.controller;
 
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveRequestDTO;
 import kyonggi.bookslyserver.domain.reservation.service.ReserveCommandService;
+import kyonggi.bookslyserver.domain.reservation.service.ReserveOwnerCommandService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/reserve")
 public class ShopOwnerReserveController {
     private final ReserveCommandService reserveCommandService;
+    private final ReserveOwnerCommandService reserveOwnerCommandService;
     @PostMapping("/setting")
     public ResponseEntity<SuccessResponse<?>> setReservationSetting
             (@RequestParam("shopId")Long shopId, @ModelAttribute ReserveRequestDTO.reservationSettingRequestDTO request){
@@ -21,6 +23,15 @@ public class ShopOwnerReserveController {
     @GetMapping("/closeTime")
     public ResponseEntity<SuccessResponse<?>> closeReservationSchedule(@RequestParam("scheduleId") Long reservationScheduleId){
         return SuccessResponse.ok(reserveCommandService.closeOrOpenReservationSchedule(reservationScheduleId));
+    }
+
+    @GetMapping("/latestRequest")
+    public ResponseEntity<SuccessResponse<?>> getReservationRequest(@RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getReservationRequest(shopId));
+    }
+    @GetMapping("/imminentRequest")
+    public ResponseEntity<SuccessResponse<?>> getImminentReservationRequest(@RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getImminentReservationRequest(shopId));
     }
     /*
     * 임시 uri api 테스트 시에만 사용 바람
