@@ -67,4 +67,12 @@ public class Employee extends BaseTimeEntity {
         return employeeMenu;
     }
 
+    public void update(EmployeeCreateRequestDto dto){
+        this.name = dto.employeeName();
+        this.selfIntro = dto.description();
+        this.profileImgUri = dto.imgUri();
+        this.employeeMenus.clear();
+        this.workSchedules.clear();
+    }
+
 }

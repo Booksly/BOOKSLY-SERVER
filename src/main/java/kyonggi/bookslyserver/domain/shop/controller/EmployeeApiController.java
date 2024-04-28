@@ -4,12 +4,10 @@ import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.service.EmployeeService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
+import okhttp3.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +17,12 @@ public class EmployeeApiController {
     @PostMapping("/api/employee/{shopId}")
     public ResponseEntity<SuccessResponse<?>> createEmployee(@PathVariable("shopId") Long id, @RequestBody @Validated EmployeeCreateRequestDto requestDto){
         Long result = employeeService.join(id, requestDto);
+        return SuccessResponse.ok(result);
+    }
+
+    @PutMapping("/api/employee/{employeeId}")
+    public ResponseEntity<SuccessResponse<?>> updateEmployee(@PathVariable("employeeId") Long id, @RequestBody @Validated EmployeeCreateRequestDto requestDto){
+        Long result = employeeService.update(id, requestDto);
         return SuccessResponse.ok(result);
     }
 }

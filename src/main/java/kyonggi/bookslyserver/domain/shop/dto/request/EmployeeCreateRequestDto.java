@@ -1,16 +1,17 @@
 package kyonggi.bookslyserver.domain.shop.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 import java.util.List;
 
 @Builder
 public record EmployeeCreateRequestDto(
-        String employeeName,
-        String description,
-        String imgUri,
+        @NotNull String employeeName,
+        @NotNull String description,
+        @NotNull String imgUri,
         List<String> menus,
 
-        List<EmployeeWorkScheduleDto> workSchedules
+        @NotNull List<EmployeeWorkScheduleDto> workSchedules
 ) {
 }
