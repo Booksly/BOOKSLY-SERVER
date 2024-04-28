@@ -15,7 +15,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReserveOwnerCommandService {
     private final ReservationRepository reservationRepository;
-    public List<ReserveResponseDTO.getReservationRequestResultDTO> getReservationRequest(){
-        return reservationRepository.getReservationRequest();
+    public List<ReserveResponseDTO.getReservationRequestResultDTO> getReservationRequest(Long shopId){
+        return reservationRepository.getReservationRequest(shopId);
+    }
+    public List<ReserveResponseDTO.getReservationRequestResultDTO> getImminentReservationRequest(Long shopId){
+        return reservationRepository.getImminentReservationRequest(shopId);
     }
 }

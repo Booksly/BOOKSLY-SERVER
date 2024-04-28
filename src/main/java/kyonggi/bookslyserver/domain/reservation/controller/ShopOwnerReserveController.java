@@ -25,9 +25,13 @@ public class ShopOwnerReserveController {
         return SuccessResponse.ok(reserveCommandService.closeOrOpenReservationSchedule(reservationScheduleId));
     }
 
-    @GetMapping("/request")
-    public ResponseEntity<SuccessResponse<?>> getReservationRequest(){
-        return SuccessResponse.ok(reserveOwnerCommandService.getReservationRequest());
+    @GetMapping("/latestRequest")
+    public ResponseEntity<SuccessResponse<?>> getReservationRequest(@RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getReservationRequest(shopId));
+    }
+    @GetMapping("/imminentRequest")
+    public ResponseEntity<SuccessResponse<?>> getImminentReservationRequest(@RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getImminentReservationRequest(shopId));
     }
     /*
     * 임시 uri api 테스트 시에만 사용 바람
