@@ -8,14 +8,12 @@ import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
-import kyonggi.bookslyserver.domain.shop.repository.EmployeeMenuRepository;
-import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
-import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
-import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
+import kyonggi.bookslyserver.domain.shop.repository.*;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,6 +24,8 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
 
     private final EmployeeMenuRepository employeeMenuRepository;
+
+    private final WorkScheduleRepository workScheduleRepository;
 
     private final ShopRepository shopRepository;
 
@@ -56,6 +56,44 @@ public class EmployeeService {
             employee.getWorkSchedules().add(workSchedule);
         }
         return employee.getId();
+    }
+
+    @Transactional
+    public Long update(Long id, EmployeeCreateRequestDto requestDto){
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if(!employee.isPresent()){
+            throw new EntityNotFoundException();
+        }
+
+        List<EmployeeMenu> employeeMenuList = employeeMenuRepository.findByEmployeeId(id);
+        List<WorkSchedule> workScheduleList = workScheduleRepository.findByEmployeeId(id);
+
+        for(EmployeeMenu employeeMenu : employeeMenuList){
+            employeeMenuRepository.delete(employeeMenu);
+        }
+
+        for(WorkSchedule workSchedule : workScheduleList){
+            workScheduleRepository.delete(workSchedule);
+        }
+        if(requestDto.menus() != null){
+            for(String menuName : requestDto.menus()){
+                Menu menu = menuRepository.findByMenuName(menuName);
+                employee.get().addMenu(employee.get(), menu);
+            }
+        }
+
+        for(EmployeeWorkScheduleDto employeeWorkScheduleDto : requestDto.workSchedules()){
+            WorkSchedule workSchedule = WorkSchedule.createEntity(employee.get(), employeeWorkScheduleDto);
+            employee.get().getWorkSchedules().add(workSchedule);
+        }
+
+
+
+        employee.get().update(requestDto);
+
+
+
+        return employee.get().getId();
     }
 
 }
