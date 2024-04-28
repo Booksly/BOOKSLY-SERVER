@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.reservation.repository.CustomRepository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
 import kyonggi.bookslyserver.domain.reservation.entity.QReservation;
@@ -9,6 +10,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Employee.QEmployee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -20,6 +22,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     QEmployee employee=QEmployee.employee;
     @Override
     public List<ReserveResponseDTO.getReservationRequestResultDTO> getReservationRequest() {
+        LocalDateTime now=LocalDateTime.now();
         return queryFactory
                 .select(Projections.constructor(ReserveResponseDTO.getReservationRequestResultDTO.class,
                         reservation.id.as("reservationId"),
@@ -29,7 +32,15 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 .from(reservation)
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.employee,employee)
-                .where(reservation.isConfirmed.eq(false).and(reservation.isRefused.eq(false)))
+                .where(reservation.isConfirmed.eq(false).and(reservation.isRefused.eq(false))
+                        .and(isValidReservationSchedule(now))
+                )
+                .orderBy(reservation.createDate.desc())
                 .fetch();
+    }
+
+    private BooleanExpression isValidReservationSchedule(LocalDateTime now){
+        return reservationSchedule.workDate.after(now.toLocalDate())
+                .or(reservationSchedule.workDate.eq(now.toLocalDate()).and(reservationSchedule.startTime.after(now.toLocalTime())));
     }
 }
