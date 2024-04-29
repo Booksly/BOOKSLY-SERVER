@@ -87,13 +87,18 @@ public class EmployeeService {
             employee.get().getWorkSchedules().add(workSchedule);
         }
 
-
-
         employee.get().update(requestDto);
 
-
-
         return employee.get().getId();
+    }
+
+    @Transactional
+    public void delete(Long id){
+        Optional<Employee> employee = employeeRepository.findById(id);
+
+        Shop shop = employee.get().getShop();
+        shop.getEmployees().remove(employee.get());
+        employeeRepository.deleteById(id);
     }
 
 }

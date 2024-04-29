@@ -25,4 +25,9 @@ public class EmployeeApiController {
         Long result = employeeService.update(id, requestDto);
         return SuccessResponse.ok(result);
     }
+
+    @DeleteMapping("/api/employee/{employeeId}")
+    public void deleteEmployee(@PathVariable("employeeId") Long id){
+        employeeService.delete(id);
+    }
 }
