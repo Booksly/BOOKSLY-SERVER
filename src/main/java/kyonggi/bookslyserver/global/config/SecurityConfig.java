@@ -81,7 +81,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authz) -> authz
 
                         //인증이 필요한 uri - 일반 회원만 접근 가능
-                        .requestMatchers("/api/user/need-login-test","/api/auth/verify/user/**").hasRole("USER")
+                        .requestMatchers("/api/user/details/**","/api/auth/verify/user/**").hasRole("USER")
                         //인증이 필요한 uri - 기업 회원만 접근 가능
                         .requestMatchers("/api/owner/**").hasRole("ADMIN")
                         // 그 외 요청, 인증이 필요없음 - 비회원도 접근 가능
