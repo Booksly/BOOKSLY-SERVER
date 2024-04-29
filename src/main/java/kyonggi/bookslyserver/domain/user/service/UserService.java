@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.user.service;
 
 import kyonggi.bookslyserver.domain.user.constant.Role;
+import kyonggi.bookslyserver.domain.user.dto.response.GetUserNicknameResponseDto;
 import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.auth.principal.user.userInfo.OAuth2UserInfo;
@@ -61,4 +62,9 @@ public class UserService {
         return userRepository.findByLoginId(loginId).get();
     }
 
+    public GetUserNicknameResponseDto getNickname(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        return GetUserNicknameResponseDto.of(user);
+    }
 }
