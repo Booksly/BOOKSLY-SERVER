@@ -12,4 +12,7 @@ public interface ShopOwnerRepository extends JpaRepository<ShopOwner, Long> {
     @Query("SELECT owner FROM ShopOwner owner where owner.user.id = :id")
     ShopOwner findByUserId(@Param("id") Long id);
 
+    @Query("SELECT owner.user.loginId FROM ShopOwner owner where owner.id = :id")
+    Optional<String> findLoginId(@Param("id") Long id);
+
 }

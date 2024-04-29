@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.user.service;
 
 import kyonggi.bookslyserver.domain.user.dto.request.JoinOwnerRequestDto;
+import kyonggi.bookslyserver.domain.user.dto.response.GetOwnerLoginIdResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.JoinOwnerResponseDto;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.entity.User;
@@ -49,4 +50,8 @@ public class ShopOwnerService {
         return shopOwnerRepository.findByUserId(userId);
     }
 
+    public GetOwnerLoginIdResponseDto getLoginId(Long ownerId) {
+        String loginId = shopOwnerRepository.findLoginId(ownerId).orElseThrow(()-> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        return GetOwnerLoginIdResponseDto.builder().loginId(loginId).build();
+    }
 }
