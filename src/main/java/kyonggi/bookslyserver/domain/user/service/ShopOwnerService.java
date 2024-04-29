@@ -52,6 +52,6 @@ public class ShopOwnerService {
 
     public GetOwnerLoginIdResponseDto getLoginId(Long ownerId) {
         String loginId = shopOwnerRepository.findLoginId(ownerId).orElseThrow(()-> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-        return GetOwnerLoginIdResponseDto.builder().loginId(loginId).build();
+        return GetOwnerLoginIdResponseDto.of(loginId);
     }
 }
