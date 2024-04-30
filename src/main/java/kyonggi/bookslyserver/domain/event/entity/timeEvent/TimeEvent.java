@@ -25,9 +25,9 @@ public class TimeEvent extends BaseTimeEntity {
 
     private boolean repetitionStatus;
 
-    private boolean isWeeklyRepeat;
+    private boolean isDayRepeat; // 요일 반복
 
-    private boolean isRecurringDays;
+    private boolean isDateRepeat; // 날짜 반복
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "timeEventSchedule_id")
