@@ -14,7 +14,9 @@ import kyonggi.bookslyserver.domain.shop.entity.Employee.QEmployee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 
 @Repository
@@ -58,8 +60,34 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                         .and(reservation.isRefused.eq(false))
                         .and(isValidReservationSchedule(now)));
     }
+
+    @Override
+    public List<ReserveResponseDTO.getDatesWithResReqResultDTO> getDatesWithResReqResultDTO(int year, int month, Long shopId) {
+        YearMonth yearMonth=YearMonth.of(year,month);
+
+        LocalDate startDate=yearMonth.atDay(1);
+        LocalDate endDate=yearMonth.atEndOfMonth();
+
+        return queryFactory
+                .select(Projections.constructor(ReserveResponseDTO.getDatesWithResReqResultDTO.class,
+                reservation.reservationSchedule.workDate.as("reservationDate")))
+                .from(reservation)
+                .innerJoin(reservation.reservationSchedule,reservationSchedule)
+                .where(isReservationRequestInTheMonth(startDate,endDate)
+                        .and(reservation.reservationSchedule.shop.id.eq(shopId))
+                        .and(reservation.isRefused.eq(false).and(reservation.isConfirmed.eq(false)))
+                )
+                .groupBy(reservation.reservationSchedule.workDate)
+                .fetch();
+
+    }
+
     private BooleanExpression isValidReservationSchedule(LocalDateTime now){
         return reservationSchedule.workDate.after(now.toLocalDate())
                 .or(reservationSchedule.workDate.eq(now.toLocalDate()).and(reservationSchedule.startTime.after(now.toLocalTime())));
+    }
+
+    private BooleanExpression isReservationRequestInTheMonth(LocalDate startDate,LocalDate endDate){
+        return reservationSchedule.workDate.between(startDate, endDate);
     }
 }

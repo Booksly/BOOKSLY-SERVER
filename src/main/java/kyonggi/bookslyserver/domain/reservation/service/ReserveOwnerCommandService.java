@@ -22,7 +22,7 @@ public class ReserveOwnerCommandService {
         return reservationRepository.getImminentReservationRequest(shopId);
     }
 
-    public List<ReserveResponseDTO.getDatesWithResReqResultDTO> getDatesWithResRequest(Long shopId){
-        return null;
+    public List<ReserveResponseDTO.getDatesWithResReqResultDTO> getDatesWithResRequest(int year,int month,Long shopId){
+        return reservationRepository.getDatesWithResReqResultDTO(year,month,shopId);
     }
 }

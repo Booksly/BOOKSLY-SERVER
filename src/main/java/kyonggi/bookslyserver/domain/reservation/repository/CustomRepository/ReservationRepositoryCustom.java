@@ -8,4 +8,6 @@ public interface ReservationRepositoryCustom {
     public List<ReserveResponseDTO.getReservationRequestResultDTO> getReservationRequest(Long shopId);
     public List<ReserveResponseDTO.getReservationRequestResultDTO> getImminentReservationRequest(Long shopId);
 
+    public List<ReserveResponseDTO.getDatesWithResReqResultDTO> getDatesWithResReqResultDTO(int year,int month, Long shopId);
+
 }
