@@ -21,4 +21,8 @@ public class ReserveOwnerCommandService {
     public List<ReserveResponseDTO.getReservationRequestResultDTO> getImminentReservationRequest(Long shopId){
         return reservationRepository.getImminentReservationRequest(shopId);
     }
+
+    public List<ReserveResponseDTO.getDatesWithResReqResultDTO> getDatesWithResRequest(int year,int month,Long shopId){
+        return reservationRepository.getDatesWithResReqResultDTO(year,month,shopId);
+    }
 }
