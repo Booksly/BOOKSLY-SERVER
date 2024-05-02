@@ -5,6 +5,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopUserReadOneDto;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,12 @@ import org.springframework.web.bind.annotation.*;
 public class ShopApiController {
 
     private final ShopService shopService;
+
+    @GetMapping("/api/shop/{shopId}")
+    public ResponseEntity<SuccessResponse<?>> findShop(@PathVariable("shopId") Long id){
+        ShopUserReadOneDto result = shopService.findOne(id);
+        return SuccessResponse.ok(result);
+    }
 
     //가게 등록
     @PostMapping("/api/shop/{shopOwnerId}")
