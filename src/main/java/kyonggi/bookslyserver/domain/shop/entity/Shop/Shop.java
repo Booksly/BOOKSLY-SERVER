@@ -2,10 +2,8 @@ package kyonggi.bookslyserver.domain.shop.entity.Shop;
 
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
-import kyonggi.bookslyserver.domain.reservation.entity.ReservationSetting;
 import kyonggi.bookslyserver.domain.review.entity.Review;
-import kyonggi.bookslyserver.domain.shop.constant.CategoryName;
-import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
@@ -13,7 +11,6 @@ import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,7 +2,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 
 
-import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopUserReadOneDto;

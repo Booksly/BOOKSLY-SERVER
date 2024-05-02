@@ -1,10 +1,9 @@
 package kyonggi.bookslyserver.domain.shop.controller;
 
-import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.service.EmployeeService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
-import okhttp3.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

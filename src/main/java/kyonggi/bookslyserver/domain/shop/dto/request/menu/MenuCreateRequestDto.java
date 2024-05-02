@@ -1,9 +1,7 @@
-package kyonggi.bookslyserver.domain.shop.dto.request;
+package kyonggi.bookslyserver.domain.shop.dto.request.menu;
 
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotNull;
-import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
-import org.aspectj.weaver.ast.Not;
 
 import java.util.List;
 

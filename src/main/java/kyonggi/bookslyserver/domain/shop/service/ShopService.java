@@ -2,8 +2,7 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 
 import jakarta.transaction.Transactional;
-import kyonggi.bookslyserver.domain.shop.dto.BusinessScheduleDto;
-import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;

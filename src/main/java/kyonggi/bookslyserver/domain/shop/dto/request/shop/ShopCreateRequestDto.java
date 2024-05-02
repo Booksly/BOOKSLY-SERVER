@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.domain.shop.dto.request;
+package kyonggi.bookslyserver.domain.shop.dto.request.shop;
 
 import kyonggi.bookslyserver.domain.shop.constant.CategoryName;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;

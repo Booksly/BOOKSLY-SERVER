@@ -2,8 +2,8 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 
 
-import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
-import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCategoryCreateDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import kyonggi.bookslyserver.domain.shop.service.MenuService;

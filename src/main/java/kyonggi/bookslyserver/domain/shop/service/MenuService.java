@@ -1,13 +1,12 @@
 package kyonggi.bookslyserver.domain.shop.service;
 
 import jakarta.transaction.Transactional;
-import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
-import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCategoryCreateDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
-import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuImage;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.MenuCategoryRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuImageRepository;
@@ -19,7 +18,6 @@ import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

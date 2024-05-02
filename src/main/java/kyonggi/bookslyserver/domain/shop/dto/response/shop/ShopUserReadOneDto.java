@@ -1,8 +1,6 @@
 package kyonggi.bookslyserver.domain.shop.dto.response.shop;
 
-import kyonggi.bookslyserver.domain.shop.dto.BusinessScheduleDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import lombok.Builder;
 
 import java.util.List;
