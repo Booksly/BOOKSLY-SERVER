@@ -46,4 +46,12 @@ public class ReserveRequestDTO {
          */
         private List<reservationMenuRequestDTO> reservationMenuRequestDTOS;
     }
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class refuseReasonRequestDTO{
+        private String refuseReason;
+    }
 }
