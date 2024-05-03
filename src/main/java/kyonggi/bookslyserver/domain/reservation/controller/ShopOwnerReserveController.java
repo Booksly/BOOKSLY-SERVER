@@ -41,9 +41,9 @@ public class ShopOwnerReserveController {
     public ResponseEntity<SuccessResponse<?>> confirmReservationRequest(@RequestParam("resId")Long reservationId){
         return SuccessResponse.ok(reserveOwnerCommandService.confirmReservationRequest(reservationId));
     }
-    @GetMapping("/refuseReq")
-    public ResponseEntity<SuccessResponse<?>> refuseReservationRequest(@RequestParam("resId")Long reservationId){
-        return SuccessResponse.ok(reserveOwnerCommandService.refuseReservationRequest(reservationId));
+    @PostMapping("/refuseReq")
+    public ResponseEntity<SuccessResponse<?>> refuseReservationRequest(@RequestParam("resId")Long reservationId,@RequestBody ReserveRequestDTO.refuseReasonRequestDTO requestDTO){
+        return SuccessResponse.ok(reserveOwnerCommandService.refuseReservationRequest(reservationId,requestDTO));
     }
     /*
     * 임시 uri api 테스트 시에만 사용 바람

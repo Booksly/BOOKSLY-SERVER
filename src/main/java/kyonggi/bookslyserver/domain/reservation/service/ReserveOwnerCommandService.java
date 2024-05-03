@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.reservation.service;
 
 import jakarta.transaction.Transactional;
+import kyonggi.bookslyserver.domain.reservation.dto.ReserveRequestDTO;
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
 import kyonggi.bookslyserver.domain.reservation.entity.Reservation;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationRepository;
@@ -40,10 +41,11 @@ public class ReserveOwnerCommandService {
         reservationRepository.save(reservation);
         return "예약이 확정되었습니다";
     }
-    public String refuseReservationRequest(Long reservationId){
+    public String refuseReservationRequest(Long reservationId, ReserveRequestDTO.refuseReasonRequestDTO requestDTO){
         Reservation reservation=reservationRepository.findById(reservationId)
                 .orElseThrow(()->new EntityNotFoundException());
         reservation.setRefused(true);
+        reservation.setRefuseReason(requestDTO.getRefuseReason());
         reservationRepository.save(reservation);
         return "예약이 거절되었습니다";
     }
