@@ -37,6 +37,14 @@ public class ShopOwnerReserveController {
     public ResponseEntity<SuccessResponse<?>> getDatesWithReservationRequest(@RequestParam("shopId")Long shopId,@PathVariable("year")int year,@PathVariable("month")int month){
         return SuccessResponse.ok(reserveOwnerCommandService.getDatesWithResRequest(year, month, shopId));
     }
+    @GetMapping("/confirmReq")
+    public ResponseEntity<SuccessResponse<?>> confirmReservationRequest(@RequestParam("resId")Long reservationId){
+        return SuccessResponse.ok(reserveOwnerCommandService.confirmReservationRequest(reservationId));
+    }
+    @GetMapping("/refuseReq")
+    public ResponseEntity<SuccessResponse<?>> refuseReservationRequest(@RequestParam("resId")Long reservationId){
+        return SuccessResponse.ok(reserveOwnerCommandService.refuseReservationRequest(reservationId));
+    }
     /*
     * 임시 uri api 테스트 시에만 사용 바람
     */
