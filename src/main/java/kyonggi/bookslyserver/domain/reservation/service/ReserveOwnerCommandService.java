@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -48,5 +49,11 @@ public class ReserveOwnerCommandService {
         reservation.setRefuseReason(requestDTO.getRefuseReason());
         reservationRepository.save(reservation);
         return "예약이 거절되었습니다";
+    }
+    /**
+     * 가게 주인 용도- 직원별 오늘 예약 전체 조회
+     */
+    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservations(LocalDate today,Long shopId, Long employeeId){
+        return null;
     }
 }

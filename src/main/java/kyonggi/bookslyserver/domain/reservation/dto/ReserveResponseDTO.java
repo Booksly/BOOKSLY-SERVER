@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public class ReserveResponseDTO {
     @Builder
@@ -54,5 +55,24 @@ public class ReserveResponseDTO {
     @Getter
     public static class getDatesWithResReqResultDTO{
         private LocalDate reservationDate;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class reservationMenu{
+        private String menuName;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class getTodayReservationsResultDTO{
+        private Long reservationScheduleId;
+        private LocalTime reservationScheduleTime;
+        private boolean isClosed;
+        private List<reservationMenu> reservationMenus;
     }
 }

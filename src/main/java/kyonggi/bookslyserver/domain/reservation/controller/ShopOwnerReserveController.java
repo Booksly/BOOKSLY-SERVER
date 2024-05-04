@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reserve")
@@ -45,6 +47,12 @@ public class ShopOwnerReserveController {
     public ResponseEntity<SuccessResponse<?>> refuseReservationRequest(@RequestParam("resId")Long reservationId,@RequestBody ReserveRequestDTO.refuseReasonRequestDTO requestDTO){
         return SuccessResponse.ok(reserveOwnerCommandService.refuseReservationRequest(reservationId,requestDTO));
     }
+
+    @GetMapping("/todayReservations/{date}")
+    public ResponseEntity<SuccessResponse<?>> getTodayReservations(@PathVariable("date") LocalDate today, @RequestParam("shopId") Long shopId, @RequestParam("employeeId")Long employeeId){
+        return null;
+    }
+
     /*
     * 임시 uri api 테스트 시에만 사용 바람
     */

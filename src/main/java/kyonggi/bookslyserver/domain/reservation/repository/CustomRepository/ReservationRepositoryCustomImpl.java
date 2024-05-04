@@ -82,6 +82,18 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
 
     }
 
+    @Override
+    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservations(LocalDate today, Long employeeId) {
+        return queryFactory.select(Projections.constructor(ReserveResponseDTO.getTodayReservationsResultDTO.class,
+                reservationSchedule.id.as("reservationScheduleId"),
+                reservationSchedule.startTime.as("reservationScheduleTime"),
+                reservationSchedule.isClosed.as("isClosed")
+                ))
+                .from(reservationSchedule)
+                .where(reservationSchedule.employee.id.eq(employeeId))
+                .fetch();
+    }
+
     private BooleanExpression isValidReservationSchedule(LocalDateTime now){
         return reservationSchedule.workDate.after(now.toLocalDate())
                 .or(reservationSchedule.workDate.eq(now.toLocalDate()).and(reservationSchedule.startTime.after(now.toLocalTime())));
