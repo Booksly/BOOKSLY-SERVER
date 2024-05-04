@@ -3,6 +3,7 @@ package kyonggi.bookslyserver.domain.shop.service;
 import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeWorkScheduleDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeDeleteResponseDto;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkSchedule;
@@ -93,12 +94,13 @@ public class EmployeeService {
     }
 
     @Transactional
-    public void delete(Long id){
+    public EmployeeDeleteResponseDto delete(Long id){
         Optional<Employee> employee = employeeRepository.findById(id);
 
         Shop shop = employee.get().getShop();
         shop.getEmployees().remove(employee.get());
         employeeRepository.deleteById(id);
+        return new EmployeeDeleteResponseDto(id);
     }
 
 }
