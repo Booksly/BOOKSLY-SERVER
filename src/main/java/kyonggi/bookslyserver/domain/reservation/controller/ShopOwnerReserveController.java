@@ -49,8 +49,8 @@ public class ShopOwnerReserveController {
     }
 
     @GetMapping("/todayReservations/{date}")
-    public ResponseEntity<SuccessResponse<?>> getTodayReservations(@PathVariable("date") LocalDate today, @RequestParam("shopId") Long shopId, @RequestParam("employeeId")Long employeeId){
-        return null;
+    public ResponseEntity<SuccessResponse<?>> getTodayReservations(@PathVariable("date") LocalDate today, @RequestParam("employeeId")Long employeeId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservations(today, employeeId));
     }
 
     /*

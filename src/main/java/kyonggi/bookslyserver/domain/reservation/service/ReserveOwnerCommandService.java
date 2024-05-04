@@ -37,14 +37,14 @@ public class ReserveOwnerCommandService {
 
     public String confirmReservationRequest(Long reservationId){
         Reservation reservation=reservationRepository.findById(reservationId)
-                .orElseThrow(()->new EntityNotFoundException());
+                .orElseThrow(()->new EntityNotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
         reservation.setConfirmed(true);
         reservationRepository.save(reservation);
         return "예약이 확정되었습니다";
     }
     public String refuseReservationRequest(Long reservationId, ReserveRequestDTO.refuseReasonRequestDTO requestDTO){
         Reservation reservation=reservationRepository.findById(reservationId)
-                .orElseThrow(()->new EntityNotFoundException());
+                .orElseThrow(()->new EntityNotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
         reservation.setRefused(true);
         reservation.setRefuseReason(requestDTO.getRefuseReason());
         reservationRepository.save(reservation);
@@ -53,7 +53,7 @@ public class ReserveOwnerCommandService {
     /**
      * 가게 주인 용도- 직원별 오늘 예약 전체 조회
      */
-    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservations(LocalDate today,Long shopId, Long employeeId){
-        return null;
+    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservations(LocalDate today,Long employeeId){
+        return reservationRepository.getTodayReservations(today, employeeId);
     }
 }
