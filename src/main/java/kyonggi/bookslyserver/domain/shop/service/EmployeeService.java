@@ -97,6 +97,10 @@ public class EmployeeService {
     public EmployeeDeleteResponseDto delete(Long id){
         Optional<Employee> employee = employeeRepository.findById(id);
 
+        if(!employee.isPresent()){
+            throw new EntityNotFoundException();
+        }
+
         Shop shop = employee.get().getShop();
         shop.getEmployees().remove(employee.get());
         employeeRepository.deleteById(id);
