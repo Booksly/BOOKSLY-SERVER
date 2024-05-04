@@ -58,6 +58,7 @@ public enum ErrorCode implements BaseErrorCode{
     EMPLOYEE_NOT_FOUND(HttpStatus.NOT_FOUND,"해당하는 직원을 찾을 수 없습니다"),
     EMPLOYEE_MENU_NOT_FOUND(HttpStatus.NOT_FOUND,"직원 메뉴를 찾을 수 없습니다"),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND,"해당하는 시간대가 없습니다"),
+    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND,"해당하는 예약이 존재하지 않습니다"),
 
     /**
      * 405 Method Not Allowed
