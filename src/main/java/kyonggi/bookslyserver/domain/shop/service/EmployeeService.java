@@ -45,18 +45,19 @@ public class EmployeeService {
 
         shop.get().getEmployees().add(employee);
 
-        if(!requestDto.menus().isEmpty()){
+        if(requestDto.menus() != null){
             for(String menuName : requestDto.menus()){
                 Menu menu = menuRepository.findByMenuName(menuName);
                 EmployeeMenu employeeMenu = employee.addMenu(employee, menu);
             }
         }
 
-        for(EmployeeWorkScheduleDto employeeWorkScheduleDto : requestDto.workSchedules()){
-            WorkSchedule workSchedule = WorkSchedule.createEntity(employee, employeeWorkScheduleDto);
-            employee.getWorkSchedules().add(workSchedule);
+        if(requestDto.workSchedules() != null) {
+            for (EmployeeWorkScheduleDto employeeWorkScheduleDto : requestDto.workSchedules()) {
+                WorkSchedule workSchedule = WorkSchedule.createEntity(employee, employeeWorkScheduleDto);
+                employee.getWorkSchedules().add(workSchedule);
+            }
         }
-
 
         return new EmployeeCreateResponseDto(employee);
     }
