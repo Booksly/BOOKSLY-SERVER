@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeWorkScheduleDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeDeleteResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkSchedule;
@@ -33,7 +34,7 @@ public class EmployeeService {
     private final MenuRepository menuRepository;
 
     @Transactional
-    public Long join(Long id, EmployeeCreateRequestDto requestDto){
+    public EmployeeCreateResponseDto join(Long id, EmployeeCreateRequestDto requestDto){
         Optional<Shop> shop = shopRepository.findById(id);
         if(!shop.isPresent()){
             throw new EntityNotFoundException();
@@ -45,18 +46,21 @@ public class EmployeeService {
 
         shop.get().getEmployees().add(employee);
 
-        if(!requestDto.menus().isEmpty()){
+        if(requestDto.menus() != null){
             for(String menuName : requestDto.menus()){
                 Menu menu = menuRepository.findByMenuName(menuName);
                 EmployeeMenu employeeMenu = employee.addMenu(employee, menu);
             }
         }
 
-        for(EmployeeWorkScheduleDto employeeWorkScheduleDto : requestDto.workSchedules()){
-            WorkSchedule workSchedule = WorkSchedule.createEntity(employee, employeeWorkScheduleDto);
-            employee.getWorkSchedules().add(workSchedule);
+        if(requestDto.workSchedules() != null) {
+            for (EmployeeWorkScheduleDto employeeWorkScheduleDto : requestDto.workSchedules()) {
+                WorkSchedule workSchedule = WorkSchedule.createEntity(employee, employeeWorkScheduleDto);
+                employee.getWorkSchedules().add(workSchedule);
+            }
         }
-        return employee.getId();
+
+        return new EmployeeCreateResponseDto(employee);
     }
 
     @Transactional
