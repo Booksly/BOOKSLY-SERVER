@@ -5,16 +5,20 @@ import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeWorkScheduleDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeDeleteResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeReadDto;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.*;
+import kyonggi.bookslyserver.global.error.ErrorCode;
+import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +36,28 @@ public class EmployeeService {
     private final ShopRepository shopRepository;
 
     private final MenuRepository menuRepository;
+
+    public List<EmployeeReadDto> readEmployee(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException();
+        }
+
+        List<EmployeeReadDto> employeeReadDtos = new ArrayList<>();
+
+        if(shop.get().getEmployees() != null) {
+            for (Employee employee : shop.get().getEmployees()) {
+                EmployeeReadDto employeeReadDto = new EmployeeReadDto(employee);
+                employeeReadDtos.add(employeeReadDto);
+            }
+        }
+        else{
+            throw new BusinessException(ErrorCode.EMPLOYEES_NOT_FOUND);
+        }
+
+        return employeeReadDtos;
+    }
 
     @Transactional
     public EmployeeCreateResponseDto join(Long id, EmployeeCreateRequestDto requestDto){
