@@ -4,6 +4,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
@@ -50,7 +51,7 @@ public class MenuApiController {
 
     @PostMapping("/api/menuCategory/{shopId}")
     public ResponseEntity<SuccessResponse<?>> createMenuCategory(@PathVariable("shopId") Long id, @RequestBody @Validated MenuCategoryCreateDto requestDto){
-        Long result = menuService.createCategory(id, requestDto);
+        MenuCategoryCreateResponseDto result = menuService.createCategory(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
