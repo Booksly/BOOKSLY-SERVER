@@ -10,5 +10,5 @@ public class MenuCategoryCreateResponseDto {
     public MenuCategoryCreateResponseDto(MenuCategory menuCategory){
         this.id = menuCategory.getId();
     }
-    
+
 }

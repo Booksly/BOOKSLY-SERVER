@@ -14,4 +14,6 @@ public interface MenuCategoryRepository extends JpaRepository<MenuCategory, Long
     void delete(@Param("categoryId") Long id);
 
     boolean existsByName(String name);
+
+    MenuCategory findByName(String name);
 }
