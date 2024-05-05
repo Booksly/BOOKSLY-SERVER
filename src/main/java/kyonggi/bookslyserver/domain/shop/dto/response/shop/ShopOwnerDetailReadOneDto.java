@@ -19,6 +19,10 @@ public class ShopOwnerDetailReadOneDto {
 
     private int todayVisitors;
 
+    private int favoriteUserNum;
+
+    private String userId;
+
     private String description;
 
     private String address;
@@ -50,6 +54,8 @@ public class ShopOwnerDetailReadOneDto {
         }
         this.totalVisitors = shop.getTotalVisitors();
         this.todayVisitors = shop.getTodayVisitors();
+        this.favoriteUserNum = shop.getFavoriteShops().size();
+        this.userId = shop.getShopOwner().getUser().getLoginId();
         this.description = shop.getIntroduction();
         this.detailAddress = shop.getDetailAddress();
         this.phoneNum = shop.getPhoneNumber();
