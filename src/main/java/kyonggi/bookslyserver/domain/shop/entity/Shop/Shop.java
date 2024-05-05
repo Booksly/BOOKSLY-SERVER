@@ -10,6 +10,7 @@ import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedul
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
+import kyonggi.bookslyserver.domain.user.entity.FavoriteShop;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
@@ -94,6 +95,9 @@ public class Shop extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private List<Employee> employees = new ArrayList<>();
+
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
+    private List<FavoriteShop> favoriteShops = new ArrayList<>();
 
 
     //==생성메서드==//
