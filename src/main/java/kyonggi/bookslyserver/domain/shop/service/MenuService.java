@@ -3,6 +3,7 @@ package kyonggi.bookslyserver.domain.shop.service;
 import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
@@ -95,6 +96,25 @@ public class MenuService {
         else{
             menuRepository.delete(menu.get());
         }
+    }
+
+    public List<MenuCategoryReadDto> readMenuCategory(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException();
+        }
+
+        List<MenuCategoryReadDto> dtos = new ArrayList<>();
+
+        if(shop.get().getMenuCategories() != null){
+            for(MenuCategory menuCategory : shop.get().getMenuCategories()){
+                dtos.add(new MenuCategoryReadDto(menuCategory));
+            }
+        }
+        else{
+            throw new BusinessException(ErrorCode.MENUCATEGORIES_NOT_FOUND);
+        }
+        return dtos;
     }
 
     @Transactional

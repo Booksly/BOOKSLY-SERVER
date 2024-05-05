@@ -4,6 +4,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import kyonggi.bookslyserver.domain.shop.service.MenuService;
@@ -13,11 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class MenuApiController {
 
     private final MenuService menuService;
+
+
 
     @PostMapping("/api/menu/{shopId}")
     public ResponseEntity<SuccessResponse<?>> createMenu(@PathVariable("shopId") Long id, @RequestBody @Validated MenuCreateRequestDto requestDto){
@@ -35,6 +40,12 @@ public class MenuApiController {
     @DeleteMapping("/api/menu/{menuId}")
     public void delete(@PathVariable("menuId") Long id){
         menuService.delete(id);
+    }
+
+    @GetMapping("/api/menuCategory/owner/{shopId}")
+    public ResponseEntity<SuccessResponse<?>> readCategory(@PathVariable("shopId") Long id){
+        List<MenuCategoryReadDto> result = menuService.readMenuCategory(id);
+        return SuccessResponse.ok(result);
     }
 
     @PostMapping("/api/menuCategory/{shopId}")
