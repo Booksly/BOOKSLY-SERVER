@@ -69,6 +69,7 @@ public enum ErrorCode implements BaseErrorCode{
      * 409 Conflict
      */
     CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 리소스입니다."),
+    MENUCATEGORY_ALREADY_EXIST(HttpStatus.CONFLICT, "해당 카테고리가 이미 존재합니다."),
 
     /**
      * 500 Internal Server Error

@@ -123,10 +123,15 @@ public class MenuService {
         if(!shop.isPresent()){
             throw new EntityNotFoundException();
         }
-        MenuCategory menuCategory = MenuCategory.createEntity(requestDto, shop.get());
-        shop.get().getMenuCategory(menuCategory);
-        menuCategoryRepository.save(menuCategory);
-        return menuCategory.getId();
+        if(!menuCategoryRepository.existsByName(requestDto.categoryName())) {
+            MenuCategory menuCategory = MenuCategory.createEntity(requestDto, shop.get());
+            shop.get().getMenuCategory(menuCategory);
+            menuCategoryRepository.save(menuCategory);
+            return menuCategory.getId();
+        }
+        else{
+            throw new BusinessException(ErrorCode.MENUCATEGORY_ALREADY_EXIST);
+        }
     }
 
     @Transactional
