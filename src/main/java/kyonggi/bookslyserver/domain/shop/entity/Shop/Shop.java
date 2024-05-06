@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.entity.Shop;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSetting;
 import kyonggi.bookslyserver.domain.review.entity.Review;
@@ -95,9 +96,13 @@ public class Shop extends BaseTimeEntity {
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private List<Employee> employees = new ArrayList<>();
 
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
+    private List<TimeEvent> timeEvents = new ArrayList<>();
+
+
 
     //==생성메서드==//
-    public void getBusinessSchedule(BusinessSchedule businessSchedule){
+    public void getBusinessSchedule(BusinessSchedule businessSchedule) {
         this.businessSchedules.add(businessSchedule);
         businessSchedule.setShop(this);
     }
