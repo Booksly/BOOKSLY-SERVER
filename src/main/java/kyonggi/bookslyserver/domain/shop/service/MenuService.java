@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadOneDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
@@ -18,6 +19,7 @@ import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,15 @@ public class MenuService {
     private final MenuCategoryRepository menuCategoryRepository;
 
     private final ShopRepository shopRepository;
+
+    public MenuReadOneDto readOneMenu(Long id){
+        Optional<Menu> menu = menuRepository.findById(id);
+        if(!menu.isPresent()){
+            throw new EntityNotFoundException();
+        }
+
+        return new MenuReadOneDto(menu.get());
+    }
 
     @Transactional
     public MenuCreateResponseDto create(Long id, MenuCreateRequestDto requestDto){

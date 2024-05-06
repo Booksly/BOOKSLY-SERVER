@@ -2,9 +2,11 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 
 
+import com.sun.net.httpserver.Authenticator;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadOneDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import kyonggi.bookslyserver.domain.shop.service.MenuService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
@@ -18,6 +20,12 @@ import org.springframework.web.bind.annotation.*;
 public class MenuApiController {
 
     private final MenuService menuService;
+
+    @GetMapping("/api/menu/owner/{menuId}")
+    public ResponseEntity<SuccessResponse<?>> readOneMenu(@PathVariable("menuId") Long id){
+        MenuReadOneDto result = menuService.readOneMenu(id);
+        return SuccessResponse.ok(result);
+    }
 
     @PostMapping("/api/menu/{shopId}")
     public ResponseEntity<SuccessResponse<?>> createMenu(@PathVariable("shopId") Long id, @RequestBody @Validated MenuCreateRequestDto requestDto){
