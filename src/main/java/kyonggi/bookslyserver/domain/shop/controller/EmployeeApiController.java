@@ -1,6 +1,8 @@
 package kyonggi.bookslyserver.domain.shop.controller;
 
 import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeDeleteResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.service.EmployeeService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +18,7 @@ public class EmployeeApiController {
 
     @PostMapping("/api/employee/{shopId}")
     public ResponseEntity<SuccessResponse<?>> createEmployee(@PathVariable("shopId") Long id, @RequestBody @Validated EmployeeCreateRequestDto requestDto){
-        Long result = employeeService.join(id, requestDto);
+        EmployeeCreateResponseDto result = employeeService.join(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
@@ -27,7 +29,8 @@ public class EmployeeApiController {
     }
 
     @DeleteMapping("/api/employee/{employeeId}")
-    public void deleteEmployee(@PathVariable("employeeId") Long id){
-        employeeService.delete(id);
+    public ResponseEntity<SuccessResponse<?>> deleteEmployee(@PathVariable("employeeId") Long id){
+        EmployeeDeleteResponseDto result = employeeService.delete(id);
+        return SuccessResponse.ok(result);
     }
 }

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reserve")
@@ -33,6 +35,24 @@ public class ShopOwnerReserveController {
     public ResponseEntity<SuccessResponse<?>> getImminentReservationRequest(@RequestParam("shopId")Long shopId){
         return SuccessResponse.ok(reserveOwnerCommandService.getImminentReservationRequest(shopId));
     }
+    @GetMapping("/monthlyReq/{year}/{month}")
+    public ResponseEntity<SuccessResponse<?>> getDatesWithReservationRequest(@RequestParam("shopId")Long shopId,@PathVariable("year")int year,@PathVariable("month")int month){
+        return SuccessResponse.ok(reserveOwnerCommandService.getDatesWithResRequest(year, month, shopId));
+    }
+    @GetMapping("/confirmReq")
+    public ResponseEntity<SuccessResponse<?>> confirmReservationRequest(@RequestParam("resId")Long reservationId){
+        return SuccessResponse.ok(reserveOwnerCommandService.confirmReservationRequest(reservationId));
+    }
+    @PostMapping("/refuseReq")
+    public ResponseEntity<SuccessResponse<?>> refuseReservationRequest(@RequestParam("resId")Long reservationId,@RequestBody ReserveRequestDTO.refuseReasonRequestDTO requestDTO){
+        return SuccessResponse.ok(reserveOwnerCommandService.refuseReservationRequest(reservationId,requestDTO));
+    }
+
+    @GetMapping("/todayReservations/{date}")
+    public ResponseEntity<SuccessResponse<?>> getTodayReservations(@PathVariable("date") LocalDate today, @RequestParam("employeeId")Long employeeId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservations(today, employeeId));
+    }
+
     /*
     * 임시 uri api 테스트 시에만 사용 바람
     */

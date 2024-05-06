@@ -40,6 +40,9 @@ public class Reservation extends BaseTimeEntity {
     @Column
     private String eventTitle;
 
+    @Column
+    private String refuseReason;
+
     @ManyToOne
     @JoinColumn(name = "reservationSchedule_id")
     private ReservationSchedule reservationSchedule;
