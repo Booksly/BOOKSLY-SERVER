@@ -1,11 +1,15 @@
 package kyonggi.bookslyserver.domain.event.entity.timeEvent;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -25,17 +29,26 @@ public class TimeEvent extends BaseTimeEntity {
 
     private boolean repetitionStatus;
 
-    private boolean isDayRepeat; // 요일 반복
+    private boolean isDayOfWeekRepeat; // 요일 반복
 
     private boolean isDateRepeat; // 날짜 반복
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "timeEventSchedule_id")
-    private TimeEventSchedule timeEventSchedule;
-
-    @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RepeatDayOfWeek> repeatDayOfWeeks = new ArrayList<>();
+    @ElementCollection(targetClass = DayOfWeek.class)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "time_event_day_of_week", joinColumns = @JoinColumn(name = "time_event_id"))
+    @Column(name = "day_of_week")
+    private List<DayOfWeek> dayOfWeeks = new ArrayList<>();
 
     @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<EmployeeTimeEvent> employeeTimeEvents = new ArrayList<>();
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "shop_id")
+    private Shop shop;
+
+    @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<TimeEventMenu> timeEventMenus = new ArrayList<>();
+
 }
