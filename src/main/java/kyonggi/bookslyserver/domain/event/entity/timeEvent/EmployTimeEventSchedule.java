@@ -1,13 +1,14 @@
 package kyonggi.bookslyserver.domain.event.entity.timeEvent;
 
 import jakarta.persistence.*;
-
-import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
-
+import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
-
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -17,28 +18,27 @@ import static jakarta.persistence.FetchType.LAZY;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class EmployeeTimeEvent extends BaseTimeEntity {
+public class EmployTimeEventSchedule extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "timeEvent_id")
-    private TimeEvent timeEvent;
+    private LocalDateTime startEventDateTime;
+
+    private LocalDateTime endEventDateTime;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    //== 연관관계 편의 메서드 ==//
-    public void addTimeEvent(TimeEvent timeEvent) {
-        this.timeEvent = timeEvent;
-        timeEvent.getEmployeeTimeEvents().add(this);
-    }
+    @OneToMany(mappedBy = "employTimeEventSchedule")
+    @Builder.Default
+    private List<ReservationSchedule> reservationSchedules = new ArrayList<>();
 
+    //== 연관관계 편의 메서드 ==//
     public void addEmployee(Employee employee) {
         this.employee = employee;
-        employee.getEmployeeTimeEvents().add(this);
+        employee.getTimeEventSchedules().add(this);
     }
 }
