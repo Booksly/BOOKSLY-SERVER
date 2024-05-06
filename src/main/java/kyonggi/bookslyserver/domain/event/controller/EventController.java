@@ -21,7 +21,7 @@ public class EventController {
 
     private final TimeEventService timeEventService;
 
-    @PostMapping("/time-events")
+    @PostMapping("/time-event")
     public ResponseEntity<SuccessResponse<?>> createTimeEvents(@OwnerId Long ownerId, @RequestBody CreateTimeEventsRequestDto createTimeEventsRequestDto){
         CreateTimeEventsResponseDto timeEventsResponseDto = timeEventService.createTimeEvents(ownerId, createTimeEventsRequestDto);
         return SuccessResponse.ok(timeEventsResponseDto);
