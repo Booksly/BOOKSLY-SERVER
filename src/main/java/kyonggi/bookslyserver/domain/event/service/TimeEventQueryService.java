@@ -42,7 +42,6 @@ public class TimeEventQueryService {
         LocalDateTime dateTimeEnd = date.atTime(LocalTime.MAX);
 
         Optional<List<TimeEvent>> timeEvents = employTimeEventScheduleRepository.findTimeEventsByEmployeeIdAndDateTime(employee.getId(), dateTimeStart, dateTimeEnd);
-        timeEvents.get().stream().forEach(timeEvent -> log.info(timeEvent.getTitle()));
         return GetTimeEventsResponseDto.of(timeEvents);
     }
 }
