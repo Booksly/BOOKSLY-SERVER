@@ -96,7 +96,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     }
 
     @Override
-    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservations(LocalDate today, Long employeeId) {
+    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservationSchedules(LocalDate today, Long employeeId) {
         
         List<ReserveResponseDTO.getTodayReservationsResultDTO> results = queryFactory
                 .select(Projections.fields(ReserveResponseDTO.getTodayReservationsResultDTO.class,
@@ -111,6 +111,48 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 .fetch();
 
         // 각 예약에 대한 메뉴 이름 목록 조회 후 reservationMenu 리스트 세팅
+        results.forEach(result -> {
+            List<String> menuNames = queryFactory
+                    .select(menu.menuName)
+                    .from(reservationMenu)
+                    .leftJoin(menu).on(reservationMenu.menu.id.eq(menu.id))
+                    .where(
+                            reservationMenu.reservation.reservationSchedule.id.eq(result.getReservationScheduleId()),
+                            reservationMenu.reservation.isConfirmed.eq(true)
+                    )
+                    .fetch()
+                    .stream()
+                    .distinct()
+                    .toList();
+
+            List<ReserveResponseDTO.reservationMenu> menuList = menuNames.stream()
+                    .map(name -> ReserveResponseDTO.reservationMenu.builder().menuName(name).build())
+                    .collect(Collectors.toList());
+
+            result.setReservationMenus(menuList);
+        });
+
+        return results;
+    }
+    @Override
+    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservationsOnly(LocalDate date, Long employeeId) {
+
+        List<ReserveResponseDTO.getTodayReservationsResultDTO> results = queryFactory
+                .select(Projections.fields(ReserveResponseDTO.getTodayReservationsResultDTO.class,
+                        reservationSchedule.id.as("reservationScheduleId"),
+                        reservationSchedule.startTime.as("reservationScheduleTime"),
+                        reservationSchedule.isClosed.as("isClosed")
+                ))
+                .from(reservationSchedule)
+                .leftJoin(reservation)
+                .on(reservation.reservationSchedule.id.eq(reservationSchedule.id))
+                .where(reservationSchedule.employee.id.eq(employeeId),
+                        reservationSchedule.workDate.eq(date),
+                        reservation.id.isNotNull().and(reservation.isConfirmed.eq(true))
+                )
+                .groupBy(reservationSchedule.id)
+                .fetch();
+
         results.forEach(result -> {
             List<String> menuNames = queryFactory
                     .select(menu.menuName)
