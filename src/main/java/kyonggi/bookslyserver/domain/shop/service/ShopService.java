@@ -13,12 +13,16 @@ import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
+import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static kyonggi.bookslyserver.global.error.ErrorCode.BAD_REQUEST;
+import static kyonggi.bookslyserver.global.error.ErrorCode.ENTITY_NOT_FOUND;
 
 @Service
 @Transactional
@@ -72,8 +76,11 @@ public class ShopService {
         shopRepository.deleteById(id);
     }
 
-
-
-
-
+    public Shop findShop(Long ownerId, Long shopId) {
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+        if (shop.getShopOwner().getId() != ownerId) {
+            throw new BusinessException(BAD_REQUEST);
+        }
+        return shop;
+    }
 }
