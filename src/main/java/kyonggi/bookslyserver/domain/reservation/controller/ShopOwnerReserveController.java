@@ -12,7 +12,7 @@ import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reserve")
+@RequestMapping("/reserve-owner")
 public class ShopOwnerReserveController {
     private final ReserveCommandService reserveCommandService;
     private final ReserveOwnerCommandService reserveOwnerCommandService;
