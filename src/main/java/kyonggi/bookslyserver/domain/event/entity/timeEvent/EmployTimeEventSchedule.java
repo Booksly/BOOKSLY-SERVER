@@ -36,6 +36,10 @@ public class EmployTimeEventSchedule extends BaseTimeEntity {
     @Builder.Default
     private List<ReservationSchedule> reservationSchedules = new ArrayList<>();
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "timeEvent_id")
+    private TimeEvent timeEvent;
+
     //== 연관관계 편의 메서드 ==//
     public void addEmployee(Employee employee) {
         this.employee = employee;

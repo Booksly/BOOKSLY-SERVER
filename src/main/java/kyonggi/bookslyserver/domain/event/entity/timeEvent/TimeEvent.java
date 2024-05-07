@@ -33,6 +33,10 @@ public class TimeEvent extends BaseTimeEntity {
 
     private boolean isDateRepeat; // 날짜 반복
 
+    private int startTime;
+
+    private int endTime;
+
     @ElementCollection(targetClass = DayOfWeek.class)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "time_event_day_of_week", joinColumns = @JoinColumn(name = "time_event_id"))
@@ -50,5 +54,9 @@ public class TimeEvent extends BaseTimeEntity {
     @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL)
     @Builder.Default
     private List<TimeEventMenu> timeEventMenus = new ArrayList<>();
+
+    @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<EmployTimeEventSchedule> timeEventSchedules = new ArrayList<>();
 
 }
