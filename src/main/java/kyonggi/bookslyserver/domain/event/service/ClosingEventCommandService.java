@@ -7,15 +7,10 @@ import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEventMenu;
 import kyonggi.bookslyserver.domain.event.repository.ClosingEventRepository;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
-import kyonggi.bookslyserver.domain.shop.service.ShopService;
-import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.EMPLOYEE_NOT_FOUND;
 import static kyonggi.bookslyserver.global.error.ErrorCode.MENU_NOT_FOUND;
@@ -23,7 +18,7 @@ import static kyonggi.bookslyserver.global.error.ErrorCode.MENU_NOT_FOUND;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ClosingEventService {
+public class ClosingEventCommandService {
     private final ClosingEventRepository closingEventRepository;
     private final MenuRepository menuRepository;
     private final EmployeeRepository employeeRepository;
