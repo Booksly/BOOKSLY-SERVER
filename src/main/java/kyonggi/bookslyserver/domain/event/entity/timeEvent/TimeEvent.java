@@ -6,6 +6,7 @@ import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,10 @@ public class TimeEvent extends BaseTimeEntity {
 
     private boolean isDateRepeat; // 날짜 반복
 
+    private LocalTime startTime;
+
+    private LocalTime endTime;
+
     @ElementCollection(targetClass = DayOfWeek.class)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "time_event_day_of_week", joinColumns = @JoinColumn(name = "time_event_id"))
@@ -50,5 +55,9 @@ public class TimeEvent extends BaseTimeEntity {
     @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL)
     @Builder.Default
     private List<TimeEventMenu> timeEventMenus = new ArrayList<>();
+
+    @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<EmployTimeEventSchedule> employTimeEventSchedules = new ArrayList<>();
 
 }
