@@ -36,7 +36,7 @@ import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-public class TimeEventService {
+public class TimeEventCommandService {
 
     private final EmployeeRepository employeeRepository;
     private final ShopRepository shopRepository;
