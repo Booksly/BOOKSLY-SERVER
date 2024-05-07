@@ -45,18 +45,17 @@ public class TimeEventService {
 
     public CreateTimeEventsResponseDto createTimeEvents(Long ownerId, CreateTimeEventsRequestDto requestDto) {
         Shop shop = findShop(ownerId, requestDto.shopId());
-
         validateRepeatSettings(requestDto.isRepeat(), requestDto.isDateRepeat(), requestDto.isDayOfWeekRepeat());
 
         List<DayOfWeek> dayOfWeeks = createRepeatDayOfWeeks(requestDto);
 
-        createTimeEventSchedulesForEmployee(requestDto,dayOfWeeks);
         TimeEvent timeEvent = createTimeEvent(requestDto, shop, dayOfWeeks);
+        timeEventRepository.save(timeEvent);
+
+        createTimeEventSchedulesForEmployee(requestDto,dayOfWeeks,timeEvent);
 
         setMenuAndTimeEventToTimeEventMenu(requestDto, timeEvent);
         setEmployeeAndTimeEventToEmployeeTimeEvent(requestDto, timeEvent);
-
-        timeEventRepository.save(timeEvent);
 
         return CreateTimeEventsResponseDto.of(timeEvent);
     }
@@ -86,17 +85,17 @@ public class TimeEventService {
         return requestDto.dayOfWeeks();
     }
     
-    private void createTimeEventSchedulesForEmployee(CreateTimeEventsRequestDto requestDto, List<DayOfWeek> dayOfWeeks) {
+    private void createTimeEventSchedulesForEmployee(CreateTimeEventsRequestDto requestDto, List<DayOfWeek> dayOfWeeks, TimeEvent timeEvent) {
 
         if (requestDto.isDayOfWeekRepeat())
-            processTimeEventScheduleByDayOfWeeks(requestDto, dayOfWeeks);
+            processTimeEventScheduleByDayOfWeeks(requestDto, dayOfWeeks, timeEvent);
 
         if (requestDto.isDateRepeat())
             validateDateIsNull(requestDto);
-            processTimeEventScheduleByDateRepeat(requestDto);
+            processTimeEventScheduleByDateRepeat(requestDto, timeEvent);
 
         if (!requestDto.isRepeat())
-            processTimeEventScheduleToday(requestDto);
+            processTimeEventScheduleToday(requestDto, timeEvent);
     }
 
     private void validateDateIsNull(CreateTimeEventsRequestDto requestDto) {
@@ -143,8 +142,9 @@ public class TimeEventService {
         return newEmployTimeEventSchedule;
     }
 
-    private EmployTimeEventSchedule createAndSaveTimeEventSchedule(LocalDateTime newStartEventDateTime, LocalDateTime newEndEventDateTime, Employee employee) {
+    private EmployTimeEventSchedule createAndSaveTimeEventSchedule(LocalDateTime newStartEventDateTime, LocalDateTime newEndEventDateTime, Employee employee, TimeEvent timeEvent) {
         EmployTimeEventSchedule newTimeEventSchedule = createNewEmployTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, employee);
+        newTimeEventSchedule.addTimeEvent(timeEvent);
         employTimeEventScheduleRepository.save(newTimeEventSchedule);
         return newTimeEventSchedule;
     }
@@ -156,8 +156,9 @@ public class TimeEventService {
      * @param employee 직원
      * @param reservationSchedulesWithinEventPeriod 새로운 타임이벤트 일정에 포함된 직원의 예약 일정들
      */
-    private void processTimeEventSchedule(LocalDateTime newStartEventDateTime, LocalDateTime newEndEventDateTime, Employee employee, List<ReservationSchedule> reservationSchedulesWithinEventPeriod) {
-        EmployTimeEventSchedule newTimeEventSchedule = createAndSaveTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, employee);
+    private void processTimeEventSchedule(LocalDateTime newStartEventDateTime, LocalDateTime newEndEventDateTime, Employee employee,
+                                          List<ReservationSchedule> reservationSchedulesWithinEventPeriod, TimeEvent timeEvent) {
+        EmployTimeEventSchedule newTimeEventSchedule = createAndSaveTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, employee, timeEvent);
         linkEventScheduleAndReservationSchedule(newTimeEventSchedule, reservationSchedulesWithinEventPeriod);
     }
 
@@ -176,7 +177,7 @@ public class TimeEventService {
      * @param requestDto
      * @param newDayOfWeeks 반복 요청된 요일 ex. [MONDAY,TUESDAY ...]
      */
-    private void processTimeEventScheduleByDayOfWeeks(CreateTimeEventsRequestDto requestDto, List<DayOfWeek> newDayOfWeeks) {
+    private void processTimeEventScheduleByDayOfWeeks(CreateTimeEventsRequestDto requestDto, List<DayOfWeek> newDayOfWeeks,TimeEvent timeEvent) {
         List<Employee> employees = getEmployees(requestDto);
 
         for (Employee em : employees) {
@@ -190,7 +191,7 @@ public class TimeEventService {
                     LocalDateTime newEndEventDateTime = LocalDateTime.of(date, requestDto.endTime());
 
                     processTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, em,
-                            getFilteredReservationSchedulesForDay(requestDto, schedules));
+                            getFilteredReservationSchedulesForDay(requestDto, schedules),timeEvent);
                 }
             });
         }
@@ -259,14 +260,14 @@ public class TimeEventService {
      *
      * @param requestDto
      */
-    private void processTimeEventScheduleByDateRepeat(CreateTimeEventsRequestDto requestDto) {
+    private void processTimeEventScheduleByDateRepeat(CreateTimeEventsRequestDto requestDto, TimeEvent timeEvent) {
         LocalDateTime newStartEventDateTime = LocalDateTime.of(requestDto.startDate(), requestDto.startTime());
         LocalDateTime newEndEventDateTime = LocalDateTime.of(requestDto.endDate(), requestDto.endTime());
 
         getEmployees(requestDto).stream()
                 .forEach(employee -> {
                     processTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, employee,
-                            findReservationScheduleWithinEventPeriod(newStartEventDateTime, newEndEventDateTime, employee));
+                            findReservationScheduleWithinEventPeriod(newStartEventDateTime, newEndEventDateTime, employee),timeEvent);
                 });
     }
 
@@ -278,14 +279,14 @@ public class TimeEventService {
      *
      * @param requestDto
      */
-    private void processTimeEventScheduleToday(CreateTimeEventsRequestDto requestDto) {
+    private void processTimeEventScheduleToday(CreateTimeEventsRequestDto requestDto, TimeEvent timeEvent) {
         LocalDateTime newStartEventDateTime = LocalDateTime.of(LocalDate.now(), requestDto.startTime());
         LocalDateTime newEndEventDateTime = LocalDateTime.of(LocalDate.now(), requestDto.endTime());
 
         getEmployees(requestDto).stream()
                 .forEach(employee -> {
                     processTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, employee,
-                            findReservationScheduleWithinEventPeriod(newStartEventDateTime, newEndEventDateTime, employee));
+                            findReservationScheduleWithinEventPeriod(newStartEventDateTime, newEndEventDateTime, employee), timeEvent);
                 });
     }
 
@@ -300,6 +301,8 @@ public class TimeEventService {
                 .repetitionStatus(requestDto.isRepeat())
                 .isDateRepeat(requestDto.isDateRepeat())
                 .isDayOfWeekRepeat(requestDto.isDayOfWeekRepeat())
+                .startTime(requestDto.startTime())
+                .endTime(requestDto.endTime())
                 .shop(shop)
                 .build();
 

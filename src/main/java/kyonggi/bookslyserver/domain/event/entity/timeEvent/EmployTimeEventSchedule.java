@@ -45,4 +45,9 @@ public class EmployTimeEventSchedule extends BaseTimeEntity {
         this.employee = employee;
         employee.getTimeEventSchedules().add(this);
     }
+
+    public void addTimeEvent(TimeEvent timeEvent) {
+        this.timeEvent = timeEvent;
+        timeEvent.getEmployTimeEventSchedules().add(this);
+    }
 }
