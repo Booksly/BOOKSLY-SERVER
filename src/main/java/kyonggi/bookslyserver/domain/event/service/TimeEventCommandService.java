@@ -2,7 +2,6 @@ package kyonggi.bookslyserver.domain.event.service;
 
 import kyonggi.bookslyserver.domain.event.dto.request.CreateTimeEventsRequestDto;
 import kyonggi.bookslyserver.domain.event.dto.response.CreateTimeEventsResponseDto;
-import kyonggi.bookslyserver.domain.event.dto.response.GetTimeEventsResponseDto;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.*;
 import kyonggi.bookslyserver.domain.event.repository.TimeEventRepository;
 import kyonggi.bookslyserver.domain.event.repository.EmployTimeEventScheduleRepository;
@@ -338,7 +337,4 @@ public class TimeEventCommandService {
                 });
     }
 
-    public GetTimeEventsResponseDto getTimeEvents(Long shopId, Long employeeId, LocalDate date, Long ownerId) {
-        return null;
-    }
 }
