@@ -26,4 +26,10 @@ public class ClosingEventMenu extends BaseTimeEntity {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
+    //== 연관관계 편의 메서드 ==//
+    public void addClosingEvent(ClosingEvent closingEvent) {
+        this.closingEvent = closingEvent;
+        closingEvent.getClosingEventMenus().add(this);
+    }
+
 }

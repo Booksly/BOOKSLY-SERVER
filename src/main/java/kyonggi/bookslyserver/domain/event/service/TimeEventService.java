@@ -12,6 +12,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
+import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.ConflictException;
@@ -42,9 +43,12 @@ public class TimeEventService {
     private final TimeEventRepository timeEventRepository;
     private final EmployTimeEventScheduleRepository employTimeEventScheduleRepository;
     private final ReservationScheduleRepository reservationScheduleRepository;
+    private final ShopService shopService;
 
     public CreateTimeEventsResponseDto createTimeEvents(Long ownerId, CreateTimeEventsRequestDto requestDto) {
-        Shop shop = findShop(ownerId, requestDto.shopId());
+
+        Shop shop = shopService.findShop(ownerId, requestDto.shopId());
+
         validateRepeatSettings(requestDto.isRepeat(), requestDto.isDateRepeat(), requestDto.isDayOfWeekRepeat());
 
         List<DayOfWeek> dayOfWeeks = createRepeatDayOfWeeks(requestDto);
@@ -307,14 +311,6 @@ public class TimeEventService {
                 .build();
 
         return timeEvent;
-    }
-
-    private Shop findShop(Long ownerId, Long shopId) {
-        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
-        if (shop.getShopOwner().getId() != ownerId) {
-            throw new BusinessException(BAD_REQUEST);
-        }
-        return shop;
     }
 
     private void setMenuAndTimeEventToTimeEventMenu(CreateTimeEventsRequestDto requestDto, TimeEvent timeEvent) {
