@@ -10,12 +10,12 @@ public record GetTimeEventResponseDto(
         String startTime,
         String endTime
 ) {
-    public GetTimeEventResponseDto of(TimeEvent timeEvent) {
+    public static GetTimeEventResponseDto of(TimeEvent timeEvent) {
         return GetTimeEventResponseDto.builder()
                 .id(timeEvent.getId())
                 .title(timeEvent.getTitle())
-                .endTime(title.getEndTime())
-                .startTime(title.getStartTime())
+                .endTime(String.valueOf(timeEvent.getEndTime()))
+                .startTime(String.valueOf(timeEvent.getStartTime()))
                 .build();
     }
 }
