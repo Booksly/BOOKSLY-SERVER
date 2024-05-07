@@ -23,19 +23,13 @@ public class ClosingEvent extends BaseTimeEntity {
 
     private int discountRate;
 
-    private boolean isAutoConfirm;
-
     private String eventMessage;
-
-    private int concurrentBookingLimit;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
     @OneToMany(mappedBy = "closingEvent", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<ClosingEventMenu> closingEventMenus = new ArrayList<>();
-
-    @OneToMany(mappedBy = "closingEvent")
-    private List<ReservationSchedule> reservationSchedules = new ArrayList<>();
 }
