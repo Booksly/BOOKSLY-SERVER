@@ -30,6 +30,6 @@ public class ClosingEvent extends BaseTimeEntity {
     private Employee employee;
 
     @OneToMany(mappedBy = "closingEvent", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<ClosingEventMenu> closingEventMenus = new ArrayList<>();
-
 }
