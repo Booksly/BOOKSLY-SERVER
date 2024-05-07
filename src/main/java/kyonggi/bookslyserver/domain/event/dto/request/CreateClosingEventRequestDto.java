@@ -9,6 +9,6 @@ public record CreateClosingEventRequestDto(
         @NotNull Long employeeId,
         @NotNull String message,
         @NotNull int discountRate,
-        @NotNull List<Long> menus
+        @NotNull List<Long> menuIds
 ) {
 }
