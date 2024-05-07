@@ -7,7 +7,7 @@ import java.util.List;
 public record CreateClosingEventRequestDto(
         @NotNull Long shopId,
         @NotNull Long employeeId,
-        @NotNull String content,
+        @NotNull String message,
         @NotNull int discountRate,
         @NotNull List<Long> menus
 ) {
