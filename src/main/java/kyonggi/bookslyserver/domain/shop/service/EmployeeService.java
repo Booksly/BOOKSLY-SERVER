@@ -52,9 +52,6 @@ public class EmployeeService {
                 employeeReadDtos.add(employeeReadDto);
             }
         }
-        else{
-            throw new BusinessException(ErrorCode.EMPLOYEES_NOT_FOUND);
-        }
 
         return employeeReadDtos;
     }
