@@ -22,7 +22,7 @@ public class MenuApiController {
 
     private final MenuService menuService;
 
-    @GetMapping("/api/menu/owner/{shopId}")
+    @GetMapping("/api/shop/{shopId}/menus")
     public ResponseEntity<SuccessResponse<?>> readMenu(@PathVariable("shopId") Long id){
         List<MenuReadDto> result = menuService.readMenu(id);
         return SuccessResponse.ok(result);
