@@ -21,7 +21,7 @@ public class MenuApiController {
 
     private final MenuService menuService;
 
-    @GetMapping("/api/menu/owner/{menuId}")
+    @GetMapping("/api/shop/{menuId}/menu")
     public ResponseEntity<SuccessResponse<?>> readOneMenu(@PathVariable("menuId") Long id){
         MenuReadOneDto result = menuService.readOneMenu(id);
         return SuccessResponse.ok(result);
