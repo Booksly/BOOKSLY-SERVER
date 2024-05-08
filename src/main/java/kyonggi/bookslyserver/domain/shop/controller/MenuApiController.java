@@ -7,6 +7,7 @@ import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import kyonggi.bookslyserver.domain.shop.service.MenuService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
@@ -23,6 +24,12 @@ public class MenuApiController {
 
     private final MenuService menuService;
 
+
+    @GetMapping("/api/shop/{shopId}/menus")
+    public ResponseEntity<SuccessResponse<?>> readMenu(@PathVariable("shopId") Long id){
+        List<MenuReadDto> result = menuService.readMenu(id);
+        return SuccessResponse.ok(result);
+    }
 
 
     @PostMapping("/api/menu/{shopId}")
