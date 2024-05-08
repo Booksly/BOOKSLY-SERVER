@@ -30,4 +30,15 @@ public class EmployeeTimeEvent extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
+
+    //== 연관관계 편의 메서드 ==//
+    public void addTimeEvent(TimeEvent timeEvent) {
+        this.timeEvent = timeEvent;
+        timeEvent.getEmployeeTimeEvents().add(this);
+    }
+
+    public void addEmployee(Employee employee) {
+        this.employee = employee;
+        employee.getEmployeeTimeEvents().add(this);
+    }
 }

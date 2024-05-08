@@ -27,6 +27,10 @@ public enum ErrorCode implements BaseErrorCode{
     DISCOUNT_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST,"할인율 설정이 되어있지 않습니다"),
     MENU_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "카테고리에 메뉴가 존재합니다. 해당 카테고리를 삭제할 수 없습니다."),
     RESERVATION_CLOSED_BAD_REQUEST(HttpStatus.BAD_REQUEST,"예약 인원이 마감된 시간대 입니다."),
+    DUPLICATED_REPEAT_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST, "요일 반복과 기간 반복의 중복 설정이 불가능합니다."),
+    INCOMPLETE_REPEAT_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST, "반복 설정을 완료해주세요."),
+    MISSING_REQUIRED_QUERY_PARAM(HttpStatus.BAD_REQUEST,"필수 쿼리 파라미터가 누락되었습니다."),
+
 
     /**
      * 401 Unauthorized
@@ -58,8 +62,12 @@ public enum ErrorCode implements BaseErrorCode{
     EMPLOYEE_NOT_FOUND(HttpStatus.NOT_FOUND,"해당하는 직원을 찾을 수 없습니다"),
     EMPLOYEE_MENU_NOT_FOUND(HttpStatus.NOT_FOUND,"직원 메뉴를 찾을 수 없습니다"),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND,"해당하는 시간대가 없습니다"),
+    SHOP_NOT_FOUND(HttpStatus.NOT_FOUND, "가게를 찾을 수 없습니다"),
+    MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴를 찾을 수 없습니다"),
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND,"해당하는 예약이 존재하지 않습니다"),
     EMPLOYEES_NOT_FOUND(HttpStatus.NOT_FOUND, "직원이 없습니다. 직원을 등록 해 주세요."),
+    MENUCATEGORIES_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴 카테고리가 존재하지 않습니다. 하나 이상의 메뉴 카테고리를 등록 해 주세요."),
+    MENUCATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴 카테고리가 존재하지 않습니다."),
     /**
      * 405 Method Not Allowed
      */
@@ -69,6 +77,8 @@ public enum ErrorCode implements BaseErrorCode{
      * 409 Conflict
      */
     CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 리소스입니다."),
+    MENUCATEGORY_ALREADY_EXIST(HttpStatus.CONFLICT, "해당 카테고리가 이미 존재합니다."),
+    EXIST_EVENTS_CONFLICT(HttpStatus.CONFLICT, "새로운 이벤트의 시간이 기존 이벤트와 겹칩니다."),
 
     /**
      * 500 Internal Server Error
