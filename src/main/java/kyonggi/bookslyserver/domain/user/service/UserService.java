@@ -59,7 +59,7 @@ public class UserService {
     @Transactional(readOnly = false)
     public User findUserByLoginId(String loginId) {
 
-        return userRepository.findByLoginId(loginId).get();
+        return userRepository.findByLoginId(loginId).orElseThrow(()-> new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN_VALUE));
     }
 
     public GetUserNicknameResponseDto getNickname(Long userId) {

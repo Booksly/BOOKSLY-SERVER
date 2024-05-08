@@ -53,7 +53,10 @@ public class ReserveOwnerCommandService {
     /**
      * 가게 주인 용도- 직원별 오늘 예약 전체 조회
      */
-    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservations(LocalDate today,Long employeeId){
-        return reservationRepository.getTodayReservations(today, employeeId);
+    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservationSchedules(LocalDate today,Long employeeId){
+        return reservationRepository.getTodayReservationSchedules(today, employeeId);
+    }
+    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservationsOnly(LocalDate date,Long employeeId){
+        return reservationRepository.getTodayReservationsOnly(date, employeeId);
     }
 }
