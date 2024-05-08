@@ -65,10 +65,9 @@ public enum ErrorCode implements BaseErrorCode{
     SHOP_NOT_FOUND(HttpStatus.NOT_FOUND, "가게를 찾을 수 없습니다"),
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴를 찾을 수 없습니다"),
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND,"해당하는 예약이 존재하지 않습니다"),
-
+    EMPLOYEES_NOT_FOUND(HttpStatus.NOT_FOUND, "직원이 없습니다. 직원을 등록 해 주세요."),
     MENUCATEGORIES_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴 카테고리가 존재하지 않습니다. 하나 이상의 메뉴 카테고리를 등록 해 주세요."),
     MENUCATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴 카테고리가 존재하지 않습니다."),
-
     /**
      * 405 Method Not Allowed
      */
