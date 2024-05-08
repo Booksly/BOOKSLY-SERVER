@@ -52,6 +52,14 @@ public class ShopOwnerReserveController {
     public ResponseEntity<SuccessResponse<?>> getTodayReservationSchedules(@PathVariable("date") LocalDate today, @RequestParam("employeeId")Long employeeId){
         return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationSchedules(today, employeeId));
     }
+
+    /**
+     * 전체 직원
+     */
+    @GetMapping("/todayReservationsAll/{date}")
+    public ResponseEntity<SuccessResponse<?>> getTodayReservationSchedulesAllEmps(@PathVariable("date") LocalDate today, @RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationSchedulesAllEmps(today, shopId));
+    }
     @GetMapping("/reservationsOfDate/{date}")
     public ResponseEntity<SuccessResponse<?>> getTodayReservationsOnly(@PathVariable("date") LocalDate date, @RequestParam("employeeId")Long employeeId){
         return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationsOnly(date, employeeId));

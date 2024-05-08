@@ -75,4 +75,13 @@ public class ReserveResponseDTO {
         private boolean isClosed;
         private List<reservationMenu> reservationMenus;
     }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class getTodayReservationsAllEmpsResultDTO {
+        private LocalTime reservationScheduleTime;
+        private List<reservationMenu> reservationMenus;
+    }
 }
