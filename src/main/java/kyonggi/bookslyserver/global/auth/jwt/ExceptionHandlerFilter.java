@@ -51,8 +51,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
     private void handleException(Exception e,HttpServletResponse response) throws IOException {
         log.info(e.getMessage());
-        log.info(e.getCause().toString());
-        log.info(e.getStackTrace().toString());
+//        log.info(e.getCause().toString());
+//        log.info(e.getStackTrace().toString());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
         response.setStatus(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus().value());
