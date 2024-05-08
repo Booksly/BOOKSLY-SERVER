@@ -20,7 +20,7 @@ public class EmployeeApiController {
     final private EmployeeService employeeService;
 
 
-    @GetMapping("/api/employee/owner/{shopId}")
+    @GetMapping("/api/shop/{shopId}/employees")
     public ResponseEntity<SuccessResponse<?>> readEmployee(@PathVariable("shopId") Long id){
         List<EmployeeReadDto> result = employeeService.readEmployee(id);
         return SuccessResponse.ok(result);
