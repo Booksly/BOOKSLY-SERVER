@@ -98,10 +98,9 @@ public class Shop extends BaseTimeEntity {
     private List<Employee> employees = new ArrayList<>();
 
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
-
     private List<FavoriteShop> favoriteShops = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shop",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private List<TimeEvent> timeEvents = new ArrayList<>();
 
 
