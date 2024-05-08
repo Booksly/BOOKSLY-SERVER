@@ -1,9 +1,9 @@
 package kyonggi.bookslyserver.domain.reservation.entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.EmployTimeEventSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
@@ -42,7 +42,7 @@ public class ReservationSchedule extends BaseTimeEntity {
 
     private LocalDate workDate;
 
-    @Column(nullable=false, columnDefinition = "tinyint(0)")
+    @Column(nullable = false, columnDefinition = "tinyint(0)")
     private boolean isAutoConfirmed;
 
     @ManyToOne(fetch = LAZY)
@@ -56,7 +56,18 @@ public class ReservationSchedule extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
-    
-    @OneToMany(mappedBy = "reservationSchedule",cascade = CascadeType.ALL)
-    private List<Reservation> reservations=new ArrayList<>(); // 이 사이즈가 reservedCapacity의 역할을 하게 될거임
+
+    @OneToMany(mappedBy = "reservationSchedule", cascade = CascadeType.ALL)
+    private List<Reservation> reservations = new ArrayList<>(); // 이 사이즈가 reservedCapacity의 역할을 하게 될거임
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "employTimeEventSchedule_id")
+    private EmployTimeEventSchedule employTimeEventSchedule;
+
+    //==연관 관계 편의 메서드==//
+    public void addEmployeeTimeEventSchedule(EmployTimeEventSchedule employTimeEventSchedule) {
+        this.employTimeEventSchedule = employTimeEventSchedule;
+        employTimeEventSchedule.getReservationSchedules().add(this);
+    }
+
 }

@@ -4,7 +4,10 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import kyonggi.bookslyserver.domain.shop.service.MenuService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
@@ -13,11 +16,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class MenuApiController {
 
     private final MenuService menuService;
+
+
+    @GetMapping("/api/shop/{shopId}/menus")
+    public ResponseEntity<SuccessResponse<?>> readMenu(@PathVariable("shopId") Long id){
+        List<MenuReadDto> result = menuService.readMenu(id);
+        return SuccessResponse.ok(result);
+    }
+
 
     @PostMapping("/api/menu/{shopId}")
     public ResponseEntity<SuccessResponse<?>> createMenu(@PathVariable("shopId") Long id, @RequestBody @Validated MenuCreateRequestDto requestDto){
@@ -37,9 +50,15 @@ public class MenuApiController {
         menuService.delete(id);
     }
 
+    @GetMapping("/api/shop/{shopId}/categories")
+    public ResponseEntity<SuccessResponse<?>> readCategory(@PathVariable("shopId") Long id){
+        List<MenuCategoryReadDto> result = menuService.readMenuCategory(id);
+        return SuccessResponse.ok(result);
+    }
+
     @PostMapping("/api/menuCategory/{shopId}")
     public ResponseEntity<SuccessResponse<?>> createMenuCategory(@PathVariable("shopId") Long id, @RequestBody @Validated MenuCategoryCreateDto requestDto){
-        Long result = menuService.createCategory(id, requestDto);
+        MenuCategoryCreateResponseDto result = menuService.createCategory(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
