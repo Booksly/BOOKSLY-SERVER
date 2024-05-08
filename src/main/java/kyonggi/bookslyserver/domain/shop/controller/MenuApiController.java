@@ -43,7 +43,7 @@ public class MenuApiController {
         menuService.delete(id);
     }
 
-    @GetMapping("/api/menuCategory/owner/{shopId}")
+    @GetMapping("/api/shop/{shopId}/categories")
     public ResponseEntity<SuccessResponse<?>> readCategory(@PathVariable("shopId") Long id){
         List<MenuCategoryReadDto> result = menuService.readMenuCategory(id);
         return SuccessResponse.ok(result);
