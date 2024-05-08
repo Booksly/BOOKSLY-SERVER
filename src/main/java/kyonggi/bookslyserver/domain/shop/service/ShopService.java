@@ -2,8 +2,10 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 
 import jakarta.transaction.Transactional;
+import kyonggi.bookslyserver.domain.shop.dto.BusinessScheduleDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopOwnerDetailReadOneDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
@@ -18,6 +20,7 @@ import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,6 +79,25 @@ public class ShopService {
         shopRepository.deleteById(id);
     }
 
+
+    public ShopOwnerDetailReadOneDto readOne(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException();
+        }
+        List<BusinessScheduleDto> businessScheduleDtos = new ArrayList<>();
+
+        for(BusinessSchedule businessSchedule : shop.get().getBusinessSchedules()){
+            businessScheduleDtos.add(new BusinessScheduleDto(businessSchedule));
+        }
+
+
+        return new ShopOwnerDetailReadOneDto(shop.get(), businessScheduleDtos);
+    }
+
+
+
+
     public Shop findShop(Long ownerId, Long shopId) {
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
         if (shop.getShopOwner().getId() != ownerId) {
@@ -83,4 +105,5 @@ public class ShopService {
         }
         return shop;
     }
+
 }
