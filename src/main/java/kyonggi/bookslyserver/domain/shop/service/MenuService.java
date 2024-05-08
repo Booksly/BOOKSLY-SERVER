@@ -114,9 +114,6 @@ public class MenuService {
                 dtos.add(new MenuCategoryReadDto(menuCategory));
             }
         }
-        else{
-            throw new BusinessException(ErrorCode.MENUCATEGORIES_NOT_FOUND);
-        }
         return dtos;
     }
 
