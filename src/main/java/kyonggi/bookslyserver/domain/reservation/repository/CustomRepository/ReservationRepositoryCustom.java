@@ -12,4 +12,5 @@ public interface ReservationRepositoryCustom {
     public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservationSchedules(LocalDate today, Long employeeId);
 
     public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservationsOnly(LocalDate date,Long employeeId);
+    public List<ReserveResponseDTO.getTodayReservationsAllEmpsResultDTO> getTodayReservationsScheduleAllEmps(LocalDate today, Long shopId);
 }

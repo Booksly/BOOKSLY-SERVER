@@ -24,6 +24,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
@@ -175,6 +176,36 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
         });
 
         return results;
+    }
+
+    @Override
+    public List<ReserveResponseDTO.getTodayReservationsAllEmpsResultDTO> getTodayReservationsScheduleAllEmps(LocalDate today, Long shopId) {
+        List<Tuple> results=queryFactory
+                .select(reservationSchedule.startTime,menu.menuName)
+                .from(reservationSchedule)
+                .join(reservationSchedule.reservations, reservation)
+                .join(reservation.reservationMenus, reservationMenu)
+                .join(reservationMenu.menu, menu)
+                .where(reservationSchedule.workDate.eq(today)
+                        .and(reservationSchedule.shop.id.eq(shopId))
+                        .and(reservation.isConfirmed.eq(true))
+                )
+                .fetch();
+
+        // startTime 기준으로 그룹화
+        Map<LocalTime,List<String>> groupByStartTime=results.stream()
+                .collect(Collectors.groupingBy(
+                   tuple->tuple.get(reservationSchedule.startTime),
+                   Collectors.mapping(tuple->tuple.get(menu.menuName),Collectors.toList())
+                ));
+        // DTO로 변환
+        return groupByStartTime.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry->new ReserveResponseDTO.getTodayReservationsAllEmpsResultDTO(entry.getKey(),entry.getValue().stream()
+                        .distinct()
+                        .map(menuName->new ReserveResponseDTO.reservationMenu(menuName))
+                        .collect(Collectors.toList())))
+                .collect(Collectors.toList());
     }
 
     private BooleanExpression isValidReservationSchedule(LocalDateTime now){
