@@ -57,6 +57,7 @@ public class ShopOwnerDetailReadOneDto {
         this.favoriteUserNum = shop.getFavoriteShops().size();
         this.userId = shop.getShopOwner().getUser().getLoginId();
         this.description = shop.getIntroduction();
+        this.address = shop.getAddress().getFirstAddress() + " " + shop.getAddress().getSecondAddress() + " " + shop.getAddress().getThirdAddress();
         this.detailAddress = shop.getDetailAddress();
         this.phoneNum = shop.getPhoneNumber();
         this.businessSchedules = businessSchedules;
