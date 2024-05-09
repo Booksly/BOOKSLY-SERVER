@@ -24,8 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static kyonggi.bookslyserver.global.error.ErrorCode.BAD_REQUEST;
-import static kyonggi.bookslyserver.global.error.ErrorCode.ENTITY_NOT_FOUND;
+import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
 @Service
 @Transactional
@@ -99,7 +98,7 @@ public class ShopService {
 
 
     public Shop findShop(Long ownerId, Long shopId) {
-        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
         if (shop.getShopOwner().getId() != ownerId) {
             throw new BusinessException(BAD_REQUEST);
         }

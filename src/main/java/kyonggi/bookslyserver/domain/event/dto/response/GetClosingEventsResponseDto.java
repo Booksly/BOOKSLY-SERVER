@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 
 @Builder
 public record GetClosingEventsResponseDto(
-        List<GetClosingEventResponseDto> closingEventConfigs
+        List<GetClosingEventResponseDto> closingEvents
 ) {
     public static GetClosingEventsResponseDto of(Optional<List<ClosingEvent>> closingEvents) {
         return GetClosingEventsResponseDto.builder()
-                .closingEventConfigs(closingEvents.orElse(new ArrayList<>())
+                .closingEvents(closingEvents.orElse(new ArrayList<>())
                         .stream().map(closingEvent -> GetClosingEventResponseDto.of(closingEvent))
                         .collect(Collectors.toList())).build();}
 }

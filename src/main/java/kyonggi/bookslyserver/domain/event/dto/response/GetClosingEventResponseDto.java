@@ -10,14 +10,14 @@ public record GetClosingEventResponseDto(
         Long id,
         String employee,
         String message,
-        String discountRate
+        int discountRate
 ) {
     public static GetClosingEventResponseDto of(ClosingEvent closingEvent) {
         return GetClosingEventResponseDto.builder()
                 .id(closingEvent.getId())
                 .employee(closingEvent.getEmployee().getName())
                 .message(closingEvent.getEventMessage())
-                .discountRate(closingEvent.getEventMessage())
+                .discountRate(closingEvent.getDiscountRate())
                 .build();
     }
 }
