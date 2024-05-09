@@ -43,7 +43,7 @@ public class ShopApiController {
 
     //가게 삭제
     @DeleteMapping("/api/shop/{shopId}")
-    public void deleteShop(@PathVariable("id") Long id){
+    public void deleteShop(@PathVariable("shopId") Long id){
         shopService.delete(id);
     }
 
