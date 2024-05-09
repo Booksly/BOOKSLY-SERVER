@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.dto.BusinessScheduleDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopDeleteResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopOwnerDetailReadOneDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
@@ -72,11 +73,18 @@ public class ShopService {
     }
 
     @Transactional
-    public void delete(Long id){
+    public ShopDeleteResponseDto delete(Long id){
         Optional<Shop> shop = shopRepository.findById(id);
+
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException();
+        }
+
         ShopOwner owner = shop.get().getShopOwner();
         owner.deleteShop(shop.get());
+        //shopRepository.delete(shop.get());
         shopRepository.deleteById(id);
+        return new ShopDeleteResponseDto(id);
     }
 
 
