@@ -4,6 +4,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopDeleteResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopOwnerDetailReadOneDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
@@ -43,8 +44,9 @@ public class ShopApiController {
 
     //가게 삭제
     @DeleteMapping("/api/shop/{shopId}")
-    public void deleteShop(@PathVariable("id") Long id){
-        shopService.delete(id);
+    public ShopDeleteResponseDto deleteShop(@PathVariable("shopId") Long id){
+        ShopDeleteResponseDto result = shopService.delete(id);
+        return result;
     }
 
 }
