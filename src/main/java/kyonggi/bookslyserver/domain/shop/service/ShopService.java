@@ -16,6 +16,7 @@ import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
+import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,9 @@ public class ShopService {
     @Transactional
     public ShopRegisterDto join(Long ownerId, ShopCreateRequestDto requestDto) {
 
+        if(shopRepository.existsByName(requestDto.getName())){
+            throw new BusinessException(SHOP_NAME_ALREADY_EXIST);
+        }
         Shop shop = Shop.createShop(requestDto);
         shopRepository.save(shop);
         List<BusinessSchedule> businessScheduleList = requestDto.getBusinessScheduleList();

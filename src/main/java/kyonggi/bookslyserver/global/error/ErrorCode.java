@@ -78,6 +78,7 @@ public enum ErrorCode implements BaseErrorCode{
      */
     CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 리소스입니다."),
     MENUCATEGORY_ALREADY_EXIST(HttpStatus.CONFLICT, "해당 카테고리가 이미 존재합니다."),
+    SHOP_NAME_ALREADY_EXIST(HttpStatus.CONFLICT, "동일한 이름의 가게가 이미 존재합니다."),
     EXIST_EVENTS_CONFLICT(HttpStatus.CONFLICT, "새로운 이벤트의 시간이 기존 이벤트와 겹칩니다."),
 
     /**
