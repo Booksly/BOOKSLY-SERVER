@@ -44,9 +44,9 @@ public class ShopApiController {
 
     //가게 삭제
     @DeleteMapping("/api/shop/{shopId}")
-    public ShopDeleteResponseDto deleteShop(@PathVariable("shopId") Long id){
+    public ResponseEntity<SuccessResponse<?>> deleteShop(@PathVariable("shopId") Long id){
         ShopDeleteResponseDto result = shopService.delete(id);
-        return result;
+        return SuccessResponse.ok(result);
     }
 
 }
