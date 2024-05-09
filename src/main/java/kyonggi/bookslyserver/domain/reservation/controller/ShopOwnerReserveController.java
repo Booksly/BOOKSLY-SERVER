@@ -48,23 +48,29 @@ public class ShopOwnerReserveController {
         return SuccessResponse.ok(reserveOwnerCommandService.refuseReservationRequest(reservationId,requestDTO));
     }
 
+    /**
+     * 개별 직원용
+     */
     @GetMapping("/todayReservations/{date}")
     public ResponseEntity<SuccessResponse<?>> getTodayReservationSchedules(@PathVariable("date") LocalDate today, @RequestParam("employeeId")Long employeeId){
         return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationSchedules(today, employeeId));
-    }
-
-    /**
-     * 전체 직원
-     */
-    @GetMapping("/todayReservationsAll/{date}")
-    public ResponseEntity<SuccessResponse<?>> getTodayReservationSchedulesAllEmps(@PathVariable("date") LocalDate today, @RequestParam("shopId")Long shopId){
-        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationSchedulesAllEmps(today, shopId));
     }
     @GetMapping("/reservationsOfDate/{date}")
     public ResponseEntity<SuccessResponse<?>> getTodayReservationsOnly(@PathVariable("date") LocalDate date, @RequestParam("employeeId")Long employeeId){
         return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationsOnly(date, employeeId));
     }
 
+    /**
+     * 전체 직원용
+     */
+    @GetMapping("/todayReservationsAll/{date}")
+    public ResponseEntity<SuccessResponse<?>> getTodayReservationSchedulesAllEmps(@PathVariable("date") LocalDate today, @RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationSchedulesAllEmps(today, shopId));
+    }
+    @GetMapping("reservationsOfDateAll/{date}")
+    public ResponseEntity<SuccessResponse<?>> getTodayReservationsOnlyAllEmps(@PathVariable("date")LocalDate date, @RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getOnlyReservationsOfDateAllEmps(date, shopId));
+    }
     /*
     * 임시 uri api 테스트 시에만 사용 바람
     */

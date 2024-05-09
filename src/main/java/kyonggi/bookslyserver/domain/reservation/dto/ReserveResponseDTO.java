@@ -84,4 +84,19 @@ public class ReserveResponseDTO {
         private LocalTime reservationScheduleTime;
         private List<reservationMenu> reservationMenus;
     }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class getOnlyReservationsOfDateAllEmpsResultDTO{
+        private String employeeName;
+        private List<getTodayReservationsResultDTO> getTodayReservationsResultDTOS;
+    }
+
+    /**
+     * 추가 할 일
+     * 1. 현재 있는 dto는 예약 일정 조회하는 dto니까 예약만 조회하는 dto 따로 생성 (시간이랑 메뉴 리스트만 있도록)
+     * 2. 새 dto 생성하면 그거로 대체하기
+     */
 }

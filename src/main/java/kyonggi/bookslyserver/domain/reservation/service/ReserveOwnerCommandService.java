@@ -5,6 +5,9 @@ import kyonggi.bookslyserver.domain.reservation.dto.ReserveRequestDTO;
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
 import kyonggi.bookslyserver.domain.reservation.entity.Reservation;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationRepository;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
+import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
+import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -20,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReserveOwnerCommandService {
     private final ReservationRepository reservationRepository;
+    private final ShopRepository shopRepository;
 
     /**
      * 가게 주인 용도- 예약 확인 슬롯
@@ -51,7 +56,7 @@ public class ReserveOwnerCommandService {
         return "예약이 거절되었습니다";
     }
     /**
-     * 가게 주인 용도- 직원별 오늘 예약 전체 조회
+     * 가게 주인 용도- 직원별 오늘(또는 특정 날짜) 예약 전체 조회
      */
     public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservationSchedules(LocalDate today,Long employeeId){
         return reservationRepository.getTodayReservationSchedules(today, employeeId);
@@ -60,9 +65,22 @@ public class ReserveOwnerCommandService {
         return reservationRepository.getTodayReservationsOnly(date, employeeId);
     }
     /**
-     * 가게 주인 용도- 전체 직원 오늘 예약 전체 조회
+     * 가게 주인 용도- 전체 직원 오늘(또는 특정 날짜) 예약 전체 조회
      */
     public List<ReserveResponseDTO.getTodayReservationsAllEmpsResultDTO> getTodayReservationSchedulesAllEmps(LocalDate today,Long shopId){
         return reservationRepository.getTodayReservationsScheduleAllEmps(today,shopId);
+    }
+    public List<ReserveResponseDTO.getOnlyReservationsOfDateAllEmpsResultDTO> getOnlyReservationsOfDateAllEmps(LocalDate date,Long shopId){
+        Shop shop=shopRepository.findById(shopId)
+                .orElseThrow(()->new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+        return shop.getEmployees().stream()
+                .map(employee -> {
+                  List<ReserveResponseDTO.getTodayReservationsResultDTO> resultDTO=reservationRepository.getTodayReservationsOnly(date,employee.getId());
+                  return ReserveResponseDTO.getOnlyReservationsOfDateAllEmpsResultDTO.builder()
+                          .employeeName(employee.getName())
+                          .getTodayReservationsResultDTOS(resultDTO)
+                          .build();
+                })
+                .collect(Collectors.toList());
     }
 }
