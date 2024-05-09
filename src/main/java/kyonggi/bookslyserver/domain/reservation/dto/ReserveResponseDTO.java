@@ -69,12 +69,23 @@ public class ReserveResponseDTO {
     @AllArgsConstructor
     @Setter
     @Getter
-    public static class getTodayReservationsResultDTO{
+    public static class getTodayReservationSchedulesResultDTO {
         private Long reservationScheduleId;
         private LocalTime reservationScheduleTime;
         private boolean isClosed;
         private List<reservationMenu> reservationMenus;
     }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class getOnlyReservationsOfDateResultDTO{
+        private Long reservationScheduleId;
+        private LocalTime reservationScheduleTime;
+        private List<reservationMenu> reservationMenus;
+    }
+
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -91,7 +102,8 @@ public class ReserveResponseDTO {
     @Getter
     public static class getOnlyReservationsOfDateAllEmpsResultDTO{
         private String employeeName;
-        private List<getTodayReservationsResultDTO> getTodayReservationsResultDTOS;
+        private List<getOnlyReservationsOfDateResultDTO> getOnlyReservationsOfDateResultDTOS;
+        // getOnly로 바꿔끼기
     }
 
     /**

@@ -2,16 +2,12 @@ package kyonggi.bookslyserver.domain.reservation.repository.CustomRepository;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.querydsl.jpa.sql.JPASQLQuery;
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
 import kyonggi.bookslyserver.domain.reservation.entity.QReservation;
 import kyonggi.bookslyserver.domain.reservation.entity.QReservationMenu;
@@ -19,14 +15,12 @@ import kyonggi.bookslyserver.domain.reservation.entity.QReservationSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.QEmployee;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.QMenu;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.criteria.JpaSubQuery;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -97,10 +91,10 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     }
 
     @Override
-    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservationSchedules(LocalDate today, Long employeeId) {
+    public List<ReserveResponseDTO.getTodayReservationSchedulesResultDTO> getTodayReservationSchedules(LocalDate today, Long employeeId) {
         
-        List<ReserveResponseDTO.getTodayReservationsResultDTO> results = queryFactory
-                .select(Projections.fields(ReserveResponseDTO.getTodayReservationsResultDTO.class,
+        List<ReserveResponseDTO.getTodayReservationSchedulesResultDTO> results = queryFactory
+                .select(Projections.fields(ReserveResponseDTO.getTodayReservationSchedulesResultDTO.class,
                         reservationSchedule.id.as("reservationScheduleId"),
                         reservationSchedule.startTime.as("reservationScheduleTime"),
                         reservationSchedule.isClosed.as("isClosed")
@@ -136,13 +130,12 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
         return results;
     }
     @Override
-    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservationsOnly(LocalDate date, Long employeeId) {
+    public List<ReserveResponseDTO.getOnlyReservationsOfDateResultDTO> getOnlyReservationsOfDate(LocalDate date, Long employeeId) {
 
-        List<ReserveResponseDTO.getTodayReservationsResultDTO> results = queryFactory
-                .select(Projections.fields(ReserveResponseDTO.getTodayReservationsResultDTO.class,
+        List<ReserveResponseDTO.getOnlyReservationsOfDateResultDTO> results = queryFactory
+                .select(Projections.fields(ReserveResponseDTO.getOnlyReservationsOfDateResultDTO.class,
                         reservationSchedule.id.as("reservationScheduleId"),
-                        reservationSchedule.startTime.as("reservationScheduleTime"),
-                        reservationSchedule.isClosed.as("isClosed")
+                        reservationSchedule.startTime.as("reservationScheduleTime")
                 ))
                 .from(reservationSchedule)
                 .leftJoin(reservation)

@@ -6,7 +6,6 @@ import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
 import kyonggi.bookslyserver.domain.reservation.entity.Reservation;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationRepository;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
-import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
@@ -58,11 +57,11 @@ public class ReserveOwnerCommandService {
     /**
      * 가게 주인 용도- 직원별 오늘(또는 특정 날짜) 예약 전체 조회
      */
-    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservationSchedules(LocalDate today,Long employeeId){
+    public List<ReserveResponseDTO.getTodayReservationSchedulesResultDTO> getTodayReservationSchedules(LocalDate today, Long employeeId){
         return reservationRepository.getTodayReservationSchedules(today, employeeId);
     }
-    public List<ReserveResponseDTO.getTodayReservationsResultDTO> getTodayReservationsOnly(LocalDate date,Long employeeId){
-        return reservationRepository.getTodayReservationsOnly(date, employeeId);
+    public List<ReserveResponseDTO.getOnlyReservationsOfDateResultDTO> getTodayReservationsOnly(LocalDate date, Long employeeId){
+        return reservationRepository.getOnlyReservationsOfDate(date, employeeId);
     }
     /**
      * 가게 주인 용도- 전체 직원 오늘(또는 특정 날짜) 예약 전체 조회
@@ -75,10 +74,10 @@ public class ReserveOwnerCommandService {
                 .orElseThrow(()->new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
         return shop.getEmployees().stream()
                 .map(employee -> {
-                  List<ReserveResponseDTO.getTodayReservationsResultDTO> resultDTO=reservationRepository.getTodayReservationsOnly(date,employee.getId());
+                  List<ReserveResponseDTO.getOnlyReservationsOfDateResultDTO> resultDTO=reservationRepository.getOnlyReservationsOfDate(date,employee.getId());
                   return ReserveResponseDTO.getOnlyReservationsOfDateAllEmpsResultDTO.builder()
                           .employeeName(employee.getName())
-                          .getTodayReservationsResultDTOS(resultDTO)
+                          .getOnlyReservationsOfDateResultDTOS(resultDTO)
                           .build();
                 })
                 .collect(Collectors.toList());
