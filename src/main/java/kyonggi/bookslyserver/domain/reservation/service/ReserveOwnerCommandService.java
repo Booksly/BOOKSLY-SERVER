@@ -102,5 +102,13 @@ public class ReserveOwnerCommandService {
                 .reservationList(reservationRepository.getTodayReservationsDetails(date, employeeId))
                 .build();
     }
+    public ReserveResponseDTO.getReservationScheduleOfDateResultDTO getReservationScheduleOfDate(LocalDate date, Long employeeId){
+        return ReserveResponseDTO.getReservationScheduleOfDateResultDTO.builder()
+                .date(date)
+                .employeeName(employeeRepository.findById(employeeId)
+                        .orElseThrow(()->new EntityNotFoundException(ErrorCode.EMPLOYEE_NOT_FOUND)).getName())
+                .scheduleList(reservationRepository.getTodayReservationSchedules(date, employeeId))
+                .build();
+    }
 
 }

@@ -123,4 +123,12 @@ public class ReserveResponseDTO {
         private LocalDate date;
         private List<getTodayReservationsDetailsResultDTO> reservationList;
     }
+    @Builder
+    @Getter
+    @Setter
+    public static class getReservationScheduleOfDateResultDTO{
+        private String employeeName;
+        private LocalDate date;
+        private List<getTodayReservationSchedulesResultDTO> scheduleList;
+    }
 }
