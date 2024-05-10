@@ -6,21 +6,27 @@ import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeWorkScheduleDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeDeleteResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeReadDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.employee.GetCalendarDatesResponseDto;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.*;
-import kyonggi.bookslyserver.global.error.ErrorCode;
-import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static kyonggi.bookslyserver.global.error.ErrorCode.EMPLOYEE_NOT_FOUND;
 
 @Service
 @Transactional
@@ -134,4 +140,31 @@ public class EmployeeService {
         return new EmployeeDeleteResponseDto(id);
     }
 
+    public GetCalendarDatesResponseDto getCalendarDates(Long shopId, Long employeeId) {
+
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_FOUND));
+
+        if (employee.getShop().getId() != shopId) throw new ForbiddenException();
+
+        LocalDate currentDate = LocalDate.now();
+        List<WorkSchedule> workSchedules = employee.getWorkSchedules();
+        int schedulingCycle = employee.getSchedulingCycle();
+        LocalDate plusDate = currentDate .plusDays(schedulingCycle-1);
+
+        List<LocalDate> workdays = new ArrayList<>();
+        List<LocalDate> holidays = new ArrayList<>();
+
+        Map<DayOfWeek,Boolean> workInfo = workSchedules.stream().collect(Collectors.toMap(WorkSchedule::getDayOfWeek,WorkSchedule::isDayOff));
+        while (!currentDate.isAfter(plusDate)) {
+            Boolean isDayOff = workInfo.get(currentDate .getDayOfWeek());
+            if (isDayOff) holidays.add(currentDate );
+            else workdays.add(currentDate );
+
+            currentDate = currentDate.plusDays(1);
+        }
+
+
+        return GetCalendarDatesResponseDto.of(employee.getId(), workdays, holidays);
+    }
 }
