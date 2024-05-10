@@ -6,6 +6,7 @@ import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
 import kyonggi.bookslyserver.domain.reservation.entity.Reservation;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationRepository;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
+import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class ReserveOwnerCommandService {
     private final ReservationRepository reservationRepository;
     private final ShopRepository shopRepository;
+    private final EmployeeRepository employeeRepository;
 
     /**
      * 가게 주인 용도- 예약 확인 슬롯
@@ -89,7 +91,16 @@ public class ReserveOwnerCommandService {
     /**
      * 예약 확인- 확정 예약 상세 조회
      */
-    public List<ReserveResponseDTO.getTodayReservationsDetailsResultDTO> getTodayReservationsDetails(LocalDate today, Long id){
-        return reservationRepository.getTodayReservationsDetails(today, id);
+    public List<ReserveResponseDTO.getTodayReservationsDetailsResultDTO> getTodayReservationsDetails(LocalDate today, Long employeeId){
+        return reservationRepository.getTodayReservationsDetails(today, employeeId);
     }
+    public ReserveResponseDTO.getReservationsDetailsOfDateResultDTO getReservationsOfDateDetails(LocalDate date, Long employeeId){
+        return ReserveResponseDTO.getReservationsDetailsOfDateResultDTO.builder()
+                .date(date)
+                .employeeName(employeeRepository.findById(employeeId)
+                        .orElseThrow(()->new EntityNotFoundException(ErrorCode.EMPLOYEE_NOT_FOUND)).getName())
+                .reservationList(reservationRepository.getTodayReservationsDetails(date, employeeId))
+                .build();
+    }
+
 }

@@ -115,4 +115,12 @@ public class ReserveResponseDTO {
         private List<String> reservationMenus;
         private String inquiry;
     }
+    @Builder
+    @Getter
+    @Setter
+    public static class getReservationsDetailsOfDateResultDTO{
+        private String employeeName;
+        private LocalDate date;
+        private List<getTodayReservationsDetailsResultDTO> reservationList;
+    }
 }
