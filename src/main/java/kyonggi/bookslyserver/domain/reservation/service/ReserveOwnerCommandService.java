@@ -77,7 +77,7 @@ public class ReserveOwnerCommandService {
                   List<ReserveResponseDTO.getOnlyReservationsOfDateResultDTO> resultDTO=reservationRepository.getOnlyReservationsOfDate(date,employee.getId());
                   return ReserveResponseDTO.getOnlyReservationsOfDateAllEmpsResultDTO.builder()
                           .employeeName(employee.getName())
-                          .getOnlyReservationsOfDateResultDTOS(resultDTO)
+                          .reservationsList(resultDTO)
                           .build();
                 })
                 .collect(Collectors.toList());
