@@ -25,50 +25,50 @@ public class MenuApiController {
     private final MenuService menuService;
 
 
-    @GetMapping("/api/shop/{shopId}/menus")
+    @GetMapping("/api/shops/{shopId}/menus")
     public ResponseEntity<SuccessResponse<?>> readMenu(@PathVariable("shopId") Long id){
         List<MenuReadDto> result = menuService.readMenu(id);
         return SuccessResponse.ok(result);
     }
 
 
-    @PostMapping("/api/menu/{shopId}")
+    @PostMapping("/api/shops/{shopId}/menus")
     public ResponseEntity<SuccessResponse<?>> createMenu(@PathVariable("shopId") Long id, @RequestBody @Validated MenuCreateRequestDto requestDto){
         MenuCreateResponseDto result = menuService.create(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
 
-    @PutMapping("/api/menu/{menuId}")
+    @PutMapping("/api/shops/menus/{menuId}")
     public ResponseEntity<SuccessResponse<?>> updateMenu(@PathVariable("menuId") Long id, @RequestBody @Validated MenuCreateRequestDto requestDto){
         MenuUpdateResponseDto result = menuService.update(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
-    @DeleteMapping("/api/menu/{menuId}")
+    @DeleteMapping("/api/shops/menus/{menuId}")
     public void delete(@PathVariable("menuId") Long id){
         menuService.delete(id);
     }
 
-    @GetMapping("/api/shop/{shopId}/categories")
+    @GetMapping("/api/shops/{shopId}/categories")
     public ResponseEntity<SuccessResponse<?>> readCategory(@PathVariable("shopId") Long id){
         List<MenuCategoryReadDto> result = menuService.readMenuCategory(id);
         return SuccessResponse.ok(result);
     }
 
-    @PostMapping("/api/menuCategory/{shopId}")
+    @PostMapping("/api/shops/{shopId}/menuCategories")
     public ResponseEntity<SuccessResponse<?>> createMenuCategory(@PathVariable("shopId") Long id, @RequestBody @Validated MenuCategoryCreateDto requestDto){
         MenuCategoryCreateResponseDto result = menuService.createCategory(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
-    @PutMapping("/api/menuCategory/{categoryId}")
+    @PutMapping("/api/shops/menuCategories/{categoryId}")
     public ResponseEntity<SuccessResponse<?>> updateMenuCategory(@PathVariable("categoryId") Long id, @RequestBody @Validated MenuCategoryCreateDto requestDto){
         MenuCategoryCreateDto result = menuService.updateCategory(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
-    @DeleteMapping("/api/menuCategory/{categoryId}")
+    @DeleteMapping("/api/shops/menuCategories/{categoryId}")
     public void deleteMenuCategory(@PathVariable("categoryId") Long id){
         menuService.deleteCategory(id);
     }
