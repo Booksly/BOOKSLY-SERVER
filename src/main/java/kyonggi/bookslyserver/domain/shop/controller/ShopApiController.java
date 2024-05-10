@@ -21,7 +21,7 @@ public class ShopApiController {
     private final ShopService shopService;
 
     //가게 상세 프로필 조회(가게 주인)
-    @GetMapping("/api/shop/owner/{shopId}")
+    @GetMapping("/api/shops/{shopId}/owner")
     public ResponseEntity<SuccessResponse<?>> readShop(@PathVariable("shopId") Long id){
         ShopOwnerDetailReadOneDto result = shopService.readOne(id);
         return SuccessResponse.ok(result);
@@ -29,21 +29,21 @@ public class ShopApiController {
 
 
     //가게 등록
-    @PostMapping("/api/shop/{shopOwnerId}")
+    @PostMapping("/api/shops/owner/{shopOwnerId}")
     public ResponseEntity<SuccessResponse<?>> createShop(@PathVariable("shopOwnerId") Long id, @RequestBody @Validated ShopCreateRequestDto requestDto){
         ShopRegisterDto result = shopService.join(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
     //가게 수정
-    @PutMapping("/api/shop/{shopId}")
+    @PutMapping("/api/shops/{shopId}/owner")
     public ResponseEntity<SuccessResponse<?>> updateShop(@PathVariable("shopId") Long id, @RequestBody @Validated ShopCreateRequestDto requestDto){
         ShopCreateResponseDto result = shopService.update(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
     //가게 삭제
-    @DeleteMapping("/api/shop/{shopId}")
+    @DeleteMapping("/api/shops/{shopId}/owner")
     public ResponseEntity<SuccessResponse<?>> deleteShop(@PathVariable("shopId") Long id){
         ShopDeleteResponseDto result = shopService.delete(id);
         return SuccessResponse.ok(result);
