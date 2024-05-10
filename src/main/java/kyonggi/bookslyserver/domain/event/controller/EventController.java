@@ -3,10 +3,7 @@ package kyonggi.bookslyserver.domain.event.controller;
 import jakarta.validation.constraints.NotNull;
 import kyonggi.bookslyserver.domain.event.dto.request.CreateClosingEventRequestDto;
 import kyonggi.bookslyserver.domain.event.dto.request.CreateTimeEventsRequestDto;
-import kyonggi.bookslyserver.domain.event.dto.response.CreateClosingEventResponseDto;
-import kyonggi.bookslyserver.domain.event.dto.response.CreateTimeEventsResponseDto;
-import kyonggi.bookslyserver.domain.event.dto.response.GetClosingEventsResponseDto;
-import kyonggi.bookslyserver.domain.event.dto.response.GetTimeEventsResponseDto;
+import kyonggi.bookslyserver.domain.event.dto.response.*;
 import kyonggi.bookslyserver.domain.event.service.ClosingEventCommandService;
 import kyonggi.bookslyserver.domain.event.service.ClosingEventQueryService;
 import kyonggi.bookslyserver.domain.event.service.TimeEventCommandService;
@@ -40,11 +37,17 @@ public class EventController {
         return SuccessResponse.ok(timeEventsResponseDto);
     }
 
-    @GetMapping("time-events")
+    @GetMapping("/time-events")
     public ResponseEntity<SuccessResponse<?>> getTimeEvents(@RequestParam(value = "date", required = false) LocalDate date, @RequestParam("shop") @NotNull Long shopId,
                                                             @RequestParam("employee") @NotNull Long employeeId, @OwnerId Long ownerId) {
         GetTimeEventsResponseDto getTimeEventsResponseDto = timeEventQueryService.getTimeEvents(shopId, employeeId, date, ownerId);
         return SuccessResponse.ok(getTimeEventsResponseDto);
+    }
+
+    @GetMapping("/time-events/dates")
+    public ResponseEntity<SuccessResponse<?>> getAvailableDates(@RequestParam("shop") Long shopId, @OwnerId Long ownerId) {
+        GetAvailableDatesResponseDto getAvailableDatesResponseDto = timeEventQueryService.getAvailableDates(shopId, ownerId);
+        return SuccessResponse.ok(getAvailableDatesResponseDto);
     }
 
 
