@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.EMPLOYEE_NOT_FOUND;
+import static kyonggi.bookslyserver.global.error.ErrorCode.SHOP_NOT_FOUND;
 
 @Service
 @Transactional
@@ -142,8 +143,8 @@ public class EmployeeService {
 
     public GetCalendarDatesResponseDto getCalendarDates(Long shopId, Long employeeId) {
 
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_FOUND));
+        shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_FOUND));
 
         if (employee.getShop().getId() != shopId) throw new ForbiddenException();
 
