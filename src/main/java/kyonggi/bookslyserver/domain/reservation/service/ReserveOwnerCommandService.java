@@ -89,7 +89,7 @@ public class ReserveOwnerCommandService {
     /**
      * 예약 확인- 확정 예약 상세 조회
      */
-    public List<ReserveResponseDTO.getTodayReservationsDetailsResultDTO> getTodayReservationsDetailsResultDTOS(LocalDate today,Long id){
+    public List<ReserveResponseDTO.getTodayReservationsDetailsResultDTO> getTodayReservationsDetails(LocalDate today, Long id){
         return reservationRepository.getTodayReservationsDetails(today, id);
     }
 }

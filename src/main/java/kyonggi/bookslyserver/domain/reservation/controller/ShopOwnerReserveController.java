@@ -74,7 +74,7 @@ public class ShopOwnerReserveController {
 
     @GetMapping("reservationDetails/{date}")
     public ResponseEntity<SuccessResponse<?>> getTodayReservationsDetails(@PathVariable("date")LocalDate today,@RequestParam("employeeId")Long employeeId){
-        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationsDetailsResultDTOS(today, employeeId));
+        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationsDetails(today, employeeId));
     }
     /*
     * 임시 uri api 테스트 시에만 사용 바람

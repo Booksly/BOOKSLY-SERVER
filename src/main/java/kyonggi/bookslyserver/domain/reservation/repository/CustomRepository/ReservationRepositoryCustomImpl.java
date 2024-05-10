@@ -204,7 +204,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     @Override
     public List<ReserveResponseDTO.getTodayReservationsDetailsResultDTO> getTodayReservationsDetails(LocalDate today, Long employeeId) {
         List<ReserveResponseDTO.getTodayReservationsDetailsResultDTO> results=queryFactory.select(
-                Projections.constructor(ReserveResponseDTO.getTodayReservationsDetailsResultDTO.class,
+                Projections.fields(ReserveResponseDTO.getTodayReservationsDetailsResultDTO.class,
                         reservation.id.as("reservationId"),
                         reservation.reservationSchedule.startTime.as("reservationScheduleTime"),
                         reservation.inquiry.as("inquiry")
