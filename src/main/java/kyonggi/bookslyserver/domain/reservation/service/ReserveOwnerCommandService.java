@@ -9,6 +9,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,9 @@ public class ReserveOwnerCommandService {
     public String refuseReservationRequest(Long reservationId, ReserveRequestDTO.refuseReasonRequestDTO requestDTO){
         Reservation reservation=reservationRepository.findById(reservationId)
                 .orElseThrow(()->new EntityNotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
+        if (requestDTO.getRefuseReason()==null){
+            throw new InvalidValueException(ErrorCode.REFUSAL_REASON_MISSING);
+        }
         reservation.setRefused(true);
         reservation.setRefuseReason(requestDTO.getRefuseReason());
         reservationRepository.save(reservation);
