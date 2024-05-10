@@ -115,4 +115,20 @@ public class ReserveResponseDTO {
         private List<String> reservationMenus;
         private String inquiry;
     }
+    @Builder
+    @Getter
+    @Setter
+    public static class getReservationsDetailsOfDateResultDTO{
+        private String employeeName;
+        private LocalDate date;
+        private List<getTodayReservationsDetailsResultDTO> reservationList;
+    }
+    @Builder
+    @Getter
+    @Setter
+    public static class getReservationScheduleOfDateResultDTO{
+        private String employeeName;
+        private LocalDate date;
+        private List<getTodayReservationSchedulesResultDTO> scheduleList;
+    }
 }
