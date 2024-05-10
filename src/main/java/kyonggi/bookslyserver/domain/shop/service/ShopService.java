@@ -4,10 +4,7 @@ package kyonggi.bookslyserver.domain.shop.service;
 import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.dto.BusinessScheduleDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopDeleteResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopOwnerDetailReadOneDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
@@ -90,6 +87,18 @@ public class ShopService {
         return new ShopDeleteResponseDto(id);
     }
 
+    //가게 이름 조회(가게 주인)
+    public List<ReadShopNamesDto> readShopNames(Long id){
+        ShopOwner owner = shopOwnerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        List<Shop> shopList = shopRepository.findByShopOwnerId(id);
+
+        List<ReadShopNamesDto> result = new ArrayList<>();
+
+        for(Shop shop : shopList){
+            result.add(new ReadShopNamesDto(shop));
+        }
+        return result;
+    }
 
     public ShopOwnerDetailReadOneDto readOne(Long id){
         Optional<Shop> shop = shopRepository.findById(id);
