@@ -86,4 +86,10 @@ public class ReserveOwnerCommandService {
                 })
                 .collect(Collectors.toList());
     }
+    /**
+     * 예약 확인- 확정 예약 상세 조회
+     */
+    public List<ReserveResponseDTO.getTodayReservationsDetailsResultDTO> getTodayReservationsDetailsResultDTOS(LocalDate today,Long id){
+        return reservationRepository.getTodayReservationsDetails(today, id);
+    }
 }
