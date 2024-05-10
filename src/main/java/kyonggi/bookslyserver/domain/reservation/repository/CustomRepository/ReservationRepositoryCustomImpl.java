@@ -201,6 +201,33 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ReserveResponseDTO.getTodayReservationsDetailsResultDTO> getTodayReservationsDetails(LocalDate today, Long employeeId) {
+        List<ReserveResponseDTO.getTodayReservationsDetailsResultDTO> results=queryFactory.select(
+                Projections.fields(ReserveResponseDTO.getTodayReservationsDetailsResultDTO.class,
+                        reservation.id.as("reservationId"),
+                        reservation.reservationSchedule.startTime.as("reservationScheduleTime"),
+                        reservation.inquiry.as("inquiry")
+                        )
+        )
+                .from(reservation)
+                .where(reservation.reservationSchedule.workDate.eq(today),
+                        reservation.isConfirmed.eq(true),
+                        reservation.reservationSchedule.employee.id.eq(employeeId))
+                .orderBy(reservationSchedule.startTime.asc())
+                .fetch();
+        results.forEach(result->{
+            List<String> menuNames=queryFactory
+                    .select(menu.menuName)
+                    .from(reservationMenu)
+                    .leftJoin(menu).on(reservationMenu.menu.id.eq(menu.id))
+                    .where(reservationMenu.reservation.id.eq(result.getReservationId()))
+                    .fetch();
+            result.setReservationMenus(menuNames);
+        });
+        return results;
+    }
+
     private BooleanExpression isValidReservationSchedule(LocalDateTime now){
         return reservationSchedule.workDate.after(now.toLocalDate())
                 .or(reservationSchedule.workDate.eq(now.toLocalDate()).and(reservationSchedule.startTime.after(now.toLocalTime())));

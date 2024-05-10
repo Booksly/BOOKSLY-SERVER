@@ -71,6 +71,11 @@ public class ShopOwnerReserveController {
     public ResponseEntity<SuccessResponse<?>> getTodayReservationsOnlyAllEmps(@PathVariable("date")LocalDate date, @RequestParam("shopId")Long shopId){
         return SuccessResponse.ok(reserveOwnerCommandService.getOnlyReservationsOfDateAllEmps(date, shopId));
     }
+
+    @GetMapping("reservationDetails/{date}")
+    public ResponseEntity<SuccessResponse<?>> getTodayReservationsDetails(@PathVariable("date")LocalDate today,@RequestParam("employeeId")Long employeeId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationsDetails(today, employeeId));
+    }
     /*
     * 임시 uri api 테스트 시에만 사용 바람
     */
