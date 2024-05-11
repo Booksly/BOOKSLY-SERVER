@@ -47,6 +47,19 @@ public class ReserveResponseDTO {
         private LocalTime reservationTime;
         private String employeeName;
     }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class getReservationRequestDetailsResultDTO{
+        private Long reservationId;
+        private LocalDate reservationDate;
+        private LocalTime reservationTime;
+        private String employeeName;
+        private List<String> menuNames;
+        private String inquiry;
+    }
 
     @Builder
     @NoArgsConstructor
