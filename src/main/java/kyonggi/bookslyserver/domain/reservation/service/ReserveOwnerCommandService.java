@@ -29,7 +29,7 @@ public class ReserveOwnerCommandService {
     private final EmployeeRepository employeeRepository;
 
     /**
-     * 가게 주인 용도- 예약 확인 슬롯
+     * 가게 주인 용도- 예약 확인 슬롯, 개별 페이지- 예약 요청 상세 조회
      */
     public List<ReserveResponseDTO.getReservationRequestResultDTO> getReservationRequest(Long shopId){
         return reservationRepository.getReservationRequest(shopId);
@@ -37,7 +37,12 @@ public class ReserveOwnerCommandService {
     public List<ReserveResponseDTO.getReservationRequestResultDTO> getImminentReservationRequest(Long shopId){
         return reservationRepository.getImminentReservationRequest(shopId);
     }
-
+    public List<ReserveResponseDTO.getReservationRequestDetailsResultDTO> getReservationRequestDetails(Long shopId){
+        return reservationRepository.getReservationRequestDetails(shopId);
+    }
+    public List<ReserveResponseDTO.getReservationRequestDetailsResultDTO> getImminentReservationRequestDetails(Long shopId){
+        return reservationRepository.getImminentReservationRequestDetails(shopId);
+    }
     public List<ReserveResponseDTO.getDatesWithResReqResultDTO> getDatesWithResRequest(int year,int month,Long shopId){
         return reservationRepository.getDatesWithResReqResultDTO(year,month,shopId);
     }

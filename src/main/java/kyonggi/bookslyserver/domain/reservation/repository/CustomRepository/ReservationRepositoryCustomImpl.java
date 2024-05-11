@@ -34,11 +34,14 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     QEmployee employee=QEmployee.employee;
     QReservationMenu reservationMenu=QReservationMenu.reservationMenu;
     QMenu menu=QMenu.menu;
+
+    /**
+     * 예약 요청 조회
+     */
     @Override
     public List<ReserveResponseDTO.getReservationRequestResultDTO> getReservationRequest(Long shopId) {
         LocalDateTime now = LocalDateTime.now();
-        JPAQuery<ReserveResponseDTO.getReservationRequestResultDTO> query = createReservationRequestBaseQuery(now);
-        query.where(reservationSchedule.shop.id.eq(shopId));
+        JPAQuery<ReserveResponseDTO.getReservationRequestResultDTO> query = createReservationRequestBaseQuery(now,shopId);
         return query.orderBy(reservation.createDate.desc()).fetch();
     }
 
@@ -50,11 +53,13 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
         OrderSpecifier<?> orderByNearest = Expressions.numberTemplate(Long.class,
                 "TIMESTAMPDIFF(SECOND, NOW(), {0})", reservationDateTime).asc();
 
-        JPAQuery<ReserveResponseDTO.getReservationRequestResultDTO> query = createReservationRequestBaseQuery(now);
+        JPAQuery<ReserveResponseDTO.getReservationRequestResultDTO> query = createReservationRequestBaseQuery(now,shopId);
         return query.orderBy(orderByNearest).fetch();
     }
-
-    private JPAQuery<ReserveResponseDTO.getReservationRequestResultDTO> createReservationRequestBaseQuery(LocalDateTime now) {
+    /**
+     * 예약 요청 조회 base query
+     */
+    private JPAQuery<ReserveResponseDTO.getReservationRequestResultDTO> createReservationRequestBaseQuery(LocalDateTime now,Long shopId) {
         return queryFactory
                 .select(Projections.constructor(ReserveResponseDTO.getReservationRequestResultDTO.class,
                         reservation.id.as("reservationId"),
@@ -66,7 +71,71 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 .join(reservationSchedule.employee, employee)
                 .where(reservation.isConfirmed.eq(false)
                         .and(reservation.isRefused.eq(false))
-                        .and(isValidReservationSchedule(now)));
+                        .and(isValidReservationSchedule(now)),
+                        reservationSchedule.shop.id.eq(shopId)
+                );
+    }
+
+    /**
+     * 예약 요청 상세 조회
+     */
+    @Override
+    public List<ReserveResponseDTO.getReservationRequestDetailsResultDTO> getReservationRequestDetails(Long shopId) {
+        LocalDateTime now=LocalDateTime.now();
+        List<ReserveResponseDTO.getReservationRequestDetailsResultDTO> results= createReservationReqDetailsBaseQuery(now,shopId).orderBy(reservation.createDate.desc()).fetch();
+        setMenuNames(results);
+        return results;
+    }
+
+    @Override
+    public List<ReserveResponseDTO.getReservationRequestDetailsResultDTO> getImminentReservationRequestDetails(Long shopId) {
+        LocalDateTime now = LocalDateTime.now();
+        Expression<LocalDateTime> reservationDateTime = Expressions.dateTimeTemplate(LocalDateTime.class,
+                "CAST(CONCAT({0}, 'T', {1}) AS TIMESTAMP)", reservationSchedule.workDate, reservationSchedule.startTime);
+        OrderSpecifier<?> orderByNearest = Expressions.numberTemplate(Long.class,
+                "TIMESTAMPDIFF(SECOND, NOW(), {0})", reservationDateTime).asc();
+        List<ReserveResponseDTO.getReservationRequestDetailsResultDTO> results= createReservationReqDetailsBaseQuery(now,shopId).orderBy(orderByNearest).fetch();
+        setMenuNames(results);
+        return results;
+    }
+    private OrderSpecifier<?> orderByNearest(){
+        LocalDateTime now = LocalDateTime.now();
+        Expression<LocalDateTime> reservationDateTime = Expressions.dateTimeTemplate(LocalDateTime.class,
+                "CAST(CONCAT({0}, 'T', {1}) AS TIMESTAMP)", reservationSchedule.workDate, reservationSchedule.startTime);
+        return Expressions.numberTemplate(Long.class,
+                "TIMESTAMPDIFF(SECOND, NOW(), {0})", reservationDateTime).asc();
+    }
+
+    /**
+     * 예약 요청 상세 조회 Base query
+     */
+    private JPAQuery<ReserveResponseDTO.getReservationRequestDetailsResultDTO> createReservationReqDetailsBaseQuery(LocalDateTime now,Long shopId){
+        return queryFactory.
+                select(Projections.fields(ReserveResponseDTO.getReservationRequestDetailsResultDTO.class,
+                        reservation.id.as("reservationId"),
+                        reservationSchedule.workDate.as("reservationDate"),
+                        reservationSchedule.startTime.as("reservationTime"),
+                        employee.name.as("employeeName"),
+                        reservation.inquiry.as("inquiry")
+                        )
+                ).from(reservation)
+                .join(reservation.reservationSchedule,reservationSchedule)
+                .join(reservationSchedule.employee,employee)
+                .where(reservation.isConfirmed.eq(false)
+                                .and(reservation.isRefused.eq(false))
+                                .and(isValidReservationSchedule(now)),
+                        reservationSchedule.shop.id.eq(shopId));
+    }
+    private void setMenuNames(List<ReserveResponseDTO.getReservationRequestDetailsResultDTO> results){
+        results.forEach(result ->{
+            List<String> menuNames=queryFactory
+                    .select(menu.menuName)
+                    .from(reservationMenu)
+                    .leftJoin(menu).on(reservationMenu.menu.id.eq(menu.id))
+                    .where(reservationMenu.reservation.id.eq(result.getReservationId()))
+                    .fetch();
+            result.setMenuNames(menuNames);
+        });
     }
 
     @Override

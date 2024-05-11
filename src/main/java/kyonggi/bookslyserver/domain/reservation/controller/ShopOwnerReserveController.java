@@ -27,6 +27,9 @@ public class ShopOwnerReserveController {
         return SuccessResponse.ok(reserveCommandService.closeOrOpenReservationSchedule(reservationScheduleId));
     }
 
+    /**
+     * 예약 요청 조회, 확정, 거절
+     */
     @GetMapping("/latestRequest")
     public ResponseEntity<SuccessResponse<?>> getReservationRequest(@RequestParam("shopId")Long shopId){
         return SuccessResponse.ok(reserveOwnerCommandService.getReservationRequest(shopId));
@@ -34,6 +37,14 @@ public class ShopOwnerReserveController {
     @GetMapping("/imminentRequest")
     public ResponseEntity<SuccessResponse<?>> getImminentReservationRequest(@RequestParam("shopId")Long shopId){
         return SuccessResponse.ok(reserveOwnerCommandService.getImminentReservationRequest(shopId));
+    }
+    @GetMapping("/latestReqDetails")
+    public ResponseEntity<SuccessResponse<?>> getReservationRequestDetails(@RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getReservationRequestDetails(shopId));
+    }
+    @GetMapping("/imminentReqDetails")
+    public ResponseEntity<SuccessResponse<?>> getImminentReservationRequestDetails(@RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getImminentReservationRequestDetails(shopId));
     }
     @GetMapping("/monthlyReq/{year}/{month}")
     public ResponseEntity<SuccessResponse<?>> getDatesWithReservationRequest(@RequestParam("shopId")Long shopId,@PathVariable("year")int year,@PathVariable("month")int month){
@@ -87,6 +98,7 @@ public class ShopOwnerReserveController {
     public ResponseEntity<SuccessResponse<?>> getReservationScheduleOfDate(@PathVariable("date")LocalDate date,@RequestParam("employeeId")Long employeeId){
         return SuccessResponse.ok(reserveOwnerCommandService.getReservationScheduleOfDate(date, employeeId));
     }
+
 
     /*
     * 임시 uri api 테스트 시에만 사용 바람
