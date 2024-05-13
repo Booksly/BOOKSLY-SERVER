@@ -1,19 +1,26 @@
 package kyonggi.bookslyserver.domain.event.service;
 
 import kyonggi.bookslyserver.domain.event.dto.request.CreateClosingEventRequestDto;
+import kyonggi.bookslyserver.domain.event.dto.request.ApplyClosingEventsRequestDto;
 import kyonggi.bookslyserver.domain.event.dto.response.CreateClosingEventResponseDto;
+import kyonggi.bookslyserver.domain.event.dto.response.ApplyClosingEventsResponseDto;
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEventMenu;
 import kyonggi.bookslyserver.domain.event.repository.ClosingEventRepository;
+import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
+import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRepository;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
+import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static kyonggi.bookslyserver.global.error.ErrorCode.EMPLOYEE_NOT_FOUND;
-import static kyonggi.bookslyserver.global.error.ErrorCode.MENU_NOT_FOUND;
+import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
 @Service
 @Transactional
@@ -22,6 +29,8 @@ public class ClosingEventCommandService {
     private final ClosingEventRepository closingEventRepository;
     private final MenuRepository menuRepository;
     private final EmployeeRepository employeeRepository;
+    private final ShopService shopService;
+    private final ReservationScheduleRepository reservationScheduleRepository;
 
     public CreateClosingEventResponseDto createClosingEvent(CreateClosingEventRequestDto createClosingEventRequestDto) {
 
@@ -44,5 +53,30 @@ public class ClosingEventCommandService {
 
         ClosingEvent createdEvent = closingEventRepository.save(closingEvent);
         return CreateClosingEventResponseDto.of(createdEvent);
+    }
+
+    public ApplyClosingEventsResponseDto applyClosingEvents(ApplyClosingEventsRequestDto applyClosingEventsRequestDto, Long ownerId) {
+        Shop shop = shopService.findShop(ownerId, applyClosingEventsRequestDto.shopId());
+
+        ReservationSchedule reservationSchedule = getReservationSchedule(applyClosingEventsRequestDto);
+
+        if(reservationSchedule.getShop().getId() != shop.getId()) throw new ForbiddenException();
+
+        ClosingEvent closingEvent = getClosingEvent(reservationSchedule);
+        reservationSchedule.addClosingEvent(closingEvent);
+
+        return ApplyClosingEventsResponseDto.of(reservationSchedule);
+    }
+
+    private ReservationSchedule getReservationSchedule(ApplyClosingEventsRequestDto applyClosingEventsRequestDto) {
+        Long scheduleId = applyClosingEventsRequestDto.reservationScheduleId();
+        ReservationSchedule reservationSchedule = reservationScheduleRepository.findById(scheduleId).orElseThrow(() -> new EntityNotFoundException(RESERVATION_SCHEDULE_NOT_FOUND));
+        return reservationSchedule;
+    }
+
+    private ClosingEvent getClosingEvent(ReservationSchedule reservationSchedule) {
+        Employee employee = reservationSchedule.getEmployee();
+        ClosingEvent closingEvent = closingEventRepository.findByEmployee(employee).orElseThrow(() -> new EntityNotFoundException(CLOSING_EVENT_NOT_FOUND));
+        return closingEvent;
     }
 }

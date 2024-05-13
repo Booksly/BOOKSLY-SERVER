@@ -53,6 +53,7 @@ public enum ErrorCode implements BaseErrorCode{
      */
     FORBIDDEN(HttpStatus.FORBIDDEN, "리소스 접근 권한이 없습니다."),
 
+
     /**
      * 404 Not Found
      */
@@ -66,9 +67,11 @@ public enum ErrorCode implements BaseErrorCode{
     SHOP_NOT_FOUND(HttpStatus.NOT_FOUND, "가게를 찾을 수 없습니다"),
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴를 찾을 수 없습니다"),
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND,"해당하는 예약이 존재하지 않습니다"),
+    RESERVATION_SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 예약 일정입니다."),
     EMPLOYEES_NOT_FOUND(HttpStatus.NOT_FOUND, "직원이 없습니다. 직원을 등록 해 주세요."),
     MENUCATEGORIES_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴 카테고리가 존재하지 않습니다. 하나 이상의 메뉴 카테고리를 등록 해 주세요."),
     MENUCATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴 카테고리가 존재하지 않습니다."),
+    CLOSING_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND,"마감이벤트 설정 정보가 존재하지 않습니다. 마감이벤트를 먼저 설정해주세요."),
 
     /**
      * 405 Method Not Allowed

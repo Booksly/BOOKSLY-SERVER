@@ -3,22 +3,20 @@ package kyonggi.bookslyserver.domain.event.controller;
 import jakarta.validation.constraints.NotNull;
 import kyonggi.bookslyserver.domain.event.dto.request.CreateClosingEventRequestDto;
 import kyonggi.bookslyserver.domain.event.dto.request.CreateTimeEventsRequestDto;
+import kyonggi.bookslyserver.domain.event.dto.request.ApplyClosingEventsRequestDto;
 import kyonggi.bookslyserver.domain.event.dto.response.*;
 import kyonggi.bookslyserver.domain.event.service.ClosingEventCommandService;
 import kyonggi.bookslyserver.domain.event.service.ClosingEventQueryService;
 import kyonggi.bookslyserver.domain.event.service.TimeEventCommandService;
 import kyonggi.bookslyserver.domain.event.service.TimeEventQueryService;
-import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,5 +59,11 @@ public class EventController {
     public ResponseEntity<SuccessResponse<?>> getClosingEvents(@RequestParam("shop") Long shopId, @OwnerId Long ownerId) {
         GetClosingEventsResponseDto getClosingEventsResponseDto = closingEventQueryService.getClosingEvents(shopId, ownerId);
         return SuccessResponse.ok(getClosingEventsResponseDto);
+    }
+
+    @PostMapping("/closing-events/schedules")
+    public ResponseEntity<SuccessResponse<?>> applyClosingEvents(@RequestBody ApplyClosingEventsRequestDto applyClosingEventsRequestDto, @OwnerId Long ownerId ) {
+        ApplyClosingEventsResponseDto applyClosingEventsResponseDto = closingEventCommandService.applyClosingEvents(applyClosingEventsRequestDto, ownerId);
+        return SuccessResponse.ok(applyClosingEventsResponseDto);
     }
 }
