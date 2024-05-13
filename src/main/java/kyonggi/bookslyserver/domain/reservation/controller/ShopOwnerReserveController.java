@@ -19,12 +19,12 @@ public class ShopOwnerReserveController {
     @PostMapping("/setting")
     public ResponseEntity<SuccessResponse<?>> setReservationSetting
             (@RequestParam("shopId")Long shopId, @ModelAttribute ReserveRequestDTO.reservationSettingRequestDTO request){
-        return SuccessResponse.created(reserveCommandService.setReservationSetting(request,shopId));
+        return SuccessResponse.created(reserveOwnerCommandService.setReservationSetting(request,shopId));
     }
 
     @GetMapping("/closeTime")
     public ResponseEntity<SuccessResponse<?>> closeReservationSchedule(@RequestParam("scheduleId") Long reservationScheduleId){
-        return SuccessResponse.ok(reserveCommandService.closeOrOpenReservationSchedule(reservationScheduleId));
+        return SuccessResponse.ok(reserveOwnerCommandService.closeOrOpenReservationSchedule(reservationScheduleId));
     }
 
     /**
@@ -105,6 +105,6 @@ public class ShopOwnerReserveController {
     */
     @GetMapping("/createResSch")
     public ResponseEntity<SuccessResponse<?>> createReservationSchedule(@RequestParam("employeeId")Long employeeId){
-        return SuccessResponse.created(reserveCommandService.createEmployeeReservationSchedule(employeeId));
+        return SuccessResponse.created(reserveOwnerCommandService.createEmployeeReservationSchedule(employeeId));
     }
 }

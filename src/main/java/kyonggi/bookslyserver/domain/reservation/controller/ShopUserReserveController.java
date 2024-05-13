@@ -7,8 +7,11 @@ import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import retrofit2.http.PATCH;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +27,14 @@ public class ShopUserReserveController {
         return SuccessResponse.ok(reserveCommandService.getAvailableReservationTimes(employeeId,date));
     }
 
-    @PostMapping("")
+    @PostMapping("/")
     public ResponseEntity<SuccessResponse<?>> createReservation(@UserId Long userId, @RequestBody ReserveRequestDTO.reservationRequestDTO request){
         return SuccessResponse.created(reserveCommandService.createReservation(userId, request));
+    }
+
+    @GetMapping("/todayReservations/{today}")
+    public ResponseEntity<SuccessResponse<?>> createTodayReservation
+            (@UserId Long userId, @PathVariable("today")LocalDate date, @RequestParam List<LocalTime> times, @RequestParam List<String> categories){
+        return SuccessResponse.created("ok");
     }
 }
