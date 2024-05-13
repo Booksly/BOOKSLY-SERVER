@@ -70,4 +70,13 @@ public class ReservationSchedule extends BaseTimeEntity {
         employTimeEventSchedule.getReservationSchedules().add(this);
     }
 
+    public void addClosingEvent(ClosingEvent closingEvent) {
+        this.closingEvent = closingEvent;
+        this.isClosingEvent = true;
+    }
+
+    public void cancelClosingEvent() {
+        this.closingEvent = null;
+        this.isClosingEvent = false;
+    }
 }
