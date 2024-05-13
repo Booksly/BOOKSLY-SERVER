@@ -75,4 +75,8 @@ public class ReservationSchedule extends BaseTimeEntity {
         this.isClosingEvent = true;
     }
 
+    public void cancelClosingEvent() {
+        this.closingEvent = null;
+        this.isClosingEvent = false;
+    }
 }

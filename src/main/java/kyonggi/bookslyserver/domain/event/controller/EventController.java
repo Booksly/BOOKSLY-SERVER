@@ -62,8 +62,8 @@ public class EventController {
     }
 
     @PostMapping("/closing-events/schedules")
-    public ResponseEntity<SuccessResponse<?>> applyClosingEvents(@RequestBody ApplyClosingEventsRequestDto applyClosingEventsRequestDto, @OwnerId Long ownerId ) {
-        ApplyClosingEventsResponseDto applyClosingEventsResponseDto = closingEventCommandService.applyClosingEvents(applyClosingEventsRequestDto, ownerId);
+    public ResponseEntity<SuccessResponse<?>> applyClosingEvents(@RequestBody ApplyClosingEventsRequestDto applyClosingEventsRequestDto,@RequestParam("apply")boolean isApply, @OwnerId Long ownerId ) {
+        ApplyClosingEventsResponseDto applyClosingEventsResponseDto = closingEventCommandService.applyClosingEvents(applyClosingEventsRequestDto,isApply, ownerId);
         return SuccessResponse.ok(applyClosingEventsResponseDto);
     }
 }

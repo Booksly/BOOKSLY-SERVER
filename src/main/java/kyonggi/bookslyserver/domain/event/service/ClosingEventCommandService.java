@@ -55,15 +55,16 @@ public class ClosingEventCommandService {
         return CreateClosingEventResponseDto.of(createdEvent);
     }
 
-    public ApplyClosingEventsResponseDto applyClosingEvents(ApplyClosingEventsRequestDto applyClosingEventsRequestDto, Long ownerId) {
+    public ApplyClosingEventsResponseDto applyClosingEvents(ApplyClosingEventsRequestDto applyClosingEventsRequestDto, boolean isApply, Long ownerId) {
         Shop shop = shopService.findShop(ownerId, applyClosingEventsRequestDto.shopId());
 
         ReservationSchedule reservationSchedule = getReservationSchedule(applyClosingEventsRequestDto);
 
         if(reservationSchedule.getShop().getId() != shop.getId()) throw new ForbiddenException();
 
-        ClosingEvent closingEvent = getClosingEvent(reservationSchedule);
-        reservationSchedule.addClosingEvent(closingEvent);
+        if (isApply) {
+            reservationSchedule.addClosingEvent(getClosingEvent(reservationSchedule));
+        } else reservationSchedule.cancelClosingEvent();
 
         return ApplyClosingEventsResponseDto.of(reservationSchedule);
     }
