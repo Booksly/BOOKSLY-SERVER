@@ -8,6 +8,8 @@ import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopDeleteResponseDto
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopOwnerDetailReadOneDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
+import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerId;
+import kyonggi.bookslyserver.global.auth.principal.user.UserId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +31,8 @@ public class ShopApiController {
 
 
     //가게 등록
-    @PostMapping("/api/shops/owner/{shopOwnerId}")
-    public ResponseEntity<SuccessResponse<?>> createShop(@PathVariable("shopOwnerId") Long id, @RequestBody @Validated ShopCreateRequestDto requestDto){
+    @PostMapping("/api/shops/owner")
+    public ResponseEntity<SuccessResponse<?>> createShop(@OwnerId Long id, @RequestBody @Validated ShopCreateRequestDto requestDto){
         ShopRegisterDto result = shopService.join(id, requestDto);
         return SuccessResponse.ok(result);
     }
