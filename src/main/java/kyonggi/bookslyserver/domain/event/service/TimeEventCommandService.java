@@ -2,6 +2,8 @@ package kyonggi.bookslyserver.domain.event.service;
 
 import kyonggi.bookslyserver.domain.event.dto.request.CreateTimeEventsRequestDto;
 import kyonggi.bookslyserver.domain.event.dto.response.CreateTimeEventsResponseDto;
+import kyonggi.bookslyserver.domain.event.dto.response.DeleteClosingEventResponseDto;
+import kyonggi.bookslyserver.domain.event.dto.response.DeleteTimeEventResponseDto;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.*;
 import kyonggi.bookslyserver.domain.event.repository.TimeEventRepository;
 import kyonggi.bookslyserver.domain.event.repository.EmployTimeEventScheduleRepository;
@@ -17,6 +19,7 @@ import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.ConflictException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -337,4 +340,19 @@ public class TimeEventCommandService {
                 });
     }
 
+    public DeleteTimeEventResponseDto deleteEvent(Long shopId, Long eventId, Long ownerId) {
+        Shop shop = shopService.findShop(ownerId, shopId);
+        TimeEvent timeEvent = timeEventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException(TIME_EVENT_NOT_FOUND));
+
+        //가게 소유 타임이벤트가 아니면 불가
+        if (!shop.getId().equals(timeEvent.getShop().getId())) {
+            throw new ForbiddenException();}
+
+        List<ReservationSchedule> reservationSchedules = reservationScheduleRepository.findByEmployeeTimeEventSchedules(timeEvent.getEmployTimeEventSchedules());
+
+        reservationSchedules.stream().forEach(reservationSchedule -> reservationSchedule.cancelTimeEvent());
+
+        timeEventRepository.delete(timeEvent);
+        return DeleteTimeEventResponseDto.of(eventId);
+    }
 }

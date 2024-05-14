@@ -48,6 +48,12 @@ public class EventController {
         return SuccessResponse.ok(getAvailableDatesResponseDto);
     }
 
+    @DeleteMapping("/time-events/{timeEventId}")
+    public ResponseEntity<SuccessResponse<?>> deleteTimeEvent(@RequestParam("shop") Long shopId, @PathVariable("timeEventId") Long timeEventId, @OwnerId Long ownerId) {
+        DeleteTimeEventResponseDto deleteTimeEventResponseDto = timeEventCommandService.deleteEvent(shopId, timeEventId, ownerId);
+        return SuccessResponse.ok(deleteTimeEventResponseDto);
+    }
+
 
     @PostMapping("/closing-events")
     public ResponseEntity<SuccessResponse<?>> createClosingEvent(@RequestBody CreateClosingEventRequestDto createClosingEventRequestDto) {

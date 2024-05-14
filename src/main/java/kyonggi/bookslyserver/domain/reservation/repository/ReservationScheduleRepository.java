@@ -2,6 +2,8 @@ package kyonggi.bookslyserver.domain.reservation.repository;
 
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.EmployTimeEventSchedule;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.EmployeeTimeEvent;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,4 +32,7 @@ public interface ReservationScheduleRepository extends JpaRepository<Reservation
 
 
     List<ReservationSchedule> findByClosingEvent(ClosingEvent closingEvent);
+
+    @Query("select rs from ReservationSchedule rs where rs.employTimeEventSchedule IN :timeEventSchedules")
+    List<ReservationSchedule> findByEmployeeTimeEventSchedules(@Param(("timeEventSchedules")) List<EmployTimeEventSchedule> timeEventSchedules);
 }
