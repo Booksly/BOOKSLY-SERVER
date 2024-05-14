@@ -31,21 +31,21 @@ public class ShopApiController {
 
 
     //가게 등록
-    @PostMapping("/api/shops/owner")
+    @PostMapping("/api/shops")
     public ResponseEntity<SuccessResponse<?>> createShop(@OwnerId Long id, @RequestBody @Validated ShopCreateRequestDto requestDto){
         ShopRegisterDto result = shopService.join(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
     //가게 수정
-    @PutMapping("/api/shops/{shopId}/owner")
+    @PutMapping("/api/shops/{shopId}")
     public ResponseEntity<SuccessResponse<?>> updateShop(@PathVariable("shopId") Long id, @RequestBody @Validated ShopCreateRequestDto requestDto){
         ShopCreateResponseDto result = shopService.update(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
     //가게 삭제
-    @DeleteMapping("/api/shops/{shopId}/owner")
+    @DeleteMapping("/api/shops/{shopId}")
     public ResponseEntity<SuccessResponse<?>> deleteShop(@PathVariable("shopId") Long id){
         ShopDeleteResponseDto result = shopService.delete(id);
         return SuccessResponse.ok(result);
