@@ -3,7 +3,7 @@ package kyonggi.bookslyserver.domain.reservation.entity;
 import jakarta.persistence.*;
 
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
-import kyonggi.bookslyserver.domain.event.entity.timeEvent.EmployTimeEventSchedule;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEventSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
@@ -61,13 +61,13 @@ public class ReservationSchedule extends BaseTimeEntity {
     private List<Reservation> reservations = new ArrayList<>(); // 이 사이즈가 reservedCapacity의 역할을 하게 될거임
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "employTimeEventSchedule_id")
-    private EmployTimeEventSchedule employTimeEventSchedule;
+    @JoinColumn(name = "timeEventSchedule_id")
+    private TimeEventSchedule timeEventSchedule;
 
     //==연관 관계 편의 메서드==//
-    public void addEmployeeTimeEventSchedule(EmployTimeEventSchedule employTimeEventSchedule) {
-        this.employTimeEventSchedule = employTimeEventSchedule;
-        employTimeEventSchedule.getReservationSchedules().add(this);
+    public void addTimeEventSchedule(TimeEventSchedule timeEventSchedule) {
+        this.timeEventSchedule = timeEventSchedule;
+        timeEventSchedule.getReservationSchedules().add(this);
     }
 
     public void addClosingEvent(ClosingEvent closingEvent) {
@@ -78,5 +78,9 @@ public class ReservationSchedule extends BaseTimeEntity {
     public void cancelClosingEvent() {
         this.closingEvent = null;
         this.isClosingEvent = false;
+    }
+
+    public void cancelTimeEvent() {
+        this.timeEventSchedule = null;
     }
 }

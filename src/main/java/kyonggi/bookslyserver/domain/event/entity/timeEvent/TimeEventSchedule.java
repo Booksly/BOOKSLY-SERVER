@@ -18,7 +18,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class EmployTimeEventSchedule extends BaseTimeEntity {
+public class TimeEventSchedule extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +32,7 @@ public class EmployTimeEventSchedule extends BaseTimeEntity {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @OneToMany(mappedBy = "employTimeEventSchedule")
+    @OneToMany(mappedBy = "timeEventSchedule")
     @Builder.Default
     private List<ReservationSchedule> reservationSchedules = new ArrayList<>();
 
@@ -48,6 +48,6 @@ public class EmployTimeEventSchedule extends BaseTimeEntity {
 
     public void addTimeEvent(TimeEvent timeEvent) {
         this.timeEvent = timeEvent;
-        timeEvent.getEmployTimeEventSchedules().add(this);
+        timeEvent.getTimeEventSchedules().add(this);
     }
 }
