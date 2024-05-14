@@ -4,6 +4,7 @@ import kyonggi.bookslyserver.domain.event.dto.request.CreateClosingEventRequestD
 import kyonggi.bookslyserver.domain.event.dto.request.ApplyClosingEventsRequestDto;
 import kyonggi.bookslyserver.domain.event.dto.response.CreateClosingEventResponseDto;
 import kyonggi.bookslyserver.domain.event.dto.response.ApplyClosingEventsResponseDto;
+import kyonggi.bookslyserver.domain.event.dto.response.DeleteClosingEventResponseDto;
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEventMenu;
 import kyonggi.bookslyserver.domain.event.repository.ClosingEventRepository;
@@ -19,6 +20,8 @@ import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
@@ -79,5 +82,20 @@ public class ClosingEventCommandService {
         Employee employee = reservationSchedule.getEmployee();
         ClosingEvent closingEvent = closingEventRepository.findByEmployee(employee).orElseThrow(() -> new EntityNotFoundException(CLOSING_EVENT_NOT_FOUND));
         return closingEvent;
+    }
+
+    public DeleteClosingEventResponseDto deleteEvent(Long eventId, Long shopId, Long ownerId) {
+        Shop shop = shopService.findShop(ownerId, shopId);
+        ClosingEvent closingEvent = closingEventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException(CLOSING_EVENT_NOT_FOUND));
+
+        //가게 소유 마감이벤트가 아니면 불가
+        if (!shop.getId().equals(closingEvent.getEmployee().getShop().getId())) {
+            throw new ForbiddenException();}
+
+        List<ReservationSchedule> reservationSchedules = reservationScheduleRepository.findByClosingEvent(closingEvent);
+        reservationSchedules.stream().forEach(reservationSchedule -> reservationSchedule.cancelClosingEvent());
+
+        closingEventRepository.delete(closingEvent);
+        return DeleteClosingEventResponseDto.of(eventId);
     }
 }

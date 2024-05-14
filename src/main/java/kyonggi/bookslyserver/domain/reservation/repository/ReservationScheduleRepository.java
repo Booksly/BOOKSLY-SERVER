@@ -1,5 +1,6 @@
 package kyonggi.bookslyserver.domain.reservation.repository;
 
+import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.EmployTimeEventSchedule;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
@@ -28,4 +29,5 @@ public interface ReservationScheduleRepository extends JpaRepository<Reservation
     List<EmployTimeEventSchedule> findTimeEventSchedulesBy(@Param("employee")Employee employee);
 
 
+    List<ReservationSchedule> findByClosingEvent(ClosingEvent closingEvent);
 }

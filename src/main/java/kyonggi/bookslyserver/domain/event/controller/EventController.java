@@ -62,8 +62,14 @@ public class EventController {
     }
 
     @PostMapping("/closing-events/schedules")
-    public ResponseEntity<SuccessResponse<?>> applyClosingEvents(@RequestBody ApplyClosingEventsRequestDto applyClosingEventsRequestDto,@RequestParam("apply")boolean isApply, @OwnerId Long ownerId ) {
-        ApplyClosingEventsResponseDto applyClosingEventsResponseDto = closingEventCommandService.applyClosingEvents(applyClosingEventsRequestDto,isApply, ownerId);
+    public ResponseEntity<SuccessResponse<?>> applyClosingEvents(@RequestBody ApplyClosingEventsRequestDto applyClosingEventsRequestDto, @RequestParam("apply") boolean isApply, @OwnerId Long ownerId) {
+        ApplyClosingEventsResponseDto applyClosingEventsResponseDto = closingEventCommandService.applyClosingEvents(applyClosingEventsRequestDto, isApply, ownerId);
         return SuccessResponse.ok(applyClosingEventsResponseDto);
+    }
+
+    @DeleteMapping("/closing-events/{closingEventId}")
+    public ResponseEntity<SuccessResponse<?>> deleteClosingEvent(@PathVariable("closingEventId") Long eventId, @RequestParam("shop")Long shopId, @OwnerId Long ownerId) {
+        DeleteClosingEventResponseDto deleteClosingEventResponseDto = closingEventCommandService.deleteEvent(eventId, shopId ,ownerId);
+        return SuccessResponse.ok(deleteClosingEventResponseDto);
     }
 }
