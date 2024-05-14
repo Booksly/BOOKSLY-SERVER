@@ -15,6 +15,7 @@ import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
+import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class ShopService {
     public ShopUserReadOneDto findOne(Long id){
         Optional<Shop> shop = shopRepository.findById(id);
         if(!shop.isPresent()){
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND);
         }
 
         String name = shop.get().getName();
