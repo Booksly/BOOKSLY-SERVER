@@ -5,6 +5,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
+import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class ShopApiController {
     private final ShopService shopService;
 
     //가게 이름 조회(가게 주인)
-    @GetMapping("/api/owner/{ownerId}/shopnames")
-    public ResponseEntity<SuccessResponse<?>> readShopNames(@PathVariable("ownerId") Long id){
+    @GetMapping("/api/shops/shopnames")
+    public ResponseEntity<SuccessResponse<?>> readShopNames(@OwnerId Long id){
         List<ReadShopNamesDto> result = shopService.readShopNames(id);
         return SuccessResponse.ok(result);
     }
