@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 
 @Data
 public class EmployeeReadOneDto {
+
+    private Long id;
+
     private String imgUrl;
 
     private String name;
@@ -20,6 +23,9 @@ public class EmployeeReadOneDto {
     private List<EmployeeReadOneWorkScheduleDto> workSchedules;
 
     public EmployeeReadOneDto(Employee employee, List<EmployeeMenu> employeeMenus){
+
+        this.id = employee.getId();
+
         this.imgUrl = employee.getProfileImgUri();
 
         this.name = employee.getName();
