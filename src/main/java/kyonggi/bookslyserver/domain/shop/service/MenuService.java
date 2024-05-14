@@ -41,7 +41,7 @@ public class MenuService {
     public MenuReadOneDto readOneMenu(Long id){
         Optional<Menu> menu = menuRepository.findById(id);
         if(!menu.isPresent()){
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND);
         }
 
         return new MenuReadOneDto(menu.get());
