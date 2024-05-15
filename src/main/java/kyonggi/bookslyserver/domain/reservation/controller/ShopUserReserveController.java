@@ -7,8 +7,11 @@ import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import retrofit2.http.PATCH;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +27,19 @@ public class ShopUserReserveController {
         return SuccessResponse.ok(reserveCommandService.getAvailableReservationTimes(employeeId,date));
     }
 
-    @PostMapping("")
+    @PostMapping("/")
     public ResponseEntity<SuccessResponse<?>> createReservation(@UserId Long userId, @RequestBody ReserveRequestDTO.reservationRequestDTO request){
         return SuccessResponse.created(reserveCommandService.createReservation(userId, request));
+    }
+
+    @GetMapping("/todayReservations/{today}")
+    public ResponseEntity<SuccessResponse<?>> findTodayReservation
+            (@PathVariable("today")LocalDate date, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<Long> categories){
+        return SuccessResponse.ok(reserveCommandService.findTodayReservation(date,startTimes,endTimes,categories));
+    }
+    @GetMapping("/todayReservations/discount/{today}")
+    public ResponseEntity<SuccessResponse<?>> findTodayReservationByDiscount
+            (@PathVariable("today")LocalDate date, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<Long> categories){
+        return SuccessResponse.ok(reserveCommandService.findTodayReservationByDiscount(date,startTimes,endTimes,categories));
     }
 }
