@@ -143,6 +143,10 @@ public class ReserveCommandService {
         List<TimeRange> timeRanges=createTimeRange(startTimes, endTimes);
         return reservationRepository.findTodayReservations(date,timeRanges,categories);
     }
+    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservationByDiscount(LocalDate date,List<LocalTime> startTimes,List<LocalTime> endTimes, List<Long> categories){
+        List<TimeRange> timeRanges=createTimeRange(startTimes, endTimes);
+        return reservationRepository.findTodayReservationsByDiscount(date,timeRanges,categories);
+    }
     /**
      * startTime, endTime to timeRange
      */

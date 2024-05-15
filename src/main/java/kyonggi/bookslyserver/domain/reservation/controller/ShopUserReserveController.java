@@ -37,4 +37,9 @@ public class ShopUserReserveController {
             (@PathVariable("today")LocalDate date, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<Long> categories){
         return SuccessResponse.ok(reserveCommandService.findTodayReservation(date,startTimes,endTimes,categories));
     }
+    @GetMapping("/todayReservations/discount/{today}")
+    public ResponseEntity<SuccessResponse<?>> findTodayReservationByDiscount
+            (@PathVariable("today")LocalDate date, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<Long> categories){
+        return SuccessResponse.ok(reserveCommandService.findTodayReservationByDiscount(date,startTimes,endTimes,categories));
+    }
 }
