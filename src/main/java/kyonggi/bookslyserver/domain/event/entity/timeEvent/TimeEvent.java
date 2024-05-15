@@ -58,6 +58,6 @@ public class TimeEvent extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL)
     @Builder.Default
-    private List<EmployTimeEventSchedule> employTimeEventSchedules = new ArrayList<>();
+    private List<TimeEventSchedule> timeEventSchedules = new ArrayList<>();
 
 }

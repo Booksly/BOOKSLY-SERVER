@@ -2,9 +2,10 @@ package kyonggi.bookslyserver.domain.event.service;
 
 import kyonggi.bookslyserver.domain.event.dto.request.CreateTimeEventsRequestDto;
 import kyonggi.bookslyserver.domain.event.dto.response.CreateTimeEventsResponseDto;
+import kyonggi.bookslyserver.domain.event.dto.response.DeleteTimeEventResponseDto;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.*;
 import kyonggi.bookslyserver.domain.event.repository.TimeEventRepository;
-import kyonggi.bookslyserver.domain.event.repository.EmployTimeEventScheduleRepository;
+import kyonggi.bookslyserver.domain.event.repository.TimeEventScheduleRepository;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRepository;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
@@ -17,6 +18,7 @@ import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.ConflictException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,7 @@ public class TimeEventCommandService {
     private final ShopRepository shopRepository;
     private final MenuRepository menuRepository;
     private final TimeEventRepository timeEventRepository;
-    private final EmployTimeEventScheduleRepository employTimeEventScheduleRepository;
+    private final TimeEventScheduleRepository timeEventScheduleRepository;
     private final ReservationScheduleRepository reservationScheduleRepository;
     private final ShopService shopService;
 
@@ -114,9 +116,9 @@ public class TimeEventCommandService {
      * @param newTimeEventSchedule 새로운 타임이벤트 일정
      * @param reservationSchedulesWithinEventPeriod 생성한 타임이벤트 일정과 시간이 겹치는 예약 일정들
      */
-    private void linkEventScheduleAndReservationSchedule(EmployTimeEventSchedule newTimeEventSchedule, List<ReservationSchedule> reservationSchedulesWithinEventPeriod) {
+    private void linkEventScheduleAndReservationSchedule(TimeEventSchedule newTimeEventSchedule, List<ReservationSchedule> reservationSchedulesWithinEventPeriod) {
         reservationSchedulesWithinEventPeriod.stream().forEach(reservationSchedule -> {
-            reservationSchedule.addEmployeeTimeEventSchedule(newTimeEventSchedule);
+            reservationSchedule.addTimeEventSchedule(newTimeEventSchedule);
         });
     }
 
@@ -128,28 +130,28 @@ public class TimeEventCommandService {
      * @param employee 타임 이벤트 일정이 추가될 직원
      */
     private void validateOverlapEventSchedule(LocalDateTime newOpenEventDateTime, LocalDateTime newEndEventDateTime, Employee employee) {
-        boolean isOverlapped = employTimeEventScheduleRepository.existsOverlappingEventScheduleWithinEventPeriod(newOpenEventDateTime, newEndEventDateTime, employee);
+        boolean isOverlapped = timeEventScheduleRepository.existsOverlappingEventScheduleWithinEventPeriod(newOpenEventDateTime, newEndEventDateTime, employee);
         if (isOverlapped)
             throw new ConflictException(ErrorCode.EXIST_EVENTS_CONFLICT);
 
         }
 
-    private EmployTimeEventSchedule createNewEmployTimeEventSchedule(LocalDateTime newStartEventDateTime, LocalDateTime newEndEventDateTime, Employee employee) {
+    private TimeEventSchedule createNewTimeEventSchedule(LocalDateTime newStartEventDateTime, LocalDateTime newEndEventDateTime, Employee employee) {
         validateOverlapEventSchedule(newStartEventDateTime, newEndEventDateTime, employee);
 
-        EmployTimeEventSchedule newEmployTimeEventSchedule = EmployTimeEventSchedule.builder()
+        TimeEventSchedule newTimeEventSchedule = TimeEventSchedule.builder()
                 .startEventDateTime(newStartEventDateTime)
                 .endEventDateTime(newEndEventDateTime)
                 .build();
-        newEmployTimeEventSchedule.addEmployee(employee);
+        newTimeEventSchedule.addEmployee(employee);
 
-        return newEmployTimeEventSchedule;
+        return newTimeEventSchedule;
     }
 
-    private EmployTimeEventSchedule createAndSaveTimeEventSchedule(LocalDateTime newStartEventDateTime, LocalDateTime newEndEventDateTime, Employee employee, TimeEvent timeEvent) {
-        EmployTimeEventSchedule newTimeEventSchedule = createNewEmployTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, employee);
+    private TimeEventSchedule createAndSaveTimeEventSchedule(LocalDateTime newStartEventDateTime, LocalDateTime newEndEventDateTime, Employee employee, TimeEvent timeEvent) {
+        TimeEventSchedule newTimeEventSchedule = createNewTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, employee);
         newTimeEventSchedule.addTimeEvent(timeEvent);
-        employTimeEventScheduleRepository.save(newTimeEventSchedule);
+        timeEventScheduleRepository.save(newTimeEventSchedule);
         return newTimeEventSchedule;
     }
 
@@ -162,7 +164,7 @@ public class TimeEventCommandService {
      */
     private void processTimeEventSchedule(LocalDateTime newStartEventDateTime, LocalDateTime newEndEventDateTime, Employee employee,
                                           List<ReservationSchedule> reservationSchedulesWithinEventPeriod, TimeEvent timeEvent) {
-        EmployTimeEventSchedule newTimeEventSchedule = createAndSaveTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, employee, timeEvent);
+        TimeEventSchedule newTimeEventSchedule = createAndSaveTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, employee, timeEvent);
         linkEventScheduleAndReservationSchedule(newTimeEventSchedule, reservationSchedulesWithinEventPeriod);
     }
 
@@ -337,4 +339,18 @@ public class TimeEventCommandService {
                 });
     }
 
+    public DeleteTimeEventResponseDto deleteEvent(Long shopId, Long eventId, Long ownerId) {
+        Shop shop = shopService.findShop(ownerId, shopId);
+        TimeEvent timeEvent = timeEventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException(TIME_EVENT_NOT_FOUND));
+
+        //가게 소유 타임이벤트가 아니면 불가
+        if (!shop.getId().equals(timeEvent.getShop().getId())) {
+            throw new ForbiddenException();}
+
+        List<ReservationSchedule> reservationSchedules = reservationScheduleRepository.findByTimeEventSchedules(timeEvent.getTimeEventSchedules());
+        reservationSchedules.stream().forEach(reservationSchedule -> reservationSchedule.cancelTimeEvent());
+
+        timeEventRepository.delete(timeEvent);
+        return DeleteTimeEventResponseDto.of(eventId);
+    }
 }

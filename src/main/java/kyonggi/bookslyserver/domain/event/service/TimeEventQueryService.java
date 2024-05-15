@@ -3,13 +3,12 @@ package kyonggi.bookslyserver.domain.event.service;
 import kyonggi.bookslyserver.domain.event.dto.response.GetAvailableDatesResponseDto;
 import kyonggi.bookslyserver.domain.event.dto.response.GetTimeEventsResponseDto;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
-import kyonggi.bookslyserver.domain.event.repository.EmployTimeEventScheduleRepository;
+import kyonggi.bookslyserver.domain.event.repository.TimeEventScheduleRepository;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSetting;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationSettingRepository;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.DayName;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
-import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
@@ -40,7 +39,7 @@ public class TimeEventQueryService {
 
     private final ShopService shopService;
     private final EmployeeRepository employeeRepository;
-    private final EmployTimeEventScheduleRepository employTimeEventScheduleRepository;
+    private final TimeEventScheduleRepository timeEventScheduleRepository;
     private final ReservationSettingRepository reservationSettingRepository;
 
     public GetTimeEventsResponseDto getTimeEvents(Long shopId, Long employeeId, LocalDate date, Long ownerId) {
@@ -53,7 +52,7 @@ public class TimeEventQueryService {
         LocalDateTime dateTimeStart = date.atStartOfDay();
         LocalDateTime dateTimeEnd = date.atTime(LocalTime.MAX);
 
-        Optional<List<TimeEvent>> timeEvents = employTimeEventScheduleRepository.findTimeEventsByEmployeeIdAndDateTime(employee.getId(), dateTimeStart, dateTimeEnd);
+        Optional<List<TimeEvent>> timeEvents = timeEventScheduleRepository.findTimeEventsByEmployeeIdAndDateTime(employee.getId(), dateTimeStart, dateTimeEnd);
         return GetTimeEventsResponseDto.of(timeEvents);
     }
 
