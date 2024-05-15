@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -107,7 +108,6 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
         return results;
     }
     private OrderSpecifier<?> orderByNearest(){
-        LocalDateTime now = LocalDateTime.now();
         Expression<LocalDateTime> reservationDateTime = Expressions.dateTimeTemplate(LocalDateTime.class,
                 "CAST(CONCAT({0}, 'T', {1}) AS TIMESTAMP)", reservationSchedule.workDate, reservationSchedule.startTime);
         return Expressions.numberTemplate(Long.class,
@@ -313,7 +313,12 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                         reservationSchedule.id.as("reservationScheduleId"),
                         reservationSchedule.workDate.as("date"),
                         reservationSchedule.startTime.as("time"),
-                        shop.name.as("shopName")
+                        shop.name.as("shopName"),
+                        Expressions.stringTemplate("CONCAT({0},' ',{1},' ',{2})",
+                                shop.address.firstAddress,
+                                shop.address.secondAddress,
+                                shop.address.thirdAddress
+                                ).as("location")
                         ))
                 .from(reservationSchedule)
                 .join(reservationSchedule.shop,shop)
@@ -322,9 +327,11 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                         isReservationSchInTimeRange(timeRanges),
                         shop.category.id.in(categories)
                         )
+                .orderBy(orderByNearest())
                 .fetch();
         results.forEach(
                 result->{
+                    int totalDcRate=0;
                     ReserveResponseDTO.timeEventInfo info=queryFactory
                             .select(Projections.fields(ReserveResponseDTO.timeEventInfo.class,
                                     timeEvent.title.as("timeEventTitle"),
@@ -335,24 +342,31 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                             .join(timeEventSchedule.timeEvent,timeEvent)
                             .where(reservationSchedule.id.eq(result.getReservationScheduleId()))
                             .fetchOne();
+                    if (info!=null) totalDcRate+=info.getTimeDc();
                     result.setTimeEvent(info);
-                }
-        );
-        results.forEach(
-                result->{
-                    ReserveResponseDTO.closeEventInfo info=queryFactory
+                    ReserveResponseDTO.closeEventInfo info2=queryFactory
                             .select(Projections.fields(ReserveResponseDTO.closeEventInfo.class,
                                     closingEvent.eventMessage.as("closeEventTitle"),
                                     closingEvent.discountRate.as("closeDc")
-                                    ))
+                            ))
                             .from(reservationSchedule)
                             .join(reservationSchedule.closingEvent,closingEvent)
                             .where(reservationSchedule.id.eq(result.getReservationScheduleId()))
                             .fetchOne();
-                    result.setCloseEvent(info);
+                    if (info2!=null) totalDcRate+=info2.getCloseDc();
+                    result.setCloseEvent(info2);
+                    result.setTotalDcRate(totalDcRate);
                 }
         );
         return results;
+    }
+
+    @Override
+    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservationsByDiscount(LocalDate date, List<ReserveCommandService.TimeRange> timeRanges, List<Long> categories) {
+        List<ReserveResponseDTO.findTodayReservationsResultDTO> results= findTodayReservations(date, timeRanges, categories);
+        return results.stream()
+                .sorted(Comparator.comparing(ReserveResponseDTO.findTodayReservationsResultDTO::getTotalDcRate).reversed())
+                .collect(Collectors.toList());
     }
 
     private BooleanExpression isValidReservationSchedule(LocalDateTime now){

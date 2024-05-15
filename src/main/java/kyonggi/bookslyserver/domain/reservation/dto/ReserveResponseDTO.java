@@ -155,6 +155,7 @@ public class ReserveResponseDTO {
         private LocalTime time;
         private String shopName;
         private String location;
+        private int totalDcRate;
         private timeEventInfo timeEvent;
         private closeEventInfo closeEvent;
     }
