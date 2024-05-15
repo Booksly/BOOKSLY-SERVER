@@ -47,6 +47,19 @@ public class ReserveResponseDTO {
         private LocalTime reservationTime;
         private String employeeName;
     }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class getReservationRequestDetailsResultDTO{
+        private Long reservationId;
+        private LocalDate reservationDate;
+        private LocalTime reservationTime;
+        private String employeeName;
+        private List<String> menuNames;
+        private String inquiry;
+    }
 
     @Builder
     @NoArgsConstructor
@@ -69,10 +82,99 @@ public class ReserveResponseDTO {
     @AllArgsConstructor
     @Setter
     @Getter
-    public static class getTodayReservationsResultDTO{
+    public static class getTodayReservationSchedulesResultDTO {
         private Long reservationScheduleId;
         private LocalTime reservationScheduleTime;
         private boolean isClosed;
         private List<reservationMenu> reservationMenus;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class getOnlyReservationsOfDateResultDTO{
+        private Long reservationScheduleId;
+        private LocalTime reservationScheduleTime;
+        private List<reservationMenu> reservationMenus;
+    }
+
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class getTodayReservationsAllEmpsResultDTO {
+        private LocalTime reservationScheduleTime;
+        private List<reservationMenu> reservationMenus;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class getOnlyReservationsOfDateAllEmpsResultDTO{
+        private String employeeName;
+        private List<getOnlyReservationsOfDateResultDTO> reservationsList;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class getTodayReservationsDetailsResultDTO{
+        private Long reservationId;
+        private LocalTime reservationScheduleTime;
+        private List<String> reservationMenus;
+        private String inquiry;
+    }
+    @Builder
+    @Getter
+    @Setter
+    public static class getReservationsDetailsOfDateResultDTO{
+        private String employeeName;
+        private LocalDate date;
+        private List<getTodayReservationsDetailsResultDTO> reservationList;
+    }
+    @Builder
+    @Getter
+    @Setter
+    public static class getReservationScheduleOfDateResultDTO{
+        private String employeeName;
+        private LocalDate date;
+        private List<getTodayReservationSchedulesResultDTO> scheduleList;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class findTodayReservationsResultDTO{
+        private Long reservationScheduleId;
+        private LocalDate date;
+        private LocalTime time;
+        private String shopName;
+        private String location;
+        private int totalDcRate;
+        private timeEventInfo timeEvent;
+        private closeEventInfo closeEvent;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class timeEventInfo{
+        private String timeEventTitle;
+        private int timeDc;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class closeEventInfo{
+        private String closeEventTitle;
+        private int closeDc;
     }
 }

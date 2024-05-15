@@ -3,8 +3,11 @@ package kyonggi.bookslyserver.domain.shop.service;
 import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadOneDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
@@ -38,6 +41,7 @@ public class MenuService {
 
     private final ShopRepository shopRepository;
 
+
     public MenuReadOneDto readOneMenu(Long id){
         Optional<Menu> menu = menuRepository.findById(id);
         if(!menu.isPresent()){
@@ -45,6 +49,20 @@ public class MenuService {
         }
 
         return new MenuReadOneDto(menu.get());
+    }
+  
+    public List<MenuReadDto> readMenu(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException();
+        }
+        List<MenuReadDto> menuReadDtos = new ArrayList<>();
+
+        for(Menu menu : shop.get().getMenus()){
+            MenuReadDto menuDto = new MenuReadDto(menu);
+            menuReadDtos.add(menuDto);
+        }
+        return menuReadDtos;
     }
 
     @Transactional
@@ -54,16 +72,18 @@ public class MenuService {
             throw new EntityNotFoundException();
         }
         Menu menu = Menu.createEntity(shop.get(), requestDto);
-        MenuCategory menuCategory = MenuCategory.createEntity(shop.get(), requestDto);
 
-        shop.get().getMenuCategories().add(menuCategory);
-        shop.get().getMenus().add(menu);
+        if(!menuCategoryRepository.existsByName(requestDto.menuCategory())){
+            throw new BusinessException(ErrorCode.MENUCATEGORY_NOT_FOUND);
+        }
+        else{
+            MenuCategory menuCategory = menuCategoryRepository.findByName(requestDto.menuCategory());
+            shop.get().getMenus().add(menu);
+            menuCategory.addMenu(menu);
+            menu.addImg(menu.getMenuImages());
 
-        menuCategory.addMenu(menu);
-        menu.addImg(menu.getMenuImages());
-
-        menuCategoryRepository.save(menuCategory);
-        menuRepository.save(menu);
+            menuRepository.save(menu);
+        }
 
         return MenuCreateResponseDto.builder().id(menu.getId()).build();
 
@@ -108,16 +128,37 @@ public class MenuService {
         }
     }
 
-    @Transactional
-    public Long createCategory(Long id, MenuCategoryCreateDto requestDto){
+    public List<MenuCategoryReadDto> readMenuCategory(Long id){
         Optional<Shop> shop = shopRepository.findById(id);
         if(!shop.isPresent()){
             throw new EntityNotFoundException();
         }
-        MenuCategory menuCategory = MenuCategory.createEntity(requestDto, shop.get());
-        shop.get().getMenuCategory(menuCategory);
-        menuCategoryRepository.save(menuCategory);
-        return menuCategory.getId();
+
+        List<MenuCategoryReadDto> dtos = new ArrayList<>();
+
+        if(shop.get().getMenuCategories() != null){
+            for(MenuCategory menuCategory : shop.get().getMenuCategories()){
+                dtos.add(new MenuCategoryReadDto(menuCategory));
+            }
+        }
+        return dtos;
+    }
+
+    @Transactional
+    public MenuCategoryCreateResponseDto createCategory(Long id, MenuCategoryCreateDto requestDto){
+        Optional<Shop> shop = shopRepository.findById(id);
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException();
+        }
+        if(!menuCategoryRepository.existsByName(requestDto.categoryName())) {
+            MenuCategory menuCategory = MenuCategory.createEntity(requestDto, shop.get());
+            shop.get().getMenuCategory(menuCategory);
+            menuCategoryRepository.save(menuCategory);
+            return new MenuCategoryCreateResponseDto(menuCategory);
+        }
+        else{
+            throw new BusinessException(ErrorCode.MENUCATEGORY_ALREADY_EXIST);
+        }
     }
 
     @Transactional

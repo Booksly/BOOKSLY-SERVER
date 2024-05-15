@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -43,6 +44,16 @@ public class GlobalExceptionHandler {
 
         final FieldErrorResponseDto fieldErrorReason = ErrorCode.BAD_REQUEST.getFieldErrorReason(errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fieldErrorReason);
+    }
+
+    /**
+     * 필수 쿼리 파라미터를 누락한 경우의 error를 handling합니다
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    protected ResponseEntity<ErrorResponseDto> handleServletRequestParameterException(MissingServletRequestParameterException e) {
+        log.error(">>> handle: MissingServletRequestParameterException ", e);
+        final ErrorResponseDto errorBaseResponse = ErrorCode.MISSING_REQUIRED_QUERY_PARAM.getErrorReason();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBaseResponse);
     }
 
     /**

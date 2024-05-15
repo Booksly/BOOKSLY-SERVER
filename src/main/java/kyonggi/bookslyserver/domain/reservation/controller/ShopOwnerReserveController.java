@@ -12,21 +12,24 @@ import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reserve")
+@RequestMapping("/reserve-owner")
 public class ShopOwnerReserveController {
     private final ReserveCommandService reserveCommandService;
     private final ReserveOwnerCommandService reserveOwnerCommandService;
     @PostMapping("/setting")
     public ResponseEntity<SuccessResponse<?>> setReservationSetting
             (@RequestParam("shopId")Long shopId, @ModelAttribute ReserveRequestDTO.reservationSettingRequestDTO request){
-        return SuccessResponse.created(reserveCommandService.setReservationSetting(request,shopId));
+        return SuccessResponse.created(reserveOwnerCommandService.setReservationSetting(request,shopId));
     }
 
     @GetMapping("/closeTime")
     public ResponseEntity<SuccessResponse<?>> closeReservationSchedule(@RequestParam("scheduleId") Long reservationScheduleId){
-        return SuccessResponse.ok(reserveCommandService.closeOrOpenReservationSchedule(reservationScheduleId));
+        return SuccessResponse.ok(reserveOwnerCommandService.closeOrOpenReservationSchedule(reservationScheduleId));
     }
 
+    /**
+     * 예약 요청 조회, 확정, 거절
+     */
     @GetMapping("/latestRequest")
     public ResponseEntity<SuccessResponse<?>> getReservationRequest(@RequestParam("shopId")Long shopId){
         return SuccessResponse.ok(reserveOwnerCommandService.getReservationRequest(shopId));
@@ -34,6 +37,14 @@ public class ShopOwnerReserveController {
     @GetMapping("/imminentRequest")
     public ResponseEntity<SuccessResponse<?>> getImminentReservationRequest(@RequestParam("shopId")Long shopId){
         return SuccessResponse.ok(reserveOwnerCommandService.getImminentReservationRequest(shopId));
+    }
+    @GetMapping("/latestReqDetails")
+    public ResponseEntity<SuccessResponse<?>> getReservationRequestDetails(@RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getReservationRequestDetails(shopId));
+    }
+    @GetMapping("/imminentReqDetails")
+    public ResponseEntity<SuccessResponse<?>> getImminentReservationRequestDetails(@RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getImminentReservationRequestDetails(shopId));
     }
     @GetMapping("/monthlyReq/{year}/{month}")
     public ResponseEntity<SuccessResponse<?>> getDatesWithReservationRequest(@RequestParam("shopId")Long shopId,@PathVariable("year")int year,@PathVariable("month")int month){
@@ -48,16 +59,52 @@ public class ShopOwnerReserveController {
         return SuccessResponse.ok(reserveOwnerCommandService.refuseReservationRequest(reservationId,requestDTO));
     }
 
+    /**
+     * 개별 직원용
+     */
     @GetMapping("/todayReservations/{date}")
-    public ResponseEntity<SuccessResponse<?>> getTodayReservations(@PathVariable("date") LocalDate today, @RequestParam("employeeId")Long employeeId){
-        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservations(today, employeeId));
+    public ResponseEntity<SuccessResponse<?>> getTodayReservationSchedules(@PathVariable("date") LocalDate today, @RequestParam("employeeId")Long employeeId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationSchedules(today, employeeId));
     }
+    @GetMapping("/reservationsOfDate/{date}")
+    public ResponseEntity<SuccessResponse<?>> getTodayReservationsOnly(@PathVariable("date") LocalDate date, @RequestParam("employeeId")Long employeeId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationsOnly(date, employeeId));
+    }
+
+    /**
+     * 전체 직원용
+     */
+    @GetMapping("/todayReservationsAll/{date}")
+    public ResponseEntity<SuccessResponse<?>> getTodayReservationSchedulesAllEmps(@PathVariable("date") LocalDate today, @RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationSchedulesAllEmps(today, shopId));
+    }
+    @GetMapping("reservationsOfDateAll/{date}")
+    public ResponseEntity<SuccessResponse<?>> getTodayReservationsOnlyAllEmps(@PathVariable("date")LocalDate date, @RequestParam("shopId")Long shopId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getOnlyReservationsOfDateAllEmps(date, shopId));
+    }
+
+    /**
+     * 예약 확인 페이지
+     */
+    @GetMapping("todayReservationDetails/{date}")
+    public ResponseEntity<SuccessResponse<?>> getTodayReservationsDetails(@PathVariable("date")LocalDate today,@RequestParam("employeeId")Long employeeId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationsDetails(today, employeeId));
+    }
+    @GetMapping("reservationDetails/{date}")
+    public ResponseEntity<SuccessResponse<?>> getReservationDetailsOfDate(@PathVariable("date")LocalDate date,@RequestParam("employeeId")Long employeeId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getReservationsOfDateDetails(date, employeeId));
+    }
+    @GetMapping("reservationSchedules/{date}")
+    public ResponseEntity<SuccessResponse<?>> getReservationScheduleOfDate(@PathVariable("date")LocalDate date,@RequestParam("employeeId")Long employeeId){
+        return SuccessResponse.ok(reserveOwnerCommandService.getReservationScheduleOfDate(date, employeeId));
+    }
+
 
     /*
     * 임시 uri api 테스트 시에만 사용 바람
     */
     @GetMapping("/createResSch")
     public ResponseEntity<SuccessResponse<?>> createReservationSchedule(@RequestParam("employeeId")Long employeeId){
-        return SuccessResponse.created(reserveCommandService.createEmployeeReservationSchedule(employeeId));
+        return SuccessResponse.created(reserveOwnerCommandService.createEmployeeReservationSchedule(employeeId));
     }
 }

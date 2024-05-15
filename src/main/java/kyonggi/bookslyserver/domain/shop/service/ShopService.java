@@ -2,8 +2,11 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 
 import jakarta.transaction.Transactional;
+import kyonggi.bookslyserver.domain.shop.dto.BusinessScheduleDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopDeleteResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopOwnerDetailReadOneDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
@@ -13,12 +16,17 @@ import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
+import kyonggi.bookslyserver.global.error.ErrorCode;
+import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
 @Service
 @Transactional
@@ -35,6 +43,9 @@ public class ShopService {
     @Transactional
     public ShopRegisterDto join(Long ownerId, ShopCreateRequestDto requestDto) {
 
+        if(shopRepository.existsByName(requestDto.getName())){
+            throw new BusinessException(SHOP_NAME_ALREADY_EXIST);
+        }
         Shop shop = Shop.createShop(requestDto);
         shopRepository.save(shop);
         List<BusinessSchedule> businessScheduleList = requestDto.getBusinessScheduleList();
@@ -65,15 +76,45 @@ public class ShopService {
     }
 
     @Transactional
-    public void delete(Long id){
+    public ShopDeleteResponseDto delete(Long id){
         Optional<Shop> shop = shopRepository.findById(id);
+
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException();
+        }
+
         ShopOwner owner = shop.get().getShopOwner();
         owner.deleteShop(shop.get());
+        //shopRepository.delete(shop.get());
         shopRepository.deleteById(id);
+        return new ShopDeleteResponseDto(id);
+    }
+
+
+    public ShopOwnerDetailReadOneDto readOne(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException();
+        }
+        List<BusinessScheduleDto> businessScheduleDtos = new ArrayList<>();
+
+        for(BusinessSchedule businessSchedule : shop.get().getBusinessSchedules()){
+            businessScheduleDtos.add(new BusinessScheduleDto(businessSchedule));
+        }
+
+
+        return new ShopOwnerDetailReadOneDto(shop.get(), businessScheduleDtos);
     }
 
 
 
 
+    public Shop findShop(Long ownerId, Long shopId) {
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        if (shop.getShopOwner().getId() != ownerId) {
+            throw new BusinessException(BAD_REQUEST);
+        }
+        return shop;
+    }
 
 }
