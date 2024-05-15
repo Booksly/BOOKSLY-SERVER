@@ -34,7 +34,7 @@ public class ShopUserReserveController {
 
     @GetMapping("/todayReservations/{today}")
     public ResponseEntity<SuccessResponse<?>> findTodayReservation
-            (@PathVariable("today")LocalDate date, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<String> categories){
-        return SuccessResponse.ok("ok");
+            (@PathVariable("today")LocalDate date, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<Long> categories){
+        return SuccessResponse.ok(reserveCommandService.findTodayReservation(date,startTimes,endTimes,categories));
     }
 }

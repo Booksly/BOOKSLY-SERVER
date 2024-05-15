@@ -8,12 +8,17 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import kyonggi.bookslyserver.domain.event.entity.closeEvent.QClosingEvent;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.QTimeEvent;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.QTimeEventSchedule;
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
 import kyonggi.bookslyserver.domain.reservation.entity.QReservation;
 import kyonggi.bookslyserver.domain.reservation.entity.QReservationMenu;
 import kyonggi.bookslyserver.domain.reservation.entity.QReservationSchedule;
+import kyonggi.bookslyserver.domain.reservation.service.ReserveCommandService;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.QEmployee;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.QMenu;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.QShop;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -34,7 +39,10 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     QEmployee employee=QEmployee.employee;
     QReservationMenu reservationMenu=QReservationMenu.reservationMenu;
     QMenu menu=QMenu.menu;
-
+    QShop shop=QShop.shop;
+    QTimeEventSchedule timeEventSchedule=QTimeEventSchedule.timeEventSchedule;
+    QTimeEvent timeEvent=QTimeEvent.timeEvent;
+    QClosingEvent closingEvent=QClosingEvent.closingEvent;
     /**
      * 예약 요청 조회
      */
@@ -297,6 +305,56 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
         return results;
     }
 
+    @Override
+    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservations(LocalDate date, List<ReserveCommandService.TimeRange> timeRanges, List<Long> categories) {
+
+        List<ReserveResponseDTO.findTodayReservationsResultDTO> results=queryFactory.
+                select(Projections.fields(ReserveResponseDTO.findTodayReservationsResultDTO.class,
+                        reservationSchedule.id.as("reservationScheduleId"),
+                        reservationSchedule.workDate.as("date"),
+                        reservationSchedule.startTime.as("time"),
+                        shop.name.as("shopName")
+                        ))
+                .from(reservationSchedule)
+                .join(reservationSchedule.shop,shop)
+                .where(reservationSchedule.workDate.eq(date),
+                        reservationSchedule.isClosed.eq(false),
+                        isReservationSchInTimeRange(timeRanges),
+                        shop.category.id.in(categories)
+                        )
+                .fetch();
+        results.forEach(
+                result->{
+                    ReserveResponseDTO.timeEventInfo info=queryFactory
+                            .select(Projections.fields(ReserveResponseDTO.timeEventInfo.class,
+                                    timeEvent.title.as("timeEventTitle"),
+                                    timeEvent.discountRate.as("timeDc")
+                                    ))
+                            .from(reservationSchedule)
+                            .join(reservationSchedule.timeEventSchedule,timeEventSchedule)
+                            .join(timeEventSchedule.timeEvent,timeEvent)
+                            .where(reservationSchedule.id.eq(result.getReservationScheduleId()))
+                            .fetchOne();
+                    result.setTimeEvent(info);
+                }
+        );
+        results.forEach(
+                result->{
+                    ReserveResponseDTO.closeEventInfo info=queryFactory
+                            .select(Projections.fields(ReserveResponseDTO.closeEventInfo.class,
+                                    closingEvent.eventMessage.as("closeEventTitle"),
+                                    closingEvent.discountRate.as("closeDc")
+                                    ))
+                            .from(reservationSchedule)
+                            .join(reservationSchedule.closingEvent,closingEvent)
+                            .where(reservationSchedule.id.eq(result.getReservationScheduleId()))
+                            .fetchOne();
+                    result.setCloseEvent(info);
+                }
+        );
+        return results;
+    }
+
     private BooleanExpression isValidReservationSchedule(LocalDateTime now){
         return reservationSchedule.workDate.after(now.toLocalDate())
                 .or(reservationSchedule.workDate.eq(now.toLocalDate()).and(reservationSchedule.startTime.after(now.toLocalTime())));
@@ -304,5 +362,18 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
 
     private BooleanExpression isReservationRequestInTheMonth(LocalDate startDate,LocalDate endDate){
         return reservationSchedule.workDate.between(startDate, endDate);
+    }
+    private BooleanExpression isReservationSchInTimeRange(List<ReserveCommandService.TimeRange> timeRanges) {
+        BooleanExpression timeRangeCondition = null;
+        for (ReserveCommandService.TimeRange timeRange : timeRanges) {
+            BooleanExpression condition = reservationSchedule.startTime.goe(timeRange.getStartTime())
+                    .and(reservationSchedule.endTime.loe(timeRange.getEndTime()));
+            if (timeRangeCondition == null) {
+                timeRangeCondition = condition;
+            } else {
+                timeRangeCondition = timeRangeCondition.or(condition);
+            }
+        }
+        return timeRangeCondition;
     }
 }

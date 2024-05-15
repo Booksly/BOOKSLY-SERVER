@@ -139,5 +139,20 @@ public class ReserveCommandService {
     /**
      * 당일 예약
      */
-
+    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservation(LocalDate date,List<LocalTime> startTimes,List<LocalTime> endTimes, List<Long> categories){
+        List<TimeRange> timeRanges=createTimeRange(startTimes, endTimes);
+        return reservationRepository.findTodayReservations(date,timeRanges,categories);
+    }
+    /**
+     * startTime, endTime to timeRange
+     */
+    public static List<TimeRange> createTimeRange(List<LocalTime> startTimes, List<LocalTime> endTimes){
+        List<TimeRange> timeRanges=new ArrayList<>();
+        for (int i=0;i< startTimes.size();i++){
+            LocalTime startTime=startTimes.get(i);
+            LocalTime endTime=endTimes.get(i);
+            timeRanges.add(new TimeRange(startTime,endTime));
+        }
+        return timeRanges;
+    }
 }
