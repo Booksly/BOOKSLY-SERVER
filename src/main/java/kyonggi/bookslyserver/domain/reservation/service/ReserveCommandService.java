@@ -23,6 +23,8 @@ import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,13 +45,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReserveCommandService {
     private final ReservationSettingRepository reservationSettingRepository;
-    private final ShopRepository shopRepository;
     private final EmployeeRepository employeeRepository;
     private final ReservationScheduleRepository reservationScheduleRepository;
     private final EmployeeMenuRepository employeeMenuRepository;
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
     private final ReservationMenuRepository reservationMenuRepository;
+    @AllArgsConstructor
+    @Getter
+    public static class TimeRange{
+        LocalTime startTime;
+        LocalTime endTime;
+    }
     /**
      * 예약 가능 시간대 조회
      */

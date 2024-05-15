@@ -33,8 +33,8 @@ public class ShopUserReserveController {
     }
 
     @GetMapping("/todayReservations/{today}")
-    public ResponseEntity<SuccessResponse<?>> createTodayReservation
-            (@UserId Long userId, @PathVariable("today")LocalDate date, @RequestParam List<LocalTime> times, @RequestParam List<String> categories){
-        return SuccessResponse.created("ok");
+    public ResponseEntity<SuccessResponse<?>> findTodayReservation
+            (@PathVariable("today")LocalDate date, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<String> categories){
+        return SuccessResponse.ok("ok");
     }
 }
