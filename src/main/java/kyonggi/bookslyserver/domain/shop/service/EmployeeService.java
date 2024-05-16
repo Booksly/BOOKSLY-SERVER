@@ -3,16 +3,14 @@ package kyonggi.bookslyserver.domain.shop.service;
 import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeWorkScheduleDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeDeleteResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeReadDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.employee.GetCalendarDatesResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.employee.*;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.*;
+import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +59,18 @@ public class EmployeeService {
         }
 
         return employeeReadDtos;
+    }
+
+
+    public EmployeeReadOneDto readOneEmployee(Long id){
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if(!employee.isPresent()){
+            throw new EntityNotFoundException(EMPLOYEE_NOT_FOUND);
+        }
+        List<EmployeeMenu> employeeMenus = employeeMenuRepository.findByEmployeeId(id);
+
+
+        return new EmployeeReadOneDto(employee.get(), employeeMenus);
     }
 
     @Transactional

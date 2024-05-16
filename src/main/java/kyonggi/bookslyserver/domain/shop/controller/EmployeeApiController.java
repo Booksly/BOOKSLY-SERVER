@@ -1,10 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.controller;
 
 import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeCreateRequestDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeDeleteResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.employee.EmployeeReadDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.employee.GetCalendarDatesResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.employee.*;
 import kyonggi.bookslyserver.domain.shop.service.EmployeeService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +20,13 @@ public class EmployeeApiController {
     @GetMapping("/api/shops/{shopId}/employees")
     public ResponseEntity<SuccessResponse<?>> readEmployee(@PathVariable("shopId") Long id){
         List<EmployeeReadDto> result = employeeService.readEmployee(id);
+        return SuccessResponse.ok(result);
+    }
+
+
+    @GetMapping("/api/shops/employees/{employeeId}")
+    public ResponseEntity<SuccessResponse<?>> readOneEmployee(@PathVariable("employeeId") Long id){
+        EmployeeReadOneDto result = employeeService.readOneEmployee(id);
         return SuccessResponse.ok(result);
     }
 
