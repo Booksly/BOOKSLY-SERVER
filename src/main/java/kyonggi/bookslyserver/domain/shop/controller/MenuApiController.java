@@ -2,11 +2,13 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 
 
+import com.sun.net.httpserver.Authenticator;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadOneDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
 import kyonggi.bookslyserver.domain.shop.service.MenuService;
@@ -23,6 +25,14 @@ import java.util.List;
 public class MenuApiController {
 
     private final MenuService menuService;
+
+
+
+    @GetMapping("/api/shops/menus/{menuId}")
+    public ResponseEntity<SuccessResponse<?>> readOneMenu(@PathVariable("menuId") Long id){
+        MenuReadOneDto result = menuService.readOneMenu(id);
+        return SuccessResponse.ok(result);
+    }
 
 
     @GetMapping("/api/shops/{shopId}/menus")

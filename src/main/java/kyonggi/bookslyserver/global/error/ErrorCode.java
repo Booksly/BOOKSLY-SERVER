@@ -30,6 +30,7 @@ public enum ErrorCode implements BaseErrorCode{
     DUPLICATED_REPEAT_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST, "요일 반복과 기간 반복의 중복 설정이 불가능합니다."),
     INCOMPLETE_REPEAT_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST, "반복 설정을 완료해주세요."),
     MISSING_REQUIRED_QUERY_PARAM(HttpStatus.BAD_REQUEST,"필수 쿼리 파라미터가 누락되었습니다."),
+    REFUSAL_REASON_MISSING(HttpStatus.BAD_REQUEST,"거절 사유는 필수로 등록해야 합니다."),
 
 
     /**
@@ -52,6 +53,7 @@ public enum ErrorCode implements BaseErrorCode{
      */
     FORBIDDEN(HttpStatus.FORBIDDEN, "리소스 접근 권한이 없습니다."),
 
+
     /**
      * 404 Not Found
      */
@@ -65,9 +67,14 @@ public enum ErrorCode implements BaseErrorCode{
     SHOP_NOT_FOUND(HttpStatus.NOT_FOUND, "가게를 찾을 수 없습니다"),
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴를 찾을 수 없습니다"),
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND,"해당하는 예약이 존재하지 않습니다"),
+    RESERVATION_SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 예약 일정입니다."),
     EMPLOYEES_NOT_FOUND(HttpStatus.NOT_FOUND, "직원이 없습니다. 직원을 등록 해 주세요."),
     MENUCATEGORIES_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴 카테고리가 존재하지 않습니다. 하나 이상의 메뉴 카테고리를 등록 해 주세요."),
     MENUCATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴 카테고리가 존재하지 않습니다."),
+    CLOSING_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 마감 이벤트입니다."),
+    TIME_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 타임 이벤트입니다."),
+
+
     /**
      * 405 Method Not Allowed
      */

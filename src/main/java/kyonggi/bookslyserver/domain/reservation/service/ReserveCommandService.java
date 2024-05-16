@@ -23,6 +23,8 @@ import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,82 +45,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReserveCommandService {
     private final ReservationSettingRepository reservationSettingRepository;
-    private final ShopRepository shopRepository;
     private final EmployeeRepository employeeRepository;
     private final ReservationScheduleRepository reservationScheduleRepository;
     private final EmployeeMenuRepository employeeMenuRepository;
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
     private final ReservationMenuRepository reservationMenuRepository;
-    /**
-     * reservation setting 생성 로직
-     */
-    public ReserveResponseDTO.reservationSettingResultDTO setReservationSetting(ReserveRequestDTO.reservationSettingRequestDTO request, Long shopId){
-        Shop shop=shopRepository.findById(shopId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-
-        if ((request.getRegisterMin() == null && request.getRegisterHr() == null)) throw new InvalidValueException(ErrorCode.TIME_SETTING_BAD_REQUEST);
-        if((request.isAuto() && request.getMaxCapacity() == null)) throw new InvalidValueException(ErrorCode.AUTO_SETTING_BAD_REQUEST);
-        
-        ReservationSetting reservationSetting;
-        // 존재 여부 확인
-        Optional<ReservationSetting> existingSetting=reservationSettingRepository.findByShop(shop);
-        
-        if (existingSetting.isPresent()){
-            reservationSetting=ReservationConverter.updateReservationSetting(request,existingSetting.get());
-        }
-        else {
-            reservationSetting= ReservationConverter.toReservationSetting(request);
-            reservationSetting.setShop(shop);
-        }
-        return ReservationConverter.toReservationSettingResultDTO(reservationSettingRepository.save(reservationSetting));
-    }
-    /**
-     * 직원별 reservation Schedule 생성 로직
-     */
-    public String createEmployeeReservationSchedule(Long employeeId){
-
-        Employee employee=employeeRepository.findById(employeeId).orElseThrow(()->new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-        Shop shop=shopRepository.findById(employee.getShop().getId()).orElseThrow(()-> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-        Optional<ReservationSetting> existingSetting=reservationSettingRepository.findByShop(shop);
-        List<WorkSchedule> workSchedules=employee.getWorkSchedules();
-        LocalDate startDate=LocalDate.now();
-
-        if (existingSetting.isPresent()){
-            ReservationSetting reservationSetting=existingSetting.get();
-            /*
-            * 가게 기본 설정 불러오기
-            */
-            Integer registerMin=reservationSetting.getRegisterMin();
-            Integer registerHr=reservationSetting.getRegisterHr();
-            if (registerHr==null) registerHr=0;
-            if (registerMin==null) registerMin=0;
-
-            Duration interval= Duration.ofHours(registerHr).plusMinutes(registerMin);
-            int cycle=reservationSetting.getReservationCycle();
-            LocalDate endDate=startDate.plusDays(cycle-1);
-
-            boolean isAutoConfirmed=reservationSetting.isAutoConfirmation();
-
-            for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-                DayOfWeek dayOfWeek=date.getDayOfWeek();
-                final LocalDate finalDate=date;
-                workSchedules.stream()
-                        .filter(ws-> !ws.isDayOff()&&ws.getDayOfWeek().equals(dayOfWeek))
-                        .forEach(
-                                ws ->{
-                                    LocalTime startTime=ws.getStartTime();
-                                    LocalTime endTime=ws.getEndTime();
-
-                                    while (startTime.plus(interval).isBefore(endTime)||startTime.plus(interval).equals(endTime)){
-                                        reservationScheduleRepository.save(ReservationConverter.toReservationSchedule(startTime,finalDate,interval,employee,shop,isAutoConfirmed));
-                                        startTime=startTime.plus(interval);
-                                    }
-                                }
-                        );
-            }
-        }else throw new EntityNotFoundException(ErrorCode.SETTING_NOT_FOUND);
-        return "생성 완료!";
+    @AllArgsConstructor
+    @Getter
+    public static class TimeRange{
+        LocalTime startTime;
+        LocalTime endTime;
     }
     /**
      * 예약 가능 시간대 조회
@@ -200,16 +137,26 @@ public class ReserveCommandService {
         reservationScheduleRepository.save(reservationSchedule);
     }
     /**
-     *  시간대 수동 마감
+     * 당일 예약
      */
-    public String closeOrOpenReservationSchedule(Long reservationScheduleId){
-        ReservationSchedule reservationSchedule=reservationScheduleRepository.findById(reservationScheduleId)
-                .orElseThrow(()->new EntityNotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
-        reservationSchedule.setClosed(!reservationSchedule.isClosed());
-        if (reservationSchedule.isClosed()) {
-            return "시간대 마감 완료";
-        } else {
-            return "시간대 오픈 완료";
+    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservation(LocalDate date,List<LocalTime> startTimes,List<LocalTime> endTimes, List<Long> categories){
+        List<TimeRange> timeRanges=createTimeRange(startTimes, endTimes);
+        return reservationRepository.findTodayReservations(date,timeRanges,categories);
+    }
+    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservationByDiscount(LocalDate date,List<LocalTime> startTimes,List<LocalTime> endTimes, List<Long> categories){
+        List<TimeRange> timeRanges=createTimeRange(startTimes, endTimes);
+        return reservationRepository.findTodayReservationsByDiscount(date,timeRanges,categories);
+    }
+    /**
+     * startTime, endTime to timeRange
+     */
+    public static List<TimeRange> createTimeRange(List<LocalTime> startTimes, List<LocalTime> endTimes){
+        List<TimeRange> timeRanges=new ArrayList<>();
+        for (int i=0;i< startTimes.size();i++){
+            LocalTime startTime=startTimes.get(i);
+            LocalTime endTime=endTimes.get(i);
+            timeRanges.add(new TimeRange(startTime,endTime));
         }
+        return timeRanges;
     }
 }
