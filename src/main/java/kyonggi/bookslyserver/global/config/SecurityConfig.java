@@ -83,7 +83,7 @@ public class SecurityConfig {
                         //인증이 필요한 uri - 일반 회원만 접근 가능
                         .requestMatchers("/api/user/details/**","/api/auth/verify/user/**","api/reservations").hasRole("USER")
                         //인증이 필요한 uri - 기업 회원만 접근 가능
-                        .requestMatchers("/api/owner/**","/api/events/**","/api/shops/**","/api/employees/**","api/reservations/owner/**").hasRole("ADMIN")
+                        .requestMatchers("/api/owner/**","/api/events/**","/api/shops/**","/api/employees/{employeeId}/reservations/**","api/reservations/owner/**").hasRole("ADMIN")
                         // 그 외 요청, 인증이 필요없음 - 비회원도 접근 가능
                         .anyRequest().permitAll());
 
