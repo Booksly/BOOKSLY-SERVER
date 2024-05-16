@@ -23,7 +23,7 @@ public class ReservationController {
     /**
      * 직원별, 날짜별 가능한 시간대 조회
      */
-    @GetMapping("/time")
+    @GetMapping("/available-times")
     public ResponseEntity<SuccessResponse<?>> getAvailableReservationTimes(@RequestParam("employeeId")Long employeeId, @RequestParam("date")LocalDate date){
         return SuccessResponse.ok(reserveCommandService.getAvailableReservationTimes(employeeId,date));
     }
@@ -39,12 +39,12 @@ public class ReservationController {
     /**
      * 당일 예약 예약 조회
      */
-    @GetMapping("/todayReservations/{today}")
+    @GetMapping("/today/{today}")
     public ResponseEntity<SuccessResponse<?>> findTodayReservation
             (@PathVariable("today")LocalDate date, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<Long> categories){
         return SuccessResponse.ok(reserveCommandService.findTodayReservation(date,startTimes,endTimes,categories));
     }
-    @GetMapping("/todayReservations/discount/{today}")
+    @GetMapping("/today/discount/{today}")
     public ResponseEntity<SuccessResponse<?>> findTodayReservationByDiscount
             (@PathVariable("today")LocalDate date, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<Long> categories){
         return SuccessResponse.ok(reserveCommandService.findTodayReservationByDiscount(date,startTimes,endTimes,categories));
@@ -53,16 +53,16 @@ public class ReservationController {
     /**
      * 예약 마감 
      */
-    @GetMapping("/closeTime")
-    public ResponseEntity<SuccessResponse<?>> closeReservationSchedule(@RequestParam("scheduleId") Long reservationScheduleId){
+    @GetMapping("/owner/{scheduleId}/close")
+    public ResponseEntity<SuccessResponse<?>> closeReservationSchedule(@PathVariable("scheduleId") Long reservationScheduleId){
         return SuccessResponse.ok(reserveOwnerCommandService.closeOrOpenReservationSchedule(reservationScheduleId));
     }
-    @GetMapping("/confirmReq")
-    public ResponseEntity<SuccessResponse<?>> confirmReservationRequest(@RequestParam("resId")Long reservationId){
+    @GetMapping("/owner/{reservationId}/confirm")
+    public ResponseEntity<SuccessResponse<?>> confirmReservationRequest(@PathVariable("reservationId")Long reservationId){
         return SuccessResponse.ok(reserveOwnerCommandService.confirmReservationRequest(reservationId));
     }
-    @PostMapping("/refuseReq")
-    public ResponseEntity<SuccessResponse<?>> refuseReservationRequest(@RequestParam("resId")Long reservationId,@RequestBody ReserveRequestDTO.refuseReasonRequestDTO requestDTO){
+    @PostMapping("/owner/{reservationId}/refuse")
+    public ResponseEntity<SuccessResponse<?>> refuseReservationRequest(@PathVariable("reservationId")Long reservationId,@RequestBody ReserveRequestDTO.refuseReasonRequestDTO requestDTO){
         return SuccessResponse.ok(reserveOwnerCommandService.refuseReservationRequest(reservationId,requestDTO));
     }
 
