@@ -74,6 +74,26 @@ public class EmployeeService {
         return new EmployeeReadOneDto(employee.get(), employeeMenus);
     }
 
+    public List<ReserveEmployeesDto> readReserveEmployees(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+
+        if(!shop.isPresent()){
+            throw new BusinessException(ErrorCode.SHOP_NOT_FOUND);
+        }
+
+        if(shop.get().getEmployees() == null){
+            throw new BusinessException(ErrorCode.RESERVE_EMPLOYEES_NOT_FOUND);
+        }
+
+        List<ReserveEmployeesDto> result = new ArrayList<>();
+
+        for(Employee employee : shop.get().getEmployees()){
+            result.add(new ReserveEmployeesDto(employee));
+        }
+
+        return result;
+    }
+
     @Transactional
     public EmployeeCreateResponseDto join(Long id, EmployeeCreateRequestDto requestDto){
         Optional<Shop> shop = shopRepository.findById(id);

@@ -31,6 +31,12 @@ public class EmployeeApiController {
         return SuccessResponse.ok(result);
     }
 
+    @GetMapping("/api/reserve/{shopId}/employees")
+    public ResponseEntity<SuccessResponse<?>> readReserveEmployees(@PathVariable("shopId") Long id){
+        List<ReserveEmployeesDto> result = employeeService.readReserveEmployees(id);
+        return SuccessResponse.ok(result);
+    }
+
     @PostMapping("/api/shops/{shopId}/employees")
     public ResponseEntity<SuccessResponse<?>> createEmployee(@PathVariable("shopId") Long id, @RequestBody @Validated EmployeeCreateRequestDto requestDto){
         EmployeeCreateResponseDto result = employeeService.join(id, requestDto);
