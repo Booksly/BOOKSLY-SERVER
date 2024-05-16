@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEventMenu;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEventMenu;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationMenu;
-import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;

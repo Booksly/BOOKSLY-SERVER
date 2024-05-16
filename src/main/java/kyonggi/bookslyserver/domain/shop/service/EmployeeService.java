@@ -1,8 +1,8 @@
 package kyonggi.bookslyserver.domain.shop.service;
 
 import jakarta.transaction.Transactional;
-import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeCreateRequestDto;
-import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeWorkScheduleDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeWorkScheduleDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.*;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;

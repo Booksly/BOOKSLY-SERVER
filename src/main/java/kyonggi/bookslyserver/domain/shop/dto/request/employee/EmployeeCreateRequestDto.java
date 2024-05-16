@@ -1,4 +1,4 @@
-package kyonggi.bookslyserver.domain.shop.dto.request;
+package kyonggi.bookslyserver.domain.shop.dto.request.employee;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

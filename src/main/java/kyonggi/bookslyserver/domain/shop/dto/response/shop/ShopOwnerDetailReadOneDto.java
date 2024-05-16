@@ -1,7 +1,6 @@
 package kyonggi.bookslyserver.domain.shop.dto.response.shop;
 
 import kyonggi.bookslyserver.domain.review.entity.Review;
-import kyonggi.bookslyserver.domain.shop.dto.BusinessScheduleDto;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import lombok.Data;
 

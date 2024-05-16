@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.controller;
 
-import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeCreateRequestDto;
+
+import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.*;
 import kyonggi.bookslyserver.domain.shop.service.EmployeeService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;

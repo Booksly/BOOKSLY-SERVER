@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class MenuReadDto {
-
     private String imgUrl;
 
     private String menuCategory;

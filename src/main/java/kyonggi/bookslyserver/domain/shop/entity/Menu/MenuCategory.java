@@ -1,8 +1,8 @@
 package kyonggi.bookslyserver.domain.shop.entity.Menu;
 
 import jakarta.persistence.*;
-import kyonggi.bookslyserver.domain.shop.dto.request.MenuCategoryCreateDto;
-import kyonggi.bookslyserver.domain.shop.dto.request.MenuCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCategoryCreateDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;

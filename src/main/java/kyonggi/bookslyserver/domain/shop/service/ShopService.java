@@ -2,10 +2,12 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 
 import jakarta.transaction.Transactional;
-import kyonggi.bookslyserver.domain.shop.dto.BusinessScheduleDto;
-import kyonggi.bookslyserver.domain.shop.dto.request.ShopCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
 import kyonggi.bookslyserver.domain.shop.repository.BusinessScheduleRepository;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
@@ -37,6 +40,41 @@ public class ShopService {
     private final ShopImageRepository shopImageRepository;
 
     private final ShopOwnerRepository shopOwnerRepository;
+
+
+    public ShopUserReadOneDto findOne(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND);
+        }
+
+        String name = shop.get().getName();
+        String description = shop.get().getIntroduction();
+        String detailAddress = shop.get().getDetailAddress();
+        String phoneNumber = shop.get().getPhoneNumber();
+
+        List<BusinessSchedule> businessSchedules = shop.get().getBusinessSchedules();
+        List<BusinessScheduleDto> businessScheduleDtos = businessSchedules.stream().map(businessSchedule -> new BusinessScheduleDto(businessSchedule)).collect(Collectors.toList());
+
+        List<Menu> menus = shop.get().getMenus();
+        List<MenuReadDto> menuReadDtos = menus.stream().map(menu -> new MenuReadDto(menu)).collect(Collectors.toList());
+
+        List<Employee> employeeList = shop.get().getEmployees();
+        List<EmployeeUserResponseDto> employees = employeeList.stream().map(employee -> new EmployeeUserResponseDto(employee)).collect(Collectors.toList());
+
+        return ShopUserReadOneDto
+                .builder()
+                .Name(name)
+                .description(description)
+                .detailAddress(detailAddress)
+                .phoneNumber(phoneNumber)
+                .businessSchedules(businessScheduleDtos)
+                .menus(menuReadDtos)
+                .employees(employees)
+                .address(new AddressDto(shop.get().getAddress()))
+                .build();
+    }
+
     @Transactional
     public ShopRegisterDto join(Long ownerId, ShopCreateRequestDto requestDto) {
 
@@ -125,5 +163,6 @@ public class ShopService {
         }
         return shop;
     }
+
 
 }

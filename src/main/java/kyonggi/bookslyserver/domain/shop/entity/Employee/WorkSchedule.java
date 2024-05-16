@@ -2,8 +2,7 @@ package kyonggi.bookslyserver.domain.shop.entity.Employee;
 
 import jakarta.persistence.*;
 
-import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
-import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeWorkScheduleDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeWorkScheduleDto;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 
 
@@ -11,10 +10,7 @@ import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 import java.time.DayOfWeek;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
