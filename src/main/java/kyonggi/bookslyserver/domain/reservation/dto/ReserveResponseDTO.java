@@ -47,6 +47,19 @@ public class ReserveResponseDTO {
         private LocalTime reservationTime;
         private String employeeName;
     }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class getReservationRequestDetailsResultDTO{
+        private Long reservationId;
+        private LocalDate reservationDate;
+        private LocalTime reservationTime;
+        private String employeeName;
+        private List<String> menuNames;
+        private String inquiry;
+    }
 
     @Builder
     @NoArgsConstructor
@@ -102,13 +115,66 @@ public class ReserveResponseDTO {
     @Getter
     public static class getOnlyReservationsOfDateAllEmpsResultDTO{
         private String employeeName;
-        private List<getOnlyReservationsOfDateResultDTO> getOnlyReservationsOfDateResultDTOS;
-        // getOnly로 바꿔끼기
+        private List<getOnlyReservationsOfDateResultDTO> reservationsList;
     }
-
-    /**
-     * 추가 할 일
-     * 1. 현재 있는 dto는 예약 일정 조회하는 dto니까 예약만 조회하는 dto 따로 생성 (시간이랑 메뉴 리스트만 있도록)
-     * 2. 새 dto 생성하면 그거로 대체하기
-     */
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class getTodayReservationsDetailsResultDTO{
+        private Long reservationId;
+        private LocalTime reservationScheduleTime;
+        private List<String> reservationMenus;
+        private String inquiry;
+    }
+    @Builder
+    @Getter
+    @Setter
+    public static class getReservationsDetailsOfDateResultDTO{
+        private String employeeName;
+        private LocalDate date;
+        private List<getTodayReservationsDetailsResultDTO> reservationList;
+    }
+    @Builder
+    @Getter
+    @Setter
+    public static class getReservationScheduleOfDateResultDTO{
+        private String employeeName;
+        private LocalDate date;
+        private List<getTodayReservationSchedulesResultDTO> scheduleList;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class findTodayReservationsResultDTO{
+        private Long reservationScheduleId;
+        private LocalDate date;
+        private LocalTime time;
+        private String shopName;
+        private String location;
+        private int totalDcRate;
+        private timeEventInfo timeEvent;
+        private closeEventInfo closeEvent;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class timeEventInfo{
+        private String timeEventTitle;
+        private int timeDc;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class closeEventInfo{
+        private String closeEventTitle;
+        private int closeDc;
+    }
 }
