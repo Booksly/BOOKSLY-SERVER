@@ -144,4 +144,37 @@ public class ReserveResponseDTO {
         private LocalDate date;
         private List<getTodayReservationSchedulesResultDTO> scheduleList;
     }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class findTodayReservationsResultDTO{
+        private Long reservationScheduleId;
+        private LocalDate date;
+        private LocalTime time;
+        private String shopName;
+        private String location;
+        private int totalDcRate;
+        private timeEventInfo timeEvent;
+        private closeEventInfo closeEvent;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class timeEventInfo{
+        private String timeEventTitle;
+        private int timeDc;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class closeEventInfo{
+        private String closeEventTitle;
+        private int closeDc;
+    }
 }

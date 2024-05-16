@@ -1,7 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.entity.Employee;
 
 import jakarta.persistence.*;
-import kyonggi.bookslyserver.domain.event.entity.timeEvent.EmployTimeEventSchedule;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEventSchedule;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.EmployeeTimeEvent;
 import kyonggi.bookslyserver.domain.review.entity.Review;
 import kyonggi.bookslyserver.domain.shop.dto.request.EmployeeCreateRequestDto;
@@ -52,7 +52,7 @@ public class Employee extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     @Builder.Default
-    private List<EmployTimeEventSchedule> timeEventSchedules = new ArrayList<>();
+    private List<TimeEventSchedule> timeEventSchedules = new ArrayList<>();
 
     public static Employee createEntity(Shop shop, EmployeeCreateRequestDto requestDto){
         return Employee.builder()

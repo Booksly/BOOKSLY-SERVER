@@ -71,7 +71,9 @@ public enum ErrorCode implements BaseErrorCode{
     EMPLOYEES_NOT_FOUND(HttpStatus.NOT_FOUND, "직원이 없습니다. 직원을 등록 해 주세요."),
     MENUCATEGORIES_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴 카테고리가 존재하지 않습니다. 하나 이상의 메뉴 카테고리를 등록 해 주세요."),
     MENUCATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴 카테고리가 존재하지 않습니다."),
-    CLOSING_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND,"마감이벤트 설정 정보가 존재하지 않습니다."),
+    CLOSING_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 마감 이벤트입니다."),
+    TIME_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 타임 이벤트입니다."),
+
 
     /**
      * 405 Method Not Allowed
