@@ -11,6 +11,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.*;
 import kyonggi.bookslyserver.global.error.ErrorCode;
+import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
@@ -89,6 +90,9 @@ public class EmployeeService {
         if(requestDto.menus() != null){
             for(String menuName : requestDto.menus()){
                 Menu menu = menuRepository.findByMenuName(menuName);
+                if(menu == null){
+                    throw new BusinessException(ErrorCode.MENU_NOT_FOUND);
+                }
                 EmployeeMenu employeeMenu = employee.addMenu(employee, menu);
             }
         }
