@@ -1,5 +1,6 @@
 package kyonggi.bookslyserver.domain.shop.dto.request.shop;
 
+import jakarta.validation.constraints.NotNull;
 import kyonggi.bookslyserver.domain.shop.constant.CategoryName;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
@@ -11,21 +12,21 @@ import java.util.List;
 @Data
 public class ShopCreateRequestDto {
 
-    private String Name;
+    @NotNull private String Name;
 
-    private CategoryName category;
+    @NotNull private CategoryName category;
 
-    private String phoneNumber;
+    @NotNull private String phoneNumber;
 
-    private String businessNumber;
+    @NotNull private String businessNumber;
 
-    private String firstAddress;
+    @NotNull private String firstAddress;
 
-    private String secondAddress;
+    @NotNull private String secondAddress;
 
-    private String thirdAddress;
+    @NotNull private String thirdAddress;
 
-    private String detailAddress;
+    @NotNull private String detailAddress;
 
     private String kakaoUrl;
 
@@ -34,9 +35,9 @@ public class ShopCreateRequestDto {
     private String introduction;
 
 
-    private List<BusinessSchedule> businessScheduleList;
+    @NotNull private List<BusinessSchedule> businessScheduleList;
 
-    private List<ShopImage> shopImageList;
+    @NotNull private List<ShopImage> shopImageList;
 
     private TimeUnit timeUnit;
 

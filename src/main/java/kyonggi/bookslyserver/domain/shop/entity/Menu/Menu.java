@@ -45,6 +45,7 @@ public class Menu extends BaseTimeEntity {
     private List<MenuImage> menuImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<TimeEventMenu> timeEventMenus = new ArrayList<>();
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)

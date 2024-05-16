@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.entity.Shop;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.review.entity.Review;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
@@ -8,6 +9,7 @@ import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedul
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
+import kyonggi.bookslyserver.domain.user.entity.FavoriteShop;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
@@ -92,9 +94,16 @@ public class Shop extends BaseTimeEntity {
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private List<Employee> employees = new ArrayList<>();
 
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
+    private List<FavoriteShop> favoriteShops = new ArrayList<>();
+
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
+    private List<TimeEvent> timeEvents = new ArrayList<>();
+
+
 
     //==생성메서드==//
-    public void getBusinessSchedule(BusinessSchedule businessSchedule){
+    public void getBusinessSchedule(BusinessSchedule businessSchedule) {
         this.businessSchedules.add(businessSchedule);
         businessSchedule.setShop(this);
     }

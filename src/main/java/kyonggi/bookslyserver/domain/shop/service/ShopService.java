@@ -16,13 +16,17 @@ import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
+import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
 @Service
 @Transactional
@@ -74,6 +78,9 @@ public class ShopService {
     @Transactional
     public ShopRegisterDto join(Long ownerId, ShopCreateRequestDto requestDto) {
 
+        if(shopRepository.existsByName(requestDto.getName())){
+            throw new BusinessException(SHOP_NAME_ALREADY_EXIST);
+        }
         Shop shop = Shop.createShop(requestDto);
         shopRepository.save(shop);
         List<BusinessSchedule> businessScheduleList = requestDto.getBusinessScheduleList();
@@ -104,16 +111,58 @@ public class ShopService {
     }
 
     @Transactional
-    public void delete(Long id){
+    public ShopDeleteResponseDto delete(Long id){
         Optional<Shop> shop = shopRepository.findById(id);
+
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException();
+        }
+
         ShopOwner owner = shop.get().getShopOwner();
         owner.deleteShop(shop.get());
+        //shopRepository.delete(shop.get());
         shopRepository.deleteById(id);
+        return new ShopDeleteResponseDto(id);
+    }
+
+    //가게 이름 조회(가게 주인)
+    public List<ReadShopNamesDto> readShopNames(Long id){
+        ShopOwner owner = shopOwnerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+        List<Shop> shopList = shopRepository.findByShopOwnerId(id);
+
+        List<ReadShopNamesDto> result = new ArrayList<>();
+
+        for(Shop shop : shopList){
+            result.add(new ReadShopNamesDto(shop));
+        }
+        return result;
+    }
+
+    public ShopOwnerDetailReadOneDto readOne(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException();
+        }
+        List<BusinessScheduleDto> businessScheduleDtos = new ArrayList<>();
+
+        for(BusinessSchedule businessSchedule : shop.get().getBusinessSchedules()){
+            businessScheduleDtos.add(new BusinessScheduleDto(businessSchedule));
+        }
+
+
+        return new ShopOwnerDetailReadOneDto(shop.get(), businessScheduleDtos);
     }
 
 
 
 
+    public Shop findShop(Long ownerId, Long shopId) {
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        if (shop.getShopOwner().getId() != ownerId) {
+            throw new BusinessException(BAD_REQUEST);
+        }
+        return shop;
+    }
 
 
 }

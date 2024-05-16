@@ -29,4 +29,15 @@ public class TimeEventMenu extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "timeEvent_id")
     private TimeEvent timeEvent;
+
+    //== 연관관계 편의 메소드 ==//
+    public void addMenu(Menu menu) {
+        this.menu = menu;
+        menu.getTimeEventMenus().add(this);
+    }
+
+    public void addTimeEvent(TimeEvent timeEvent) {
+        this.timeEvent = timeEvent;
+        timeEvent.getTimeEventMenus().add(this);
+    }
 }
