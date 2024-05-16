@@ -7,7 +7,6 @@ import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import retrofit2.http.PATCH;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -15,8 +14,8 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reserve")
-public class ShopUserReserveController {
+@RequestMapping("api/reservations")
+public class ShopUserReservationController {
     private final ReserveCommandService reserveCommandService;
 
     /**
