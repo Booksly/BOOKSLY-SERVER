@@ -20,25 +20,25 @@ public class EmployeeApiController {
     final private EmployeeService employeeService;
 
 
-    @GetMapping("/api/shop/{shopId}/employees")
+    @GetMapping("/api/shops/{shopId}/employees")
     public ResponseEntity<SuccessResponse<?>> readEmployee(@PathVariable("shopId") Long id){
         List<EmployeeReadDto> result = employeeService.readEmployee(id);
         return SuccessResponse.ok(result);
     }
 
-    @PostMapping("/api/employee/{shopId}")
+    @PostMapping("/api/shops/{shopId}/employees")
     public ResponseEntity<SuccessResponse<?>> createEmployee(@PathVariable("shopId") Long id, @RequestBody @Validated EmployeeCreateRequestDto requestDto){
         EmployeeCreateResponseDto result = employeeService.join(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
-    @PutMapping("/api/employee/{employeeId}")
+    @PutMapping("/api/shops/employees/{employeeId}")
     public ResponseEntity<SuccessResponse<?>> updateEmployee(@PathVariable("employeeId") Long id, @RequestBody @Validated EmployeeCreateRequestDto requestDto){
         Long result = employeeService.update(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
-    @DeleteMapping("/api/employee/{employeeId}")
+    @DeleteMapping("/api/shops/employees/{employeeId}")
     public ResponseEntity<SuccessResponse<?>> deleteEmployee(@PathVariable("employeeId") Long id){
         EmployeeDeleteResponseDto result = employeeService.delete(id);
         return SuccessResponse.ok(result);
