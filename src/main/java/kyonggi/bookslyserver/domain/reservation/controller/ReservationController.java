@@ -31,7 +31,7 @@ public class ReservationController {
     /**
      * 예약하기
      */
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<SuccessResponse<?>> createReservation(@UserId Long userId, @RequestBody ReserveRequestDTO.reservationRequestDTO request){
         return SuccessResponse.created(reserveCommandService.createReservation(userId, request));
     }
