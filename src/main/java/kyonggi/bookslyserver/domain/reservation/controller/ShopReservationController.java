@@ -51,7 +51,7 @@ public class ShopReservationController {
     public ResponseEntity<SuccessResponse<?>> getTodayReservationSchedulesAllEmps(@PathVariable("date") LocalDate today, @PathVariable("shopId")Long shopId){
         return SuccessResponse.ok(reserveOwnerCommandService.getTodayReservationSchedulesAllEmps(today, shopId));
     }
-    @GetMapping("reservations/of-date/all-employees/{date}")
+    @GetMapping("/reservations/of-date/all-employees/{date}")
     public ResponseEntity<SuccessResponse<?>> getReservationsOnlyAllEmpsOfDate(@PathVariable("date")LocalDate date, @PathVariable("shopId")Long shopId){
         return SuccessResponse.ok(reserveOwnerCommandService.getOnlyReservationsOfDateAllEmps(date, shopId));
     }
