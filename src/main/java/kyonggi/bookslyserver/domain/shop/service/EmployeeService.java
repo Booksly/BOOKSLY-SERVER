@@ -11,6 +11,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.*;
 import kyonggi.bookslyserver.global.error.ErrorCode;
+import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
@@ -73,6 +74,26 @@ public class EmployeeService {
         return new EmployeeReadOneDto(employee.get(), employeeMenus);
     }
 
+    public List<ReserveEmployeesDto> readReserveEmployees(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+
+        if(!shop.isPresent()){
+            throw new BusinessException(ErrorCode.SHOP_NOT_FOUND);
+        }
+
+        if(shop.get().getEmployees() == null){
+            throw new BusinessException(ErrorCode.RESERVE_EMPLOYEES_NOT_FOUND);
+        }
+
+        List<ReserveEmployeesDto> result = new ArrayList<>();
+
+        for(Employee employee : shop.get().getEmployees()){
+            result.add(new ReserveEmployeesDto(employee));
+        }
+
+        return result;
+    }
+
     @Transactional
     public EmployeeCreateResponseDto join(Long id, EmployeeCreateRequestDto requestDto){
         Optional<Shop> shop = shopRepository.findById(id);
@@ -89,6 +110,9 @@ public class EmployeeService {
         if(requestDto.menus() != null){
             for(String menuName : requestDto.menus()){
                 Menu menu = menuRepository.findByMenuName(menuName);
+                if(menu == null){
+                    throw new BusinessException(ErrorCode.MENU_NOT_FOUND);
+                }
                 EmployeeMenu employeeMenu = employee.addMenu(employee, menu);
             }
         }
