@@ -31,7 +31,7 @@ public class EmployeeApiController {
         return SuccessResponse.ok(result);
     }
 
-    @GetMapping("/api/reserve/{shopId}/employees")
+    @GetMapping("/api/shops/{shopId}/employees/reservation")
     public ResponseEntity<SuccessResponse<?>> readReserveEmployees(@PathVariable("shopId") Long id){
         List<ReserveEmployeesDto> result = employeeService.readReserveEmployees(id);
         return SuccessResponse.ok(result);
