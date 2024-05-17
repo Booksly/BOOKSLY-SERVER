@@ -36,7 +36,7 @@ public class MenuApiController {
         return SuccessResponse.ok(result);
     }
 
-    @GetMapping("/api/reserve/employees/{employeeId}/menus")
+    @GetMapping("/api/shops/employees/{employeeId}/menus/reservation")
     public ResponseEntity<SuccessResponse<?>> readReserveMenus(@PathVariable("employeeId") Long id){
         List<ReserveMenusDto> result = menuService.readReserveMenus(id);
         return SuccessResponse.ok(result);
