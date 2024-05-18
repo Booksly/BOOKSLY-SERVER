@@ -49,6 +49,20 @@ public class ReservationController {
             (@PathVariable("today")LocalDate date, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<Long> categories){
         return SuccessResponse.ok(reserveCommandService.findTodayReservationByDiscount(date,startTimes,endTimes,categories));
     }
+    /**
+     * 마이페이지 전체 예약 조회
+     */
+    @GetMapping("/all")
+    public ResponseEntity<SuccessResponse<?>> getAllReservationRecords(@UserId Long userId){
+        return SuccessResponse.ok(reserveCommandService.getAllReservationRecords(userId));
+    }
+    /**
+     * 마이페이지 전체 예약 조회- 카테고리별
+     */
+    @GetMapping("/all/categories/{categoryId}")
+    public ResponseEntity<SuccessResponse<?>> getAllReservationRecordsByCategory(@UserId Long userId,@PathVariable("categoryId")Long categoryId){
+        return SuccessResponse.ok(reserveCommandService.getAllReservationRecordsByCategory(userId,categoryId));
+    }
 
     /**
      * 예약 마감 

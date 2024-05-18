@@ -18,6 +18,7 @@ import kyonggi.bookslyserver.domain.reservation.entity.QReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.service.ReserveCommandService;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.QEmployee;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.QMenu;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.QMenuCategory;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.QShop;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -44,6 +45,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     QTimeEventSchedule timeEventSchedule=QTimeEventSchedule.timeEventSchedule;
     QTimeEvent timeEvent=QTimeEvent.timeEvent;
     QClosingEvent closingEvent=QClosingEvent.closingEvent;
+    QMenuCategory menuCategory=QMenuCategory.menuCategory;
     /**
      * 예약 요청 조회
      */
@@ -362,6 +364,61 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     }
 
     @Override
+    public List<ReserveResponseDTO.myPageReservationsResultDTO> getAllReservationRecords(Long userId, Long categoryId) {
+        List<ReserveResponseDTO.myPageReservationsResultDTO> results=queryFactory.select(
+                Projections.fields(ReserveResponseDTO.myPageReservationsResultDTO.class,
+                        reservation.id.as("reservationId"),
+                        reservation.eventTitle.as("eventTitle"),
+                        reservation.isRefused.as("isRefused"),
+                        reservation.isCanceled.as("isCanceled"),
+                        reservationSchedule.workDate.as("date"),
+                        reservationSchedule.startTime.as("time"),
+                        shop.name.as("shopName"),
+                        Expressions.stringTemplate("CAST({0} AS string)",shop.category.categoryName).as("shopCategory"),
+                        Expressions.stringTemplate("CONCAT({0},' ',{1},' ',{2})",
+                                shop.address.firstAddress,
+                                shop.address.secondAddress,
+                                shop.address.thirdAddress
+                        ).as("location"),
+                        employee.name.as("employeeName"))
+                )
+                .from(reservation)
+                .join(reservation.reservationSchedule,reservationSchedule)
+                .join(reservationSchedule.shop,shop)
+                .join(reservationSchedule.employee,employee)
+                .where(reservation.user.id.eq(userId), hasToClassifyCategory(categoryId))
+                .fetch();
+        results.forEach(
+                result -> {
+                    List<Tuple> menus= queryFactory.select(
+                            menuCategory.name, menu.menuName
+                            )
+                            .from(reservationMenu)
+                            .leftJoin(menu).on(reservationMenu.menu.id.eq(menu.id))
+                            .join(menu.menuCategory,menuCategory)
+                            .where(reservationMenu.reservation.id.eq(result.getReservationId()))
+                            .fetch();
+                    Map<String,List<String>> groupByCategory=menus.stream()
+                            .collect(Collectors.groupingBy(
+                                    tuple -> tuple.get(menuCategory.name),
+                                    Collectors.mapping(tuple -> tuple.get(menu.menuName),Collectors.toList())
+                            ));
+                    List<ReserveResponseDTO.menuInfo> menuInfos=groupByCategory.entrySet().stream()
+                            .map(entry ->
+                               ReserveResponseDTO.menuInfo.builder()
+                                       .menuCategory(entry.getKey())
+                                       .menuNames(entry.getValue())
+                                       .build())
+                            .toList();
+                    result.setReservationMenus(menuInfos);
+                }
+        );
+        return results.stream().sorted(Comparator.comparing(ReserveResponseDTO.myPageReservationsResultDTO::getDate)
+                .thenComparing(ReserveResponseDTO.myPageReservationsResultDTO::getTime).reversed()
+        ).toList();
+    }
+
+    @Override
     public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservationsByDiscount(LocalDate date, List<ReserveCommandService.TimeRange> timeRanges, List<Long> categories) {
         List<ReserveResponseDTO.findTodayReservationsResultDTO> results= findTodayReservations(date, timeRanges, categories);
         return results.stream()
@@ -389,5 +446,8 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
             }
         }
         return timeRangeCondition;
+    }
+    private BooleanExpression hasToClassifyCategory(Long categoryId){
+        return categoryId>=0? shop.category.id.eq(categoryId):null;
     }
 }

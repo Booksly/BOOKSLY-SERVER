@@ -177,4 +177,32 @@ public class ReserveResponseDTO {
         private String closeEventTitle;
         private int closeDc;
     }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class myPageReservationsResultDTO{
+        private Long reservationId;
+        private String shopCategory;
+        private String shopName;
+        private String location;
+        private LocalDate date;
+        private LocalTime time;
+        private String employeeName;
+        private String eventTitle;
+        private List<menuInfo> reservationMenus;
+        private boolean isConfirmed;
+        private boolean isRefused;
+        private boolean isCanceled;
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class menuInfo{
+        private String menuCategory;
+        private List<String> menuNames;
+    }
 }
