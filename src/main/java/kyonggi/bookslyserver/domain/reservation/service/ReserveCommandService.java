@@ -129,7 +129,13 @@ public class ReserveCommandService {
      * 마이페이지 전체 예약 조회
      */
     public List<ReserveResponseDTO.myPageReservationsResultDTO> getAllReservationRecords(Long userId){
-        return reservationRepository.getAllReservationRecords(userId);
+        return reservationRepository.getAllReservationRecords(userId,(long)-1);
+    }
+    /**
+     * 마이페이지 전체 예약 조회- 카테고리별
+     */
+    public List<ReserveResponseDTO.myPageReservationsResultDTO> getAllReservationRecordsByCategory(Long userId,Long categoryId){
+        return reservationRepository.getAllReservationRecords(userId,categoryId);
     }
     /**
      * 자동 예약 마감

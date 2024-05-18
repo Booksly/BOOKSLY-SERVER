@@ -364,7 +364,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     }
 
     @Override
-    public List<ReserveResponseDTO.myPageReservationsResultDTO> getAllReservationRecords(Long userId) {
+    public List<ReserveResponseDTO.myPageReservationsResultDTO> getAllReservationRecords(Long userId, Long categoryId) {
         List<ReserveResponseDTO.myPageReservationsResultDTO> results=queryFactory.select(
                 Projections.fields(ReserveResponseDTO.myPageReservationsResultDTO.class,
                         reservation.id.as("reservationId"),
@@ -386,7 +386,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .join(reservationSchedule.employee,employee)
-                .where(reservation.user.id.eq(userId))
+                .where(reservation.user.id.eq(userId), hasToClassifyCategory(categoryId))
                 .fetch();
         results.forEach(
                 result -> {
@@ -446,5 +446,8 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
             }
         }
         return timeRangeCondition;
+    }
+    private BooleanExpression hasToClassifyCategory(Long categoryId){
+        return categoryId>=0? shop.category.id.eq(categoryId):null;
     }
 }
