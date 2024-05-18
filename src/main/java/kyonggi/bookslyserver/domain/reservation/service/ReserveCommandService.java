@@ -126,17 +126,24 @@ public class ReserveCommandService {
         return ReservationConverter.toCreateReservationResultDTO(newReservation);
     }
     /**
-     * 마이페이지 전체 예약 조회
+     * 마이페이지 전체 예약 조회, 카테고리별
      */
     public List<ReserveResponseDTO.myPageReservationsResultDTO> getAllReservationRecords(Long userId){
-        return reservationRepository.getAllReservationRecords(userId,(long)-1);
+        return reservationRepository.getAllReservationRecords(userId,(long)-1,false);
+    }
+    public List<ReserveResponseDTO.myPageReservationsResultDTO> getAllReservationRecordsByCategory(Long userId,Long categoryId){
+        return reservationRepository.getAllReservationRecords(userId,categoryId,false);
     }
     /**
-     * 마이페이지 전체 예약 조회- 카테고리별
+     * 마이페이지 현재 예약 조회, 카테고리별
      */
-    public List<ReserveResponseDTO.myPageReservationsResultDTO> getAllReservationRecordsByCategory(Long userId,Long categoryId){
-        return reservationRepository.getAllReservationRecords(userId,categoryId);
+    public List<ReserveResponseDTO.myPageReservationsResultDTO> getNowReservationRecords(Long userId){
+        return reservationRepository.getAllReservationRecords(userId,(long)-1,true);
     }
+    public List<ReserveResponseDTO.myPageReservationsResultDTO> getNowReservationRecordsByCategory(Long userId,Long categoryId){
+        return reservationRepository.getAllReservationRecords(userId,categoryId,true);
+    }
+
     /**
      * 자동 예약 마감
      */
