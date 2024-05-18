@@ -3,6 +3,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.*;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.service.EmployeeService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,12 @@ public class EmployeeApiController {
     @GetMapping("/api/shops/{shopId}/employees/reservation")
     public ResponseEntity<SuccessResponse<?>> readReserveEmployees(@PathVariable("shopId") Long id){
         List<ReserveEmployeesDto> result = employeeService.readReserveEmployees(id);
+        return SuccessResponse.ok(result);
+    }
+
+    @GetMapping("/api/shops/{shopId}/employees/eventRegistration")
+    public ResponseEntity<SuccessResponse<?>> readEmployeeNames(@PathVariable("shopId") Long id){
+        List<EventRegisterEmployeeNamesDto> result = employeeService.readEmployeeNames(id);
         return SuccessResponse.ok(result);
     }
 

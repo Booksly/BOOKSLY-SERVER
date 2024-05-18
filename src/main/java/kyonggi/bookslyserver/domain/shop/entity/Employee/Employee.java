@@ -1,5 +1,6 @@
 package kyonggi.bookslyserver.domain.shop.entity.Employee;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEventSchedule;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.EmployeeTimeEvent;
@@ -35,6 +36,7 @@ public class Employee extends BaseTimeEntity {
     private int schedulingCycle;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
