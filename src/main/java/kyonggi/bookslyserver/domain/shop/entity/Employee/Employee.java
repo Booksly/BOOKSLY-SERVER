@@ -36,7 +36,6 @@ public class Employee extends BaseTimeEntity {
     private int schedulingCycle;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
