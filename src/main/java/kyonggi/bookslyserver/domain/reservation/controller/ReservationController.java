@@ -63,6 +63,17 @@ public class ReservationController {
     public ResponseEntity<SuccessResponse<?>> getAllReservationRecordsByCategory(@UserId Long userId,@PathVariable("categoryId")Long categoryId){
         return SuccessResponse.ok(reserveCommandService.getAllReservationRecordsByCategory(userId,categoryId));
     }
+    /**
+     * 마이페이지 현재 예약 조회
+     */
+    @GetMapping("/now")
+    public ResponseEntity<SuccessResponse<?>> getNowReservationRecords(@UserId Long userId){
+        return SuccessResponse.ok(reserveCommandService.getNowReservationRecords(userId));
+    }
+    @GetMapping("/now/categories/{categoryId}")
+    public ResponseEntity<SuccessResponse<?>> getNowReservationRecordsByCategory(@UserId Long userId,@PathVariable("categoryId")Long categoryId){
+        return SuccessResponse.ok(reserveCommandService.getNowReservationRecordsByCategory(userId,categoryId));
+    }
 
     /**
      * 예약 마감 

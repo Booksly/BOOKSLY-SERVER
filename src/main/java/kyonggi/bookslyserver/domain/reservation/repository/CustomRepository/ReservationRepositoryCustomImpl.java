@@ -364,7 +364,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     }
 
     @Override
-    public List<ReserveResponseDTO.myPageReservationsResultDTO> getAllReservationRecords(Long userId, Long categoryId) {
+    public List<ReserveResponseDTO.myPageReservationsResultDTO> getAllReservationRecords(Long userId, Long categoryId, boolean now) {
         List<ReserveResponseDTO.myPageReservationsResultDTO> results=queryFactory.select(
                 Projections.fields(ReserveResponseDTO.myPageReservationsResultDTO.class,
                         reservation.id.as("reservationId"),
@@ -386,7 +386,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .join(reservationSchedule.employee,employee)
-                .where(reservation.user.id.eq(userId), hasToClassifyCategory(categoryId))
+                .where(reservation.user.id.eq(userId), hasToClassifyCategory(categoryId),forNowReservations(now))
                 .fetch();
         results.forEach(
                 result -> {
@@ -413,6 +413,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                     result.setReservationMenus(menuInfos);
                 }
         );
+        if(now) return results.stream().sorted(Comparator.comparing(ReserveResponseDTO.myPageReservationsResultDTO::getDate).thenComparing(ReserveResponseDTO.myPageReservationsResultDTO::getTime)).toList();
         return results.stream().sorted(Comparator.comparing(ReserveResponseDTO.myPageReservationsResultDTO::getDate)
                 .thenComparing(ReserveResponseDTO.myPageReservationsResultDTO::getTime).reversed()
         ).toList();
@@ -449,5 +450,8 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     }
     private BooleanExpression hasToClassifyCategory(Long categoryId){
         return categoryId>=0? shop.category.id.eq(categoryId):null;
+    }
+    private BooleanExpression forNowReservations(boolean isNow){
+        return isNow?isValidReservationSchedule(LocalDateTime.now()).and(reservation.isRefused.eq(false)):null;
     }
 }
