@@ -87,6 +87,7 @@ public enum ErrorCode implements BaseErrorCode{
     MENUCATEGORY_ALREADY_EXIST(HttpStatus.CONFLICT, "해당 카테고리가 이미 존재합니다."),
     SHOP_NAME_ALREADY_EXIST(HttpStatus.CONFLICT, "동일한 이름의 가게가 이미 존재합니다."),
     EXIST_EVENTS_CONFLICT(HttpStatus.CONFLICT, "새로운 이벤트의 시간이 기존 이벤트와 겹칩니다."),
+    EVENT_SETTING_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 이벤트 설정이 존재합니다."),
 
     /**
      * 500 Internal Server Error
