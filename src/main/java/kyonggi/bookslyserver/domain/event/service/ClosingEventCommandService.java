@@ -15,6 +15,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
+import kyonggi.bookslyserver.global.error.exception.ConflictException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
@@ -37,12 +38,12 @@ public class ClosingEventCommandService {
 
     public CreateClosingEventResponseDto createClosingEvent(CreateClosingEventRequestDto createClosingEventRequestDto) {
 
+        Employee employee = findEmployee(createClosingEventRequestDto.employeeId());
+
         ClosingEvent closingEvent = ClosingEvent.builder()
                 .eventMessage(createClosingEventRequestDto.message())
                 .discountRate(createClosingEventRequestDto.discountRate())
-                .employee(employeeRepository
-                        .findById(createClosingEventRequestDto.employeeId())
-                        .orElseThrow(()->new EntityNotFoundException(EMPLOYEE_NOT_FOUND))).build();
+                .employee(employee).build();
 
 
         createClosingEventRequestDto.menuIds().stream()
@@ -56,6 +57,19 @@ public class ClosingEventCommandService {
 
         ClosingEvent createdEvent = closingEventRepository.save(closingEvent);
         return CreateClosingEventResponseDto.of(createdEvent);
+    }
+
+    private Employee findEmployee(Long id) {
+
+        if (closingEventRepository.existsByEmployeeId(id)) {
+            throw new ConflictException(EVENT_SETTING_ALREADY_EXISTS);
+        }
+
+        Employee employee = employeeRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_FOUND));
+
+        return employee;
     }
 
     public ApplyClosingEventsResponseDto applyClosingEvents(ApplyClosingEventsRequestDto applyClosingEventsRequestDto, boolean isApply, Long ownerId) {
