@@ -35,7 +35,6 @@ public class ReserveMenusDto {
                     this.isEvent = true;
                     closingEventDescribe = closingEventMenu.getClosingEvent().getEventMessage();
                     this.discountRate = closingEventMenu.getClosingEvent().getDiscountRate();
-                    //this.price = menu.getPrice() - menu.getPrice() * this.discountRate / 100;
                 }
 
             }
@@ -48,7 +47,6 @@ public class ReserveMenusDto {
                         this.isEvent = true;
                         timeEventDescribe = employeeTimeEvent.getTimeEvent().getTitle();
                         this.discountRate = employeeTimeEvent.getTimeEvent().getDiscountRate();
-                        //this.price = menu.getPrice() - menu.getPrice() * this.discountRate / 100;
                     }
                 }
             }
@@ -67,9 +65,9 @@ public class ReserveMenusDto {
         if(closingEventDescribe.equals("") && timeEventDescribe.equals("")){
             this.eventDescribe = "이벤트 메뉴가 아닙니다!";
             this.discountRate = 0;
-            //this.price = menu.getPrice();
             this.isEvent = false;
         }
+
 
         this.menuId = menu.getId();
         this.employeeMenuId = employeeMenu.getId();
