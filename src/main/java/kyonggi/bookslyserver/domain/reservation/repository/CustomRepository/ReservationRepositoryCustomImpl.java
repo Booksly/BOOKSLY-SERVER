@@ -393,7 +393,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .join(reservationSchedule.employee,employee)
-                .where(reservation.user.id.eq(userId), hasToClassifyCategory(categoryId),forNowReservations(now))
+                .where(reservation.user.id.eq(userId), hasToClassifyCategory(categoryId),forNowReservations(now),reservation.isDeleted.isFalse())
                 .fetch();
         results.forEach(
                 result -> {

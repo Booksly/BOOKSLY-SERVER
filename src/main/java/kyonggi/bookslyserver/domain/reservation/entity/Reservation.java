@@ -37,6 +37,9 @@ public class Reservation extends BaseTimeEntity {
     @Column(columnDefinition = "tinyint(0) default 0")
     private boolean isRefused;
 
+    @Column(columnDefinition = "tinyint(0) default 0")
+    private boolean isDeleted;
+
     @Column
     private String eventTitle;
 
