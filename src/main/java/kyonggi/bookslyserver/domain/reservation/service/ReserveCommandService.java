@@ -143,7 +143,20 @@ public class ReserveCommandService {
     public List<ReserveResponseDTO.myPageReservationsResultDTO> getNowReservationRecordsByCategory(Long userId,Long categoryId){
         return reservationRepository.getAllReservationRecords(userId,categoryId,true);
     }
+    /**
+     * 예약 취소하기
+     */
+    public String cancelReservation(Long reservationId){
+        Reservation reservation=reservationRepository.findById(reservationId).orElseThrow(()-> new EntityNotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
+        reservation.setCanceled(true);
+        reservationRepository.save(reservation);
+        // reservationSchedule의 reservations에서 위 객체 삭제. 연관관계를 아예 끊기에는 취소 예약도 조회가 가능해야 하기 때문에 연관관계를 아예 끊어서는 안 됨.
 
+        // 예약 자동 확정인 가게일 경우 위 시간이 마감되었었다면 마감 풀기
+
+
+        return reservation.getUser().getNickname()+"님의 "+"예약 ID"+reservation.getId()+"이(가) 취소되었습니다.";
+    }
     /**
      * 자동 예약 마감
      */

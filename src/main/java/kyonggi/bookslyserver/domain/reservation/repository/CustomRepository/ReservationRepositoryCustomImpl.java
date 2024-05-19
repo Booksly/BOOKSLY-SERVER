@@ -30,6 +30,7 @@ import java.time.YearMonth;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -83,6 +84,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 .where(reservation.isConfirmed.eq(false)
                         .and(reservation.isRefused.eq(false))
                         .and(isValidReservationSchedule(now)),
+                        reservation.isCanceled.eq(false),
                         reservationSchedule.shop.id.eq(shopId)
                 );
     }
@@ -134,6 +136,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 .where(reservation.isConfirmed.eq(false)
                                 .and(reservation.isRefused.eq(false))
                                 .and(isValidReservationSchedule(now)),
+                        reservation.isCanceled.eq(false),
                         reservationSchedule.shop.id.eq(shopId));
     }
     private void setMenuNames(List<ReserveResponseDTO.getReservationRequestDetailsResultDTO> results){
@@ -192,7 +195,8 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                     .leftJoin(menu).on(reservationMenu.menu.id.eq(menu.id))
                     .where(
                             reservationMenu.reservation.reservationSchedule.id.eq(result.getReservationScheduleId()),
-                            reservationMenu.reservation.isConfirmed.eq(true)
+                            reservationMenu.reservation.isConfirmed.eq(true),
+                            reservationMenu.reservation.isCanceled.eq(false)
                     )
                     .fetch()
                     .stream()
@@ -233,7 +237,8 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                     .leftJoin(menu).on(reservationMenu.menu.id.eq(menu.id))
                     .where(
                             reservationMenu.reservation.reservationSchedule.id.eq(result.getReservationScheduleId()),
-                            reservationMenu.reservation.isRefused.eq(false)
+                            reservationMenu.reservation.isRefused.eq(false),
+                            reservationMenu.reservation.isCanceled.eq(false)
                     )
                     .fetch()
                     .stream()
@@ -255,12 +260,11 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
         List<Tuple> results=queryFactory
                 .select(reservationSchedule.startTime,menu.menuName)
                 .from(reservationSchedule)
-                .join(reservationSchedule.reservations, reservation)
-                .join(reservation.reservationMenus, reservationMenu)
-                .join(reservationMenu.menu, menu)
+                .leftJoin(reservationSchedule.reservations, reservation).on(reservation.isConfirmed.isTrue().and(reservation.isCanceled.isFalse()))
+                .leftJoin(reservation.reservationMenus, reservationMenu)
+                .leftJoin(reservationMenu.menu, menu)
                 .where(reservationSchedule.workDate.eq(today)
                         .and(reservationSchedule.shop.id.eq(shopId))
-                        .and(reservation.isConfirmed.eq(true))
                 )
                 .fetch();
 
@@ -268,13 +272,14 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
         Map<LocalTime,List<String>> groupByStartTime=results.stream()
                 .collect(Collectors.groupingBy(
                    tuple->tuple.get(reservationSchedule.startTime),
-                   Collectors.mapping(tuple->tuple.get(menu.menuName),Collectors.toList())
+                   Collectors.mapping(tuple-> Optional.ofNullable(tuple.get(menu.menuName)).orElse(""),Collectors.toList())
                 ));
         // DTO로 변환
         return groupByStartTime.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .map(entry->new ReserveResponseDTO.getTodayReservationsAllEmpsResultDTO(entry.getKey(),entry.getValue().stream()
                         .distinct()
+                        .filter(menuName ->!menuName.isEmpty())
                         .map(menuName->new ReserveResponseDTO.reservationMenu(menuName))
                         .collect(Collectors.toList())))
                 .collect(Collectors.toList());
@@ -292,6 +297,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 .from(reservation)
                 .where(reservation.reservationSchedule.workDate.eq(today),
                         reservation.isConfirmed.eq(true),
+                        reservation.isCanceled.eq(false),
                         reservation.reservationSchedule.employee.id.eq(employeeId))
                 .orderBy(reservationSchedule.startTime.asc())
                 .fetch();
