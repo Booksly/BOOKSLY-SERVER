@@ -161,6 +161,12 @@ public class ReserveCommandService {
 
         return reservation.getUser().getNickname()+"님의 "+"예약 ID"+reservation.getId()+"이(가) 취소되었습니다.";
     }
+    public String deleteReservation(Long reservationId){
+        Reservation reservation=reservationRepository.findById(reservationId).orElseThrow(()-> new EntityNotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
+        reservation.setDeleted(true);
+        reservationRepository.save(reservation);
+        return reservation.getUser().getNickname()+"님의 "+"예약 ID"+reservation.getId()+"이(가) 삭제되었습니다.";
+    }
     /**
      * 자동 예약 마감
      */

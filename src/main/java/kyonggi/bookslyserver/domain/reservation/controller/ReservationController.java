@@ -76,11 +76,15 @@ public class ReservationController {
         return SuccessResponse.ok(reserveCommandService.getNowReservationRecordsByCategory(userId,categoryId));
     }
     /**
-     * 예약 취소
+     * 예약 취소 및 삭제
      */
     @GetMapping("/{reservationId}/cancel")
     public ResponseEntity<SuccessResponse<?>> cancelReservation(@PathVariable("reservationId")Long reservationId){
         return SuccessResponse.ok(reserveCommandService.cancelReservation(reservationId));
+    }
+    @GetMapping("/{reservationId}/delete")
+    public ResponseEntity<SuccessResponse<?>> deleteReservation(@PathVariable("reservationId")Long reservationId){
+        return SuccessResponse.ok(reserveCommandService.deleteReservation(reservationId));
     }
     /**
      * 예약 마감 
