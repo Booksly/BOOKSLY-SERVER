@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.event.service;
 
 import kyonggi.bookslyserver.domain.event.dto.response.GetClosingEventsResponseDto;
+import kyonggi.bookslyserver.domain.event.dto.response.GetTodayClosingEventsResponseDto;
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
 import kyonggi.bookslyserver.domain.event.repository.ClosingEventRepository;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
@@ -28,5 +29,10 @@ public class ClosingEventQueryService {
         Optional<List<ClosingEvent>> closingEvents = closingEventRepository.findByEmployeeIds(employeeIds);
 
         return GetClosingEventsResponseDto.of(closingEvents);
+    }
+
+    public GetTodayClosingEventsResponseDto getTodayClosingEvents(String region, String timeSlot, List<Long> categories) {
+
+        return null;
     }
 }

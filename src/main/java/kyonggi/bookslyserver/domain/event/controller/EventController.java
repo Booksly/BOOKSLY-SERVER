@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -78,8 +79,17 @@ public class EventController {
     }
 
     @DeleteMapping("/closing-events/{closingEventId}")
-    public ResponseEntity<SuccessResponse<?>> deleteClosingEvent(@PathVariable("closingEventId") Long eventId, @RequestParam("shop")Long shopId, @OwnerId Long ownerId) {
-        DeleteClosingEventResponseDto deleteClosingEventResponseDto = closingEventCommandService.deleteEvent(eventId, shopId ,ownerId);
+    public ResponseEntity<SuccessResponse<?>> deleteClosingEvent(@PathVariable("closingEventId") Long eventId, @RequestParam("shop") Long shopId, @OwnerId Long ownerId) {
+        DeleteClosingEventResponseDto deleteClosingEventResponseDto = closingEventCommandService.deleteEvent(eventId, shopId, ownerId);
         return SuccessResponse.ok(deleteClosingEventResponseDto);
+    }
+
+    @GetMapping("/closing-events/today")
+    public ResponseEntity<SuccessResponse<?>> getTodayClosingEvents(@RequestParam(value = "region", required = false) String region,
+                                                                    @RequestParam(value = "time_slot", required = false) String timeSlot,
+                                                                    @RequestParam(value = "category",required = false)List<Long> categories) {
+
+        GetTodayClosingEventsResponseDto getTodayClosingEventsResponseDto = closingEventQueryService.getTodayClosingEvents(region, timeSlot, categories);
+        return SuccessResponse.ok(getTodayClosingEventsResponseDto);
     }
 }
