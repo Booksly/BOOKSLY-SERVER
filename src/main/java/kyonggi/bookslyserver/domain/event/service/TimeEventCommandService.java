@@ -10,6 +10,7 @@ import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRepository;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
+import kyonggi.bookslyserver.domain.shop.repository.EmployeeMenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
@@ -37,7 +38,7 @@ import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 public class TimeEventCommandService {
 
     private final EmployeeRepository employeeRepository;
-    private final ShopRepository shopRepository;
+    private final EmployeeMenuRepository employeeMenuRepository;
     private final MenuRepository menuRepository;
     private final TimeEventRepository timeEventRepository;
     private final TimeEventScheduleRepository timeEventScheduleRepository;
@@ -48,6 +49,7 @@ public class TimeEventCommandService {
 
         validateRepeatSettings(requestDto.isRepeat(), requestDto.isDateRepeat(), requestDto.isDayOfWeekRepeat());
         validateTimeRequest(requestDto);
+        validateMenuIsEmployeeMenu(requestDto);
 
         Shop shop = shopService.findShop(ownerId, requestDto.shopId());
         List<DayOfWeek> dayOfWeeks = createRepeatDayOfWeeks(requestDto);
@@ -60,6 +62,13 @@ public class TimeEventCommandService {
         setEmployeeAndTimeEventToEmployeeTimeEvent(requestDto, timeEvent);
 
         return CreateTimeEventsResponseDto.of(timeEvent);
+    }
+
+    private void validateMenuIsEmployeeMenu(CreateLocalTimeEventsRequestDto requestDto) {
+        requestDto.menus().stream().forEach(menu-> {
+            if(!employeeMenuRepository.existsByMenuId(menu)){
+                throw new InvalidValueException(MENU_IS_NOT_EMPLOYEEMENU);
+            }});
     }
 
     private void validateTimeRequest(CreateLocalTimeEventsRequestDto requestDto) {
