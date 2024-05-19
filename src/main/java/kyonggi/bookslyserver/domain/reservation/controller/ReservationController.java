@@ -8,6 +8,7 @@ import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import retrofit2.http.Path;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -74,7 +75,13 @@ public class ReservationController {
     public ResponseEntity<SuccessResponse<?>> getNowReservationRecordsByCategory(@UserId Long userId,@PathVariable("categoryId")Long categoryId){
         return SuccessResponse.ok(reserveCommandService.getNowReservationRecordsByCategory(userId,categoryId));
     }
-
+    /**
+     * 예약 취소
+     */
+    @GetMapping("/{reservationId}/cancel")
+    public ResponseEntity<SuccessResponse<?>> cancelReservation(@PathVariable("reservationId")Long reservationId){
+        return SuccessResponse.ok(reserveCommandService.cancelReservation(reservationId));
+    }
     /**
      * 예약 마감 
      */

@@ -51,6 +51,7 @@ public class ReserveCommandService {
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
     private final ReservationMenuRepository reservationMenuRepository;
+    private final ShopRepository shopRepository;
     @AllArgsConstructor
     @Getter
     public static class TimeRange{
@@ -143,7 +144,23 @@ public class ReserveCommandService {
     public List<ReserveResponseDTO.myPageReservationsResultDTO> getNowReservationRecordsByCategory(Long userId,Long categoryId){
         return reservationRepository.getAllReservationRecords(userId,categoryId,true);
     }
+    /**
+     * 예약 취소하기
+     */
+    public String cancelReservation(Long reservationId){
+        Reservation reservation=reservationRepository.findById(reservationId).orElseThrow(()-> new EntityNotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
+        reservation.setCanceled(true);
+        reservationRepository.save(reservation);
 
+        ReservationSchedule reservationSchedule=reservationScheduleRepository.findById(reservation.getReservationSchedule().getId()).orElseThrow(()->new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        reservationSchedule.getReservations().remove(reservation);
+
+        if (reservationSchedule.isAutoConfirmed()&&reservationSchedule.isClosed()){
+            reservationSchedule.setClosed(false);
+        }
+
+        return reservation.getUser().getNickname()+"님의 "+"예약 ID"+reservation.getId()+"이(가) 취소되었습니다.";
+    }
     /**
      * 자동 예약 마감
      */
