@@ -165,7 +165,8 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 .innerJoin(reservation.reservationSchedule,reservationSchedule)
                 .where(isReservationRequestInTheMonth(startDate,endDate)
                         .and(reservation.reservationSchedule.shop.id.eq(shopId))
-                        .and(reservation.isRefused.eq(false).and(reservation.isConfirmed.eq(false)))
+                        .and(reservation.isRefused.eq(false).and(reservation.isConfirmed.eq(false))),
+                        reservation.isCanceled.eq(false)
                 )
                 .groupBy(reservation.reservationSchedule.workDate)
                 .fetch();

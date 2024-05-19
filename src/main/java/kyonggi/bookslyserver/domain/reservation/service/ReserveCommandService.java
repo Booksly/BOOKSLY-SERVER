@@ -51,6 +51,7 @@ public class ReserveCommandService {
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
     private final ReservationMenuRepository reservationMenuRepository;
+    private final ShopRepository shopRepository;
     @AllArgsConstructor
     @Getter
     public static class TimeRange{
@@ -150,10 +151,13 @@ public class ReserveCommandService {
         Reservation reservation=reservationRepository.findById(reservationId).orElseThrow(()-> new EntityNotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
         reservation.setCanceled(true);
         reservationRepository.save(reservation);
-        // reservationSchedule의 reservations에서 위 객체 삭제. 연관관계를 아예 끊기에는 취소 예약도 조회가 가능해야 하기 때문에 연관관계를 아예 끊어서는 안 됨.
 
-        // 예약 자동 확정인 가게일 경우 위 시간이 마감되었었다면 마감 풀기
+        ReservationSchedule reservationSchedule=reservationScheduleRepository.findById(reservation.getReservationSchedule().getId()).orElseThrow(()->new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        reservationSchedule.getReservations().remove(reservation);
 
+        if (reservationSchedule.isAutoConfirmed()&&reservationSchedule.isClosed()){
+            reservationSchedule.setClosed(false);
+        }
 
         return reservation.getUser().getNickname()+"님의 "+"예약 ID"+reservation.getId()+"이(가) 취소되었습니다.";
     }
