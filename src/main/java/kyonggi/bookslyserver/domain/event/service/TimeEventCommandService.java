@@ -73,10 +73,13 @@ public class TimeEventCommandService {
 
     private void validateTimeRequest(CreateLocalTimeEventsRequestDto requestDto) {
 
-        if (requestDto.startDate().isAfter(requestDto.endDate())) {
+        if (requestDto.isDateRepeat() && requestDto.startDate().isAfter(requestDto.endDate())) {
             throw new InvalidValueException(START_DATE_IS_AFTER_END_DATE);
         }
-        if (requestDto.startTime().isAfter(requestDto.endTime())) {
+
+        boolean dateRequest = requestDto.isDateRepeat() && requestDto.startDate().isBefore(requestDto.endDate());
+
+        if (requestDto.startTime().isAfter(requestDto.endTime()) && !dateRequest) {
             throw new InvalidValueException(START_TIME_IS_AFTER_END_TIME);
         }
 
