@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface EmployeeMenuRepository extends JpaRepository<EmployeeMenu,Long> {
 
+    boolean existsByMenuId(Long menuId);
+
     @Modifying
     @Transactional
     @Query("select em from EmployeeMenu em where em.employee.id = :employee_id")

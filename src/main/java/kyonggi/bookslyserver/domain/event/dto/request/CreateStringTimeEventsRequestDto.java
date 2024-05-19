@@ -1,19 +1,20 @@
 package kyonggi.bookslyserver.domain.event.dto.request;
 
 import jakarta.validation.constraints.NotNull;
+import kyonggi.bookslyserver.domain.event.validation.annotation.TimeRange;
+import org.hibernate.validator.constraints.Range;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
-public record CreateTimeEventsRequestDto(
+public record CreateStringTimeEventsRequestDto(
         @NotNull Long shopId,
         @NotNull String title,
         @NotNull List<Long> employeeIds,
-        @NotNull LocalTime startTime, // 검증 필요: 영업 시작 시간 이후일 것
-        @NotNull LocalTime endTime, // 검증 필요: 영업 마감 시간 이전일 것, startTime 이후일 것
-        @NotNull int discountRate,
+        @NotNull @TimeRange String startTime,
+        @NotNull @TimeRange String endTime,
+        @NotNull @Range(min = 1 ,max = 100) int discountRate,
         @NotNull List<Long> menus,
         @NotNull Boolean isRepeat,
         @NotNull Boolean isDayOfWeekRepeat, // 요일 반복 여부 ex. 월,화,수...

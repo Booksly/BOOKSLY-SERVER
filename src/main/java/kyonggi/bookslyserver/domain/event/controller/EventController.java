@@ -1,8 +1,10 @@
 package kyonggi.bookslyserver.domain.event.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import kyonggi.bookslyserver.domain.event.dto.request.CreateClosingEventRequestDto;
-import kyonggi.bookslyserver.domain.event.dto.request.CreateTimeEventsRequestDto;
+import kyonggi.bookslyserver.domain.event.dto.request.CreateLocalTimeEventsRequestDto;
+import kyonggi.bookslyserver.domain.event.dto.request.CreateStringTimeEventsRequestDto;
 import kyonggi.bookslyserver.domain.event.dto.request.ApplyClosingEventsRequestDto;
 import kyonggi.bookslyserver.domain.event.dto.response.*;
 import kyonggi.bookslyserver.domain.event.service.ClosingEventCommandService;
@@ -14,6 +16,7 @@ import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -22,6 +25,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @RequestMapping("/api/events")
 @Slf4j
+@Validated
 public class EventController {
 
     private final TimeEventCommandService timeEventCommandService;
@@ -30,8 +34,8 @@ public class EventController {
     private final ClosingEventQueryService closingEventQueryService;
 
     @PostMapping("/time-events")
-    public ResponseEntity<SuccessResponse<?>> createTimeEvents(@OwnerId Long ownerId, @RequestBody CreateTimeEventsRequestDto createTimeEventsRequestDto) {
-        CreateTimeEventsResponseDto timeEventsResponseDto = timeEventCommandService.createTimeEvents(ownerId, createTimeEventsRequestDto);
+    public ResponseEntity<SuccessResponse<?>> createTimeEvents(@OwnerId Long ownerId, @RequestBody @Valid CreateStringTimeEventsRequestDto createTimeEventsRequestDto) {
+        CreateTimeEventsResponseDto timeEventsResponseDto = timeEventCommandService.createTimeEvents(ownerId, CreateLocalTimeEventsRequestDto.of(createTimeEventsRequestDto));
         return SuccessResponse.ok(timeEventsResponseDto);
     }
 
