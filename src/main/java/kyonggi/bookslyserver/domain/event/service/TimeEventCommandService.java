@@ -103,9 +103,9 @@ public class TimeEventCommandService {
         if (requestDto.isDayOfWeekRepeat())
             processTimeEventScheduleByDayOfWeeks(requestDto, dayOfWeeks, timeEvent);
 
-        if (requestDto.isDateRepeat())
+        if (requestDto.isDateRepeat()){
             validateDateIsNull(requestDto);
-            processTimeEventScheduleByDateRepeat(requestDto, timeEvent);
+            processTimeEventScheduleByDateRepeat(requestDto, timeEvent);}
 
         if (!requestDto.isRepeat())
             processTimeEventScheduleToday(requestDto, timeEvent);
@@ -175,6 +175,10 @@ public class TimeEventCommandService {
         linkEventScheduleAndReservationSchedule(newTimeEventSchedule, reservationSchedulesWithinEventPeriod);
     }
 
+    /**
+     * filteredReservationSchedule가 0인 경우 예외 반환
+     * @param filteredReservationSchedule 이벤트 생성 요청 시간 범위에 포함되는 예약 일정들
+     */
     private void validateScheduleSize(List<ReservationSchedule> filteredReservationSchedule) {
         if (filteredReservationSchedule.size() == 0) {
             throw new InvalidValueException(SCHEDULE_NOT_INCLUDED);
@@ -276,6 +280,16 @@ public class TimeEventCommandService {
 
     }
 
+    private void processTimeEventSchedule(CreateLocalTimeEventsRequestDto requestDto, TimeEvent timeEvent, LocalDateTime newStartEventDateTime, LocalDateTime newEndEventDateTime) {
+        getEmployees(requestDto).stream()
+                .forEach(employee -> {
+                    List<ReservationSchedule> filteredReservationSchedules = findReservationScheduleWithinEventPeriod(newStartEventDateTime, newEndEventDateTime, employee);
+                    validateScheduleSize(filteredReservationSchedules);
+
+                    createTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, employee, filteredReservationSchedules, timeEvent);
+                });
+    }
+
     /**
      * 기간 반복 요청에 따른 TimeEventSchedule 처리
      *
@@ -289,13 +303,7 @@ public class TimeEventCommandService {
         LocalDateTime newStartEventDateTime = LocalDateTime.of(requestDto.startDate(), requestDto.startTime());
         LocalDateTime newEndEventDateTime = LocalDateTime.of(requestDto.endDate(), requestDto.endTime());
 
-        getEmployees(requestDto).stream()
-                .forEach(employee -> {
-                    List<ReservationSchedule> filteredReservationSchedules = findReservationScheduleWithinEventPeriod(newStartEventDateTime, newEndEventDateTime, employee);
-                    validateScheduleSize(filteredReservationSchedules);
-
-                    createTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, employee, filteredReservationSchedules,timeEvent);
-                });
+        processTimeEventSchedule(requestDto, timeEvent, newStartEventDateTime, newEndEventDateTime);
     }
 
     /**
@@ -310,15 +318,8 @@ public class TimeEventCommandService {
         LocalDateTime newStartEventDateTime = LocalDateTime.of(LocalDate.now(), requestDto.startTime());
         LocalDateTime newEndEventDateTime = LocalDateTime.of(LocalDate.now(), requestDto.endTime());
 
-        getEmployees(requestDto).stream()
-                .forEach(employee -> {
-                    List<ReservationSchedule> filteredReservationSchedules = findReservationScheduleWithinEventPeriod(newStartEventDateTime, newEndEventDateTime, employee);
-                    validateScheduleSize(filteredReservationSchedules);
-
-                    createTimeEventSchedule(newStartEventDateTime, newEndEventDateTime, employee, filteredReservationSchedules, timeEvent);
-                });
+        processTimeEventSchedule(requestDto, timeEvent, newStartEventDateTime, newEndEventDateTime);
     }
-
 
 
     private TimeEvent createTimeEvent(CreateLocalTimeEventsRequestDto requestDto, Shop shop, List<DayOfWeek> dayOfWeeks) {
