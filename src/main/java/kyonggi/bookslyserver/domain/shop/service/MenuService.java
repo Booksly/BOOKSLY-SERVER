@@ -2,22 +2,17 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 import jakarta.transaction.Transactional;
 
+import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEventMenu;
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCreateRequestDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryReadDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.*;
 
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadOneDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
+import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
-import kyonggi.bookslyserver.domain.shop.repository.MenuCategoryRepository;
-import kyonggi.bookslyserver.domain.shop.repository.MenuImageRepository;
-import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
-import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
+import kyonggi.bookslyserver.domain.shop.repository.*;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
@@ -28,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -41,6 +37,8 @@ public class MenuService {
     private final MenuCategoryRepository menuCategoryRepository;
 
     private final ShopRepository shopRepository;
+
+    private final EmployeeRepository employeeRepository;
 
 
     public MenuReadOneDto readOneMenu(Long id){
@@ -64,6 +62,35 @@ public class MenuService {
             menuReadDtos.add(menuDto);
         }
         return menuReadDtos;
+    }
+
+    public List<EventRegisterMenuNamesDto> readMenuNames(Long id){
+        Optional<Employee> employee = employeeRepository.findById(id);
+        List<Menu> menus = new ArrayList<>();
+        List<Menu> deletemenus = new ArrayList<>();
+        if(!employee.isPresent()){
+            throw new EntityNotFoundException(ErrorCode.EMPLOYEE_NOT_FOUND);
+        }
+
+        for(EmployeeMenu employeeMenu : employee.get().getEmployeeMenus()){
+            menus.add(employeeMenu.getMenu());
+        }
+
+        for(Menu menu : menus){
+            for(ClosingEventMenu closingEventMenu : menu.getClosingEventMenus()){
+                if(closingEventMenu.getClosingEvent().getEmployee() == employee.get()){
+                    deletemenus.add(menu);
+                }
+            }
+        }
+
+        for(Menu menu : deletemenus){
+            menus.remove(menu);
+        }
+
+        List<EventRegisterMenuNamesDto> result = menus.stream().map(menu -> new EventRegisterMenuNamesDto(menu)).collect(Collectors.toList());
+
+        return result;
     }
 
     @Transactional

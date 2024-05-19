@@ -5,12 +5,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCreateRequestDto;
 import com.sun.net.httpserver.Authenticator;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryReadDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadOneDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.*;
 import kyonggi.bookslyserver.domain.shop.service.MenuService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +33,12 @@ public class MenuApiController {
     @GetMapping("/api/shops/{shopId}/menus")
     public ResponseEntity<SuccessResponse<?>> readMenu(@PathVariable("shopId") Long id){
         List<MenuReadDto> result = menuService.readMenu(id);
+        return SuccessResponse.ok(result);
+    }
+
+    @GetMapping("/api/shops/employees/{employeeId}/menus/eventRegistration")
+    public ResponseEntity<SuccessResponse<?>> readMenuNames(@PathVariable("employeeId") Long id){
+        List<EventRegisterMenuNamesDto> result = menuService.readMenuNames(id);
         return SuccessResponse.ok(result);
     }
 
