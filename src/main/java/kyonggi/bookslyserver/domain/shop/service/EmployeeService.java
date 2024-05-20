@@ -95,7 +95,7 @@ public class EmployeeService {
     }
 
     public List<EventRegisterEmployeeNamesDto> readEmployeeNames(Long id){
-        List<Employee> employees = employeeRepository.findEmployeeNames(id);
+        List<Employee> employees = employeeRepository.findEmployeesByShopId(id);
         List<EventRegisterEmployeeNamesDto> result = employees.stream().map(employee -> new EventRegisterEmployeeNamesDto(employee)).collect(Collectors.toList());
         return result;
     }

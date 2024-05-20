@@ -18,5 +18,5 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     @Modifying
     @Transactional
     @Query("select e from Employee e where e.shop.id = :shopId")
-    List<Employee> findEmployeeNames(@Param("shopId") Long id);
+    List<Employee> findEmployeesByShopId(@Param("shopId") Long id);
 }
