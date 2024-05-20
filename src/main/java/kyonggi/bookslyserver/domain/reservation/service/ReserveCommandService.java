@@ -14,8 +14,6 @@ import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRe
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationSettingRepository;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
-import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkSchedule;
-import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeMenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
@@ -29,13 +27,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -57,6 +52,13 @@ public class ReserveCommandService {
     public static class TimeRange{
         LocalTime startTime;
         LocalTime endTime;
+    }
+    @AllArgsConstructor
+    @Getter
+    public static class AddressRange {
+        String firstAddress;
+        String secondAddress;
+        String thirdAddress;
     }
     /**
      * 예약 가능 시간대 조회
@@ -181,13 +183,15 @@ public class ReserveCommandService {
     /**
      * 당일 예약
      */
-    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservation(LocalDate date,List<LocalTime> startTimes,List<LocalTime> endTimes, List<Long> categories){
+    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservation(LocalDate date,List<String> firstAddress,List<String> secondAddress,List<String> thirdAddress,List<LocalTime> startTimes,List<LocalTime> endTimes, List<Long> categories){
         List<TimeRange> timeRanges=createTimeRange(startTimes, endTimes);
-        return reservationRepository.findTodayReservations(date,timeRanges,categories);
+        List<AddressRange> addressRanges=createAddressRange(firstAddress, secondAddress, thirdAddress);
+        return reservationRepository.findTodayReservations(date,addressRanges,timeRanges,categories);
     }
-    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservationByDiscount(LocalDate date,List<LocalTime> startTimes,List<LocalTime> endTimes, List<Long> categories){
+    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservationByDiscount(LocalDate date,List<String> firstAddress,List<String> secondAddress,List<String> thirdAddress,List<LocalTime> startTimes,List<LocalTime> endTimes, List<Long> categories){
         List<TimeRange> timeRanges=createTimeRange(startTimes, endTimes);
-        return reservationRepository.findTodayReservationsByDiscount(date,timeRanges,categories);
+        List<AddressRange> addressRanges=createAddressRange(firstAddress, secondAddress, thirdAddress);
+        return reservationRepository.findTodayReservationsByDiscount(date,addressRanges,timeRanges,categories);
     }
     /**
      * startTime, endTime to timeRange
@@ -200,5 +204,15 @@ public class ReserveCommandService {
             timeRanges.add(new TimeRange(startTime,endTime));
         }
         return timeRanges;
+    }
+    public static List<AddressRange> createAddressRange(List<String> firstAddress, List<String> secondAddress, List<String> thirdAddress){
+        List<AddressRange> addressRanges=new ArrayList<>();
+        for (int i=0;i< firstAddress.size();i++){
+            String firstAddr = firstAddress.get(i);
+            String secondAddr = secondAddress.get(i);
+            String thirdAddr = thirdAddress.get(i);
+            addressRanges.add(new AddressRange(firstAddr,secondAddr,thirdAddr));
+        }
+        return addressRanges;
     }
 }

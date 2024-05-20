@@ -315,7 +315,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     }
 
     @Override
-    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservations(LocalDate date, List<ReserveCommandService.TimeRange> timeRanges, List<Long> categories) {
+    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservations(LocalDate date, List<ReserveCommandService.AddressRange> addressRanges,List<ReserveCommandService.TimeRange> timeRanges, List<Long> categories) {
 
         List<ReserveResponseDTO.findTodayReservationsResultDTO> results=queryFactory.
                 select(Projections.fields(ReserveResponseDTO.findTodayReservationsResultDTO.class,
@@ -334,6 +334,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 .where(reservationSchedule.workDate.eq(date),
                         reservationSchedule.isClosed.eq(false),
                         isReservationSchInTimeRange(timeRanges),
+                        isShopInAddressRange(addressRanges),
                         shop.category.id.in(categories)
                         )
                 .orderBy(orderByNearest())
@@ -368,6 +369,13 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                 }
         );
         return results;
+    }
+    @Override
+    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservationsByDiscount(LocalDate date, List<ReserveCommandService.AddressRange> addressRanges, List<ReserveCommandService.TimeRange> timeRanges, List<Long> categories) {
+        List<ReserveResponseDTO.findTodayReservationsResultDTO> results= findTodayReservations(date,addressRanges, timeRanges, categories);
+        return results.stream()
+                .sorted(Comparator.comparing(ReserveResponseDTO.findTodayReservationsResultDTO::getTotalDcRate).reversed())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -426,14 +434,6 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
         ).toList();
     }
 
-    @Override
-    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservationsByDiscount(LocalDate date, List<ReserveCommandService.TimeRange> timeRanges, List<Long> categories) {
-        List<ReserveResponseDTO.findTodayReservationsResultDTO> results= findTodayReservations(date, timeRanges, categories);
-        return results.stream()
-                .sorted(Comparator.comparing(ReserveResponseDTO.findTodayReservationsResultDTO::getTotalDcRate).reversed())
-                .collect(Collectors.toList());
-    }
-
     private BooleanExpression isValidReservationSchedule(LocalDateTime now){
         return reservationSchedule.workDate.after(now.toLocalDate())
                 .or(reservationSchedule.workDate.eq(now.toLocalDate()).and(reservationSchedule.startTime.after(now.toLocalTime())));
@@ -454,6 +454,22 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
             }
         }
         return timeRangeCondition;
+    }
+    private BooleanExpression isShopInAddressRange(List<ReserveCommandService.AddressRange> addressRanges){
+        if(addressRanges==null||addressRanges.isEmpty()){
+            return null;
+        }
+        BooleanExpression addressRangeCondition=null;
+        for (ReserveCommandService.AddressRange range:addressRanges){
+            BooleanExpression condition=shop.address.firstAddress.eq(range.getFirstAddress())
+                    .and(shop.address.secondAddress.eq(range.getSecondAddress()));
+            if (!"전체".equals(range.getThirdAddress())){
+                condition=condition.and(shop.address.thirdAddress.eq(range.getThirdAddress()));
+            }
+            if (addressRangeCondition==null) addressRangeCondition=condition;
+            else addressRangeCondition=condition.or(condition);
+        }
+        return addressRangeCondition;
     }
     private BooleanExpression hasToClassifyCategory(Long categoryId){
         return categoryId>=0? shop.category.id.eq(categoryId):null;

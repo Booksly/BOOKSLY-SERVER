@@ -17,7 +17,7 @@ public interface ReservationRepositoryCustom {
     public List<ReserveResponseDTO.getTodayReservationsDetailsResultDTO> getTodayReservationsDetails(LocalDate today, Long employeeId);
     public List<ReserveResponseDTO.getReservationRequestDetailsResultDTO> getReservationRequestDetails(Long shopId);
     public List<ReserveResponseDTO.getReservationRequestDetailsResultDTO> getImminentReservationRequestDetails(Long shopId);
-    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservations(LocalDate date, List<ReserveCommandService.TimeRange> timeRanges,List<Long> categories);
-    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservationsByDiscount(LocalDate date,List<ReserveCommandService.TimeRange> timeRanges,List<Long> categories);
+    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservations(LocalDate date, List<ReserveCommandService.AddressRange> addressRanges,List<ReserveCommandService.TimeRange> timeRanges,List<Long> categories);
+    public List<ReserveResponseDTO.findTodayReservationsResultDTO> findTodayReservationsByDiscount(LocalDate date,List<ReserveCommandService.AddressRange> addressRanges,List<ReserveCommandService.TimeRange> timeRanges,List<Long> categories);
     public List<ReserveResponseDTO.myPageReservationsResultDTO> getAllReservationRecords(Long userId, Long categoryId, boolean now);
 }
