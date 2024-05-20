@@ -64,6 +64,9 @@ public class ShopService {
         List<Employee> employeeList = shop.get().getEmployees();
         List<EmployeeUserResponseDto> employees = employeeList.stream().map(employee -> new EmployeeUserResponseDto(employee)).collect(Collectors.toList());
 
+        int visit = shop.get().getTotalVisitors() + 1;
+        shop.get().setTotalVisitors(visit);
+
         return ShopUserReadOneDto
                 .builder()
                 .Name(name)
