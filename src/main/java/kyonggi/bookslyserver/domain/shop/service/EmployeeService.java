@@ -94,6 +94,12 @@ public class EmployeeService {
         return result;
     }
 
+    public List<EventRegisterEmployeeNamesDto> readEmployeeNames(Long id){
+        List<Employee> employees = employeeRepository.findEmployeesByShopId(id);
+        List<EventRegisterEmployeeNamesDto> result = employees.stream().map(employee -> new EventRegisterEmployeeNamesDto(employee)).collect(Collectors.toList());
+        return result;
+    }
+
     @Transactional
     public EmployeeCreateResponseDto join(Long id, EmployeeCreateRequestDto requestDto){
         Optional<Shop> shop = shopRepository.findById(id);

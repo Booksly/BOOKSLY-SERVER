@@ -1,5 +1,6 @@
 package kyonggi.bookslyserver.domain.shop.entity.Employee;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEventSchedule;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.EmployeeTimeEvent;
