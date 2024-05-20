@@ -37,11 +37,16 @@ public class MenuApiController {
     }
 
     @GetMapping("/api/shops/employees/{employeeId}/menus/closingEventRegistration")
-    public ResponseEntity<SuccessResponse<?>> readMenuNames(@PathVariable("employeeId") Long id){
-        List<EventRegisterMenuNamesDto> result = menuService.readMenuNames(id);
+    public ResponseEntity<SuccessResponse<?>> readMenuNamesClosingEventRegister(@PathVariable("employeeId") Long id){
+        List<EventRegisterMenuNamesDto> result = menuService.readMenuNamesClosingEventRegister(id);
         return SuccessResponse.ok(result);
     }
 
+    @GetMapping("api/shops/employees/{employeeId}/menus/timeEventRegistration")
+    public ResponseEntity<SuccessResponse<?>> readMenuNamesTimeEventRegister(@PathVariable("employeeId") Long id){
+        List<EventRegisterMenuNamesDto> result = menuService.readMenuNamesTimeEventRegister(id);
+        return SuccessResponse.ok(result);
+    }
 
     @PostMapping("/api/shops/{shopId}/menus")
     public ResponseEntity<SuccessResponse<?>> createMenu(@PathVariable("shopId") Long id, @RequestBody @Validated MenuCreateRequestDto requestDto){
