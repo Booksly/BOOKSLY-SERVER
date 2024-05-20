@@ -42,13 +42,13 @@ public class ReservationController {
      */
     @GetMapping("/today/{today}")
     public ResponseEntity<SuccessResponse<?>> findTodayReservation
-            (@PathVariable("today")LocalDate date, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<Long> categories){
-        return SuccessResponse.ok(reserveCommandService.findTodayReservation(date,startTimes,endTimes,categories));
+            (@PathVariable("today")LocalDate date,@RequestParam List<String> firstAddress,@RequestParam List<String> secondAddress,@RequestParam List<String> thirdAddress, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<Long> categories){
+        return SuccessResponse.ok(reserveCommandService.findTodayReservation(date,firstAddress,secondAddress,thirdAddress,startTimes,endTimes,categories));
     }
     @GetMapping("/today/discount/{today}")
     public ResponseEntity<SuccessResponse<?>> findTodayReservationByDiscount
-            (@PathVariable("today")LocalDate date, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<Long> categories){
-        return SuccessResponse.ok(reserveCommandService.findTodayReservationByDiscount(date,startTimes,endTimes,categories));
+            (@PathVariable("today")LocalDate date,@RequestParam List<String> firstAddress,@RequestParam List<String> secondAddress,@RequestParam List<String> thirdAddress, @RequestParam List<LocalTime> startTimes,@RequestParam List<LocalTime> endTimes, @RequestParam List<Long> categories){
+        return SuccessResponse.ok(reserveCommandService.findTodayReservationByDiscount(date,firstAddress,secondAddress,thirdAddress,startTimes,endTimes,categories));
     }
     /**
      * 마이페이지 전체 예약 조회
