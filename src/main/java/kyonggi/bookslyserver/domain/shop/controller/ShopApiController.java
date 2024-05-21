@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 
 
+import com.sun.net.httpserver.Authenticator;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
@@ -47,6 +48,10 @@ public class ShopApiController {
         return SuccessResponse.ok(result);
     }
 
+/*    @GetMapping("/api/newshops")
+    public ResponseEntity<SuccessResponse<?>> readNewShops(){
+
+    }*/
 
     //가게 등록
     @PostMapping("/api/shops")

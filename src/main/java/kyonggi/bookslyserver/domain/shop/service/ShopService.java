@@ -21,6 +21,7 @@ import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -95,7 +96,7 @@ public class ShopService {
 
         Optional<ShopOwner> owner = shopOwnerRepository.findById(ownerId);
         shop.getShopOwner(owner);
-
+        shop.setCreatedAt(LocalDate.now());
         return new ShopRegisterDto(shop);
     }
 
