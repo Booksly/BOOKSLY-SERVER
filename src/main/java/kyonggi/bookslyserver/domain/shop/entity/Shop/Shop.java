@@ -182,11 +182,14 @@ public class Shop extends BaseTimeEntity {
     }
 
     public float getRatingByReview() {
-        float sum = 0;
-        for (Review review : reviews) {
-            sum += review.getRating();
+        if (reviews.size() > 0) {
+            float sum = 0;
+            for (Review review : reviews) {
+                sum += review.getRating();
+            }
+            return sum / reviews.size();
         }
-        return sum / reviews.size();
+        return 0;
     }
 
 
