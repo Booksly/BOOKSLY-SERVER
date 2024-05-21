@@ -79,6 +79,7 @@ public class SecurityConfig {
          */
         http
                 .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers("/api/events/closing-events/today","/api/events/time-events/today").permitAll()
 
                         //인증이 필요한 uri - 일반 회원만 접근 가능
                         .requestMatchers("/api/user/details/**","/api/auth/verify/user/**","api/reservations","api/reservations/all").hasRole("USER")

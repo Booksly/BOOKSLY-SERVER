@@ -1,5 +1,6 @@
 package kyonggi.bookslyserver.global.error.handler;
 
+import jakarta.validation.ConstraintViolationException;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.dto.ErrorResponseDto;
 import kyonggi.bookslyserver.global.error.dto.FieldErrorResponseDto;
@@ -29,7 +30,7 @@ public class GlobalExceptionHandler {
     /**
      * Valid & Validated annotation의 binding error를 handling합니다.
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class})
     protected ResponseEntity<FieldErrorResponseDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(">>> handle: MethodArgumentNotValidException ", e);
 
@@ -41,6 +42,22 @@ public class GlobalExceptionHandler {
                             String errorMessage = Optional.ofNullable(fieldError.getDefaultMessage()).orElse("");
                             errors.merge(fieldName, errorMessage, (existingErrorMessage, newErrorMessage) -> existingErrorMessage + ", " + newErrorMessage);
                         });
+
+        final FieldErrorResponseDto fieldErrorReason = ErrorCode.BAD_REQUEST.getFieldErrorReason(errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fieldErrorReason);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    protected ResponseEntity<FieldErrorResponseDto> handleConstraintViolationException(ConstraintViolationException e) {
+        log.error(">>> handle: ConstraintViolationException ", e);
+
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        e.getConstraintViolations().forEach(violation -> {
+            String fieldName = violation.getPropertyPath().toString();
+            String errorMessage = Optional.ofNullable(violation.getMessage()).orElse("");
+            errors.merge(fieldName, errorMessage, (existingErrorMessage, newErrorMessage) -> existingErrorMessage + ", " + newErrorMessage);
+        });
 
         final FieldErrorResponseDto fieldErrorReason = ErrorCode.BAD_REQUEST.getFieldErrorReason(errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fieldErrorReason);

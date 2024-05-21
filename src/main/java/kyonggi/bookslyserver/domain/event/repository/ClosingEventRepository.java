@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.event.repository;
 
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +20,8 @@ public interface ClosingEventRepository extends JpaRepository<ClosingEvent, Long
     Optional<ClosingEvent> findByEmployee(Employee employee);
 
     boolean existsByEmployeeId(Long employeeId);
+
+    @Query("select c.employee.shop from ClosingEvent c join c.employee e join e.shop")
+    List<Shop> findShopsByClosingEvent();
+
 }

@@ -11,6 +11,8 @@ import java.time.LocalTime;
 @Slf4j
 public class TimeRangeValidator implements ConstraintValidator<TimeRange, String> {
 
+    private static final String TIME_PATTERN = "^([01][0-9]|2[0-3]):[0-5][0-9]$";
+
     @Override
     public void initialize(TimeRange constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
@@ -21,7 +23,7 @@ public class TimeRangeValidator implements ConstraintValidator<TimeRange, String
         if (timeInput == null) {
             return true; // @NotNull 어노테이션을 사용하여 별도로 null 체크
         }
-        if (!timeInput.matches("^([01][0-9]|2[0-3]):[0-5][0-9]$")) {
+        if (!timeInput.matches(TIME_PATTERN)) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("올바른 시간 입력 형식이 아닙니다. 09:00와 같은 형식으로 입력해주세요.").addConstraintViolation();
 
