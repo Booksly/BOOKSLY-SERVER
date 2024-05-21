@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.notice.entity;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.reservation.entity.Reservation;
 import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
@@ -20,4 +21,8 @@ public class UserNotice extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="reservation_id")
+    private Reservation reservation;
 }
