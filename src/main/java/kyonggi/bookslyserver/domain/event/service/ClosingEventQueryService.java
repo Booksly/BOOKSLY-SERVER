@@ -12,6 +12,7 @@ import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -64,28 +65,27 @@ public class ClosingEventQueryService {
         return filteredShops;
     }
 
+    private void validateCategoriesExist(List<Long> categoryIds) {
+        List<Long> existingCategoryIds = categoryRepository.findByCategoryIds(categoryIds);
+        if (existingCategoryIds.size() != categoryIds.size()) {
+            throw new InvalidValueException(ErrorCode.CATEGORY_NOT_FOUNT);
+        }
+    }
+
     private List<Shop> getCategoryFilteredShops(List<Long> categories, List<Shop> shops) {
-        List<Shop> filteredShops = new ArrayList<>();
-
-        categories.stream()
-                .map(categoryId -> categoryRepository.findById(categoryId).orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUNT)))
-                .forEach(category ->
-                        filteredShops.addAll(shopRepository.findByCategoryId(category.getId(),shops)));
-
-        return filteredShops;
+        validateCategoriesExist(categories);
+        return shopRepository.findByCategoryIds(categories,shops);
     }
 
     private List<ReservationSchedule> getTimeSlotFilteredEventSchedules(List<String> timeSlots, List<Shop> shops) {
         List<ReservationSchedule> earliestEventSchedulesForTimeSlot = new ArrayList<>();
         Pageable firstResult = PageRequest.of(0, 1);
+        LocalDate nowDate = LocalDate.now();
 
         timeSlots.forEach(timeSlot -> {
-            LocalDate nowDate = LocalDate.now();
             String[] times = timeSlot.split("-");
             LocalTime startTime = LocalTime.parse(times[0]);
             LocalTime endTime = LocalTime.parse(times[1]);
-            log.info("startTime = "+startTime);
-            log.info("endTime = "+endTime);
 
             shops.stream()
                     .map(shop -> reservationScheduleRepository.findWithAppliedClosingEvent(nowDate, startTime, endTime, shop, firstResult))
@@ -109,12 +109,12 @@ public class ClosingEventQueryService {
         List<Shop> shops = closingEventRepository.findShopsByClosingEvent();
 
         //지역 필터링 조건 적용
-        if (regions != null) shops = getRegionFilteredShops(regions, shops);
+        if (regions != null && !regions.isEmpty()) shops = getRegionFilteredShops(regions, shops);
 
         //카테고리 필터링 조건 적용
-        if (categories != null) shops = getCategoryFilteredShops(categories, shops);
+        if (categories != null && !categories.isEmpty()) shops = getCategoryFilteredShops(categories, shops);
 
-        if (timeSlots == null){
+        if (timeSlots == null || timeSlots.isEmpty()){
             String timeSlot = LocalTime.now() + "-" + LocalTime.MAX;
             timeSlots = new ArrayList<>();
             timeSlots.add(timeSlot);

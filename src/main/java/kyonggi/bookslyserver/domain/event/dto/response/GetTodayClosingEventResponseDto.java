@@ -25,5 +25,6 @@ public record GetTodayClosingEventResponseDto(
                 .shopName(shop.getName())
                 .shopImg(shop.getShopImages().get(0).getImgUri())
                 .rating(shop.getRatingByReview())
+                .time(eventReservationSchedule.getStartTime())
                 .message(eventReservationSchedule.getClosingEvent().getEventMessage()).build();}
 }
