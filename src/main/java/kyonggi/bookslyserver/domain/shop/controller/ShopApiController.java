@@ -13,6 +13,9 @@ import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerId;
 import kyonggi.bookslyserver.global.auth.principal.user.UserId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -48,10 +51,12 @@ public class ShopApiController {
         return SuccessResponse.ok(result);
     }
 
-/*    @GetMapping("/api/newshops")
-    public ResponseEntity<SuccessResponse<?>> readNewShops(){
-
-    }*/
+    //새로 입점한 가게 리스트 조회
+    @GetMapping("/api/newshops")
+    public ResponseEntity<SuccessResponse<?>> readNewShops(@PageableDefault(size = 5, page = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable){
+        List<NewShopFilterDto> result = shopService.readNewShops(pageable);
+        return SuccessResponse.ok(result);
+    }
 
     //가게 등록
     @PostMapping("/api/shops")

@@ -19,6 +19,8 @@ import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -154,6 +156,11 @@ public class ShopService {
         return new ShopOwnerDetailReadOneDto(shop.get(), businessScheduleDtos);
     }
 
+    public List<NewShopFilterDto> readNewShops(Pageable pageable){
+        Page<Shop> shopPage = shopRepository.findNewShops(pageable, LocalDate.now(), LocalDate.now().minusMonths(3));
+        List<NewShopFilterDto> result = shopPage.stream().map(shop -> new NewShopFilterDto(shop)).collect(Collectors.toList());
+        return result;
+    }
 
 
 
