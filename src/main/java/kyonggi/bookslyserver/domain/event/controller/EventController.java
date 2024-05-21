@@ -11,6 +11,7 @@ import kyonggi.bookslyserver.domain.event.service.ClosingEventCommandService;
 import kyonggi.bookslyserver.domain.event.service.ClosingEventQueryService;
 import kyonggi.bookslyserver.domain.event.service.TimeEventCommandService;
 import kyonggi.bookslyserver.domain.event.service.TimeEventQueryService;
+import kyonggi.bookslyserver.domain.event.validation.annotation.TimeSlotFormat;
 import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -85,11 +86,11 @@ public class EventController {
     }
 
     @GetMapping("/closing-events/today")
-    public ResponseEntity<SuccessResponse<?>> getTodayClosingEvents(@RequestParam(value = "region", required = false) String region,
-                                                                    @RequestParam(value = "time_slot", required = false) String timeSlot,
+    public ResponseEntity<SuccessResponse<?>> getTodayClosingEvents(@RequestParam(value = "region", required = false) List<String> regions,
+                                                                    @RequestParam(value = "time_slot", required = false) @TimeSlotFormat List<String> timeSlots,
                                                                     @RequestParam(value = "category",required = false)List<Long> categories) {
 
-        GetTodayClosingEventsResponseDto getTodayClosingEventsResponseDto = closingEventQueryService.getTodayClosingEvents(region, timeSlot, categories);
+        GetTodayClosingEventsResponseDto getTodayClosingEventsResponseDto = closingEventQueryService.getTodayClosingEvents(regions, timeSlots, categories);
         return SuccessResponse.ok(getTodayClosingEventsResponseDto);
     }
 }

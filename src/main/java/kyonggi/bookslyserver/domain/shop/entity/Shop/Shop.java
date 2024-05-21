@@ -181,6 +181,14 @@ public class Shop extends BaseTimeEntity {
         this.timeUnit = requestDto.getTimeUnit();
     }
 
+    public float getRatingByReview() {
+        float sum = 0;
+        for (Review review : reviews) {
+            sum += review.getRating();
+        }
+        return sum / reviews.size();
+    }
+
 
 
 }
