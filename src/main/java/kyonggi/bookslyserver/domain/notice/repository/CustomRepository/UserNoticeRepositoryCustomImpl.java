@@ -11,6 +11,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Shop.QShop;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 @Repository
 @RequiredArgsConstructor
@@ -22,14 +23,15 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
     QShop shop=QShop.shop;
     @Override
     public List<NoticeResponseDTO.refusedReservationsResultDTO> getRefusedReservationsNotices(Long userID) {
-        return queryFactory.select(
+        List<NoticeResponseDTO.refusedReservationsResultDTO> results= queryFactory.select(
                 Projections.fields(NoticeResponseDTO.refusedReservationsResultDTO.class,
                         userNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
-                        Expressions.stringTemplate("CONCAT({0},' ',{1})",
+                        Expressions.stringTemplate("CONCAT({0},'T',{1})",
                                 reservationSchedule.workDate,
                                 reservationSchedule.startTime
-                                ),
+                                ).as("reservationTime"),
+                        reservationSchedule.workDate, reservationSchedule.startTime,
                         reservation.refuseReason.as("refuseReason")
                         ))
                 .from(userNotice)
@@ -41,5 +43,6 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                 )
                 .orderBy(userNotice.createDate.desc())
                 .fetch();
+        return results;
     }
 }

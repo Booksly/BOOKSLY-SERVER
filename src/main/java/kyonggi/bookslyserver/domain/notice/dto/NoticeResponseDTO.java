@@ -13,7 +13,7 @@ public class NoticeResponseDTO {
     public static class refusedReservationsResultDTO{
         private LocalDateTime createdTime;
         private String shopName;
-        private LocalDateTime reservationTime;
+        private String reservationTime;
         private String refuseReason;
     }
 }
