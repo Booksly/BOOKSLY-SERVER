@@ -35,6 +35,8 @@ public enum ErrorCode implements BaseErrorCode{
     START_TIME_IS_AFTER_END_TIME(HttpStatus.BAD_REQUEST,"이벤트 시작 시간은 이벤트 마감 시간 이전이어야 합니다."),
     START_DATE_IS_AFTER_END_DATE(HttpStatus.BAD_REQUEST,"이벤트 시작일은 이벤트 마감일 이전이어야 합니다."),
     MENU_IS_NOT_EMPLOYEEMENU(HttpStatus.BAD_REQUEST,"직원 담당 메뉴가 아닌 메뉴가 존재합니다."),
+    EMPLOYEE_NOT_BELONG_SHOP(HttpStatus.BAD_REQUEST,"요청 가게에 속한 직원이 아닙니다."),
+    NOT_OWNER_OF_SHOP(HttpStatus.BAD_REQUEST,"해당 가게의 주인이 아닙니다."),
 
 
     /**

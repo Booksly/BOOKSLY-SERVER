@@ -60,8 +60,8 @@ public class EventController {
 
 
     @PostMapping("/closing-events")
-    public ResponseEntity<SuccessResponse<?>> createClosingEvent(@RequestBody CreateClosingEventRequestDto createClosingEventRequestDto) {
-        CreateClosingEventResponseDto createClosingEventResponseDto = closingEventCommandService.createClosingEvent(createClosingEventRequestDto);
+    public ResponseEntity<SuccessResponse<?>> createClosingEvent(@RequestBody CreateClosingEventRequestDto createClosingEventRequestDto, @OwnerId Long ownerId) {
+        CreateClosingEventResponseDto createClosingEventResponseDto = closingEventCommandService.createClosingEvent(createClosingEventRequestDto, ownerId);
         return SuccessResponse.created(createClosingEventResponseDto);
     }
 

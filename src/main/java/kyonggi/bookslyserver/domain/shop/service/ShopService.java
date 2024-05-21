@@ -18,6 +18,7 @@ import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -159,7 +160,7 @@ public class ShopService {
     public Shop findShop(Long ownerId, Long shopId) {
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
         if (shop.getShopOwner().getId() != ownerId) {
-            throw new BusinessException(BAD_REQUEST);
+            throw new InvalidValueException(NOT_OWNER_OF_SHOP);
         }
         return shop;
     }

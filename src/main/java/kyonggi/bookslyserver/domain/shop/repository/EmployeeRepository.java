@@ -19,4 +19,8 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     @Transactional
     @Query("select e from Employee e where e.shop.id = :shopId")
     List<Employee> findEmployeesByShopId(@Param("shopId") Long id);
+
+    @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END " +
+            "FROM Employee e WHERE e.id = :employeeId AND e.shop.id = :shopId")
+    boolean existsByIdAndShopId(@Param("employeeId") Long employeeId, @Param("shopId") Long shopId);
 }
