@@ -54,7 +54,7 @@ public class ShopApiController {
 
     //Top100 조회
     @GetMapping("/api/shops/top100")
-    public ResponseEntity<SuccessResponse<?>> readTopShops(@PageableDefault(size = 10, page = 10, sort = "totalVisitors", direction = Sort.Direction.DESC) Pageable pageable){
+    public ResponseEntity<SuccessResponse<?>> readTopShops(@PageableDefault(size = 10, page = 0, sort = "totalVisitors", direction = Sort.Direction.DESC) Pageable pageable){
         List<ShopFilterDto> result = shopService.readTopShops(pageable);
         return SuccessResponse.ok(result);
     }
