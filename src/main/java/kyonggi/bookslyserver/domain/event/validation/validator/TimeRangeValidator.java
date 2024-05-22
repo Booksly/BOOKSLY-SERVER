@@ -3,15 +3,14 @@ package kyonggi.bookslyserver.domain.event.validation.validator;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import kyonggi.bookslyserver.domain.event.validation.annotation.TimeRange;
-import kyonggi.bookslyserver.global.error.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalTime;
 
+import static kyonggi.bookslyserver.global.util.TimeUtil.TIME_PATTERN;
+
 @Slf4j
 public class TimeRangeValidator implements ConstraintValidator<TimeRange, String> {
-
-    private static final String TIME_PATTERN = "^([01][0-9]|2[0-3]):[0-5][0-9]$";
 
     @Override
     public void initialize(TimeRange constraintAnnotation) {

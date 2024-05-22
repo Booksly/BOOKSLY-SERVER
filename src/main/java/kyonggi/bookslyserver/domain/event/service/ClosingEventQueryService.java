@@ -9,6 +9,7 @@ import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRe
 import kyonggi.bookslyserver.domain.reservation.service.ReserveQueryService;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
+import kyonggi.bookslyserver.global.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -48,9 +49,9 @@ public class ClosingEventQueryService {
         LocalDate nowDate = LocalDate.now();
 
         timeSlots.forEach(timeSlot -> {
-            String[] times = timeSlot.split("-");
-            LocalTime startTime = LocalTime.parse(times[0]);
-            LocalTime endTime = LocalTime.parse(times[1]);
+            LocalTime[] times = TimeUtil.parseTimeSlot(timeSlot);
+            LocalTime startTime = times[0];
+            LocalTime endTime = times[1];
 
             shops.stream()
                     .map(shop -> reservationScheduleRepository.findWithAppliedClosingEvent(nowDate, startTime, endTime, shop, firstResult))
