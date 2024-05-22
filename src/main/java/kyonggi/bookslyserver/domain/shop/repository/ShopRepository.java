@@ -21,5 +21,4 @@ public interface ShopRepository extends JpaRepository<Shop,Long> {
     @Query("select s from Shop s where s.shopOwner.id = :id")
     List<Shop> findByShopOwnerId(@Param("id") Long id);
 
-    Page<Shop> findAllByOrderByTotalVisitorsAsc(Pageable pageable);
 }
