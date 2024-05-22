@@ -6,13 +6,9 @@ import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
 import kyonggi.bookslyserver.domain.event.repository.ClosingEventRepository;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRepository;
+import kyonggi.bookslyserver.domain.reservation.service.ReserveQueryService;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
-import kyonggi.bookslyserver.domain.shop.repository.CategoryRepository;
-import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
-import kyonggi.bookslyserver.global.error.ErrorCode;
-import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
-import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -33,10 +29,8 @@ public class ClosingEventQueryService {
 
     private final ShopService shopService;
     private final ClosingEventRepository closingEventRepository;
-    private final ShopRepository shopRepository;
-    private final CategoryRepository categoryRepository;
     private final ReservationScheduleRepository reservationScheduleRepository;
-    private final String allRegion = "전체";
+    private final ReserveQueryService reserveQueryService;
 
     public GetClosingEventsResponseDto getClosingEvents(Long shopId, Long ownerId) {
 
@@ -47,35 +41,6 @@ public class ClosingEventQueryService {
         return GetClosingEventsResponseDto.of(closingEvents);
     }
 
-    private List<Shop> filterShopsByAddress(List<Shop> shops, String region) {
-        String[] address = region.split(" ");
-
-        if (address[2].equals(allRegion)) {
-            shops = shopRepository.findShopsByOneAndTwoAddress(address[0], address[1], shops);
-        }else {
-            shops = shopRepository.findShopsByAddress(address[0], address[1], address[2], shops);
-        }
-        return shops;
-    }
-
-    private List<Shop> getRegionFilteredShops(List<String> regions, List<Shop> shops) {
-        List<Shop> filteredShops = new ArrayList<>();
-        regions.stream().forEach(region ->
-                filteredShops.addAll(filterShopsByAddress(shops, region)));
-        return filteredShops;
-    }
-
-    private void validateCategoriesExist(List<Long> categoryIds) {
-        List<Long> existingCategoryIds = categoryRepository.findByCategoryIds(categoryIds);
-        if (existingCategoryIds.size() != categoryIds.size()) {
-            throw new InvalidValueException(ErrorCode.CATEGORY_NOT_FOUNT);
-        }
-    }
-
-    private List<Shop> getCategoryFilteredShops(List<Long> categories, List<Shop> shops) {
-        validateCategoriesExist(categories);
-        return shopRepository.findByCategoryIds(categories,shops);
-    }
 
     private List<ReservationSchedule> getTimeSlotFilteredEventSchedules(List<String> timeSlots, List<Shop> shops) {
         List<ReservationSchedule> earliestEventSchedulesForTimeSlot = new ArrayList<>();
@@ -96,23 +61,15 @@ public class ClosingEventQueryService {
         return earliestEventSchedulesForTimeSlot;
     }
 
-    private List<ReservationSchedule> orderEventSchedulesByAsc(List<ReservationSchedule> eventReservationSchedules) {
-        return eventReservationSchedules.stream()
-                .sorted(Comparator
-                        .comparing(ReservationSchedule::getStartTime)
-                        .thenComparing(rs -> rs.getShop().getRatingByReview(), Comparator.reverseOrder())
-                        .thenComparing(rs -> rs.getShop().getCreateDate()))
-                .toList();
-    }
 
     public GetTodayClosingEventsResponseDto getTodayClosingEvents(List<String> regions, List<String> timeSlots, List<Long> categories) {
         List<Shop> shops = closingEventRepository.findShopsByClosingEvent();
 
         //지역 필터링 조건 적용
-        if (regions != null && !regions.isEmpty()) shops = getRegionFilteredShops(regions, shops);
+        if (regions != null && !regions.isEmpty()) shops = shopService.getRegionFilteredShops(regions, shops);
 
         //카테고리 필터링 조건 적용
-        if (categories != null && !categories.isEmpty()) shops = getCategoryFilteredShops(categories, shops);
+        if (categories != null && !categories.isEmpty()) shops = shopService.getCategoryFilteredShops(categories, shops);
 
         if (timeSlots == null || timeSlots.isEmpty()){
             String timeSlot = LocalTime.now() + "-" + LocalTime.MAX;
@@ -121,7 +78,7 @@ public class ClosingEventQueryService {
         }
         List<ReservationSchedule> timeSlotFilteredEventSchedules = getTimeSlotFilteredEventSchedules(timeSlots, shops);
 
-        return GetTodayClosingEventsResponseDto.of(orderEventSchedulesByAsc(timeSlotFilteredEventSchedules));
+        return GetTodayClosingEventsResponseDto.of(reserveQueryService.sortSchedulesByStartTimeThenRating(timeSlotFilteredEventSchedules));
     }
 
 }
