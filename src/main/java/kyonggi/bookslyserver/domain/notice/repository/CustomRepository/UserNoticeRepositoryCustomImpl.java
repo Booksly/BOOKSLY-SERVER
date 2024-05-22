@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.notice.repository.CustomRepository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kyonggi.bookslyserver.domain.notice.dto.NoticeResponseDTO;
@@ -27,7 +28,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                 Projections.fields(NoticeResponseDTO.refusedReservationsResultDTO.class,
                         userNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
-                        Expressions.stringTemplate("CONCAT({0},'T',{1})",
+                        Expressions.stringTemplate("CONCAT({0},' ',{1})",
                                 reservationSchedule.workDate,
                                 reservationSchedule.startTime
                                 ).as("reservationTime"),
@@ -51,7 +52,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                 Projections.fields(NoticeResponseDTO.confirmedReservationsResultDTO.class,
                         userNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
-                        Expressions.stringTemplate("CONCAT({0},'T',{1})",
+                        Expressions.stringTemplate("CONCAT({0},' ',{1})",
                                 reservationSchedule.workDate,
                                 reservationSchedule.startTime
                         ).as("reservationTime"),
@@ -67,4 +68,32 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                 .orderBy(userNotice.createDate.desc())
                 .fetch();
     }
+
+    @Override
+    public List<NoticeResponseDTO.todoReservationsResultDTO> getTodoReservationsNotices(Long userId) {
+        return queryFactory.select(
+                Projections.fields(NoticeResponseDTO.todoReservationsResultDTO.class,
+                        reservation.reservationSchedule.employee.name.as("employeeName"),
+                        Expressions.stringTemplate("CONCAT({0},' ',{1})",
+                                reservationSchedule.workDate,
+                                reservationSchedule.startTime
+                        ).as("reservationTime")
+                        ))
+                .from(reservation)
+                .join(reservationSchedule)
+                .where(reservation.user.id.eq(userId),
+                        reservation.isCanceled.isFalse().and(reservation.isConfirmed.isTrue()),
+                        isFutureReservationSchedule(LocalDateTime.now())
+                        )
+                .orderBy(
+                        reservationSchedule.workDate.asc(),
+                        reservationSchedule.startTime.asc()
+                )
+                .fetch();
+    }
+    private BooleanExpression isFutureReservationSchedule(LocalDateTime now){
+        return reservationSchedule.workDate.after(now.toLocalDate())
+                .or(reservationSchedule.workDate.eq(now.toLocalDate()).and(reservationSchedule.startTime.after(now.toLocalTime())));
+    }
+
 }

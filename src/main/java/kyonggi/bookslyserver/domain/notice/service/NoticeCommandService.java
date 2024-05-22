@@ -21,5 +21,7 @@ public class NoticeCommandService {
     public List<NoticeResponseDTO.confirmedReservationsResultDTO> getConfirmedReservationsNotices(Long userID){
         return userNoticeRepository.getConfirmedReservationsNotices(userID);
     }
-
+    public List<NoticeResponseDTO.todoReservationsResultDTO> getTodoReservationsNotices(Long userId){
+        return userNoticeRepository.getTodoReservationsNotices(userId);
+    }
 }

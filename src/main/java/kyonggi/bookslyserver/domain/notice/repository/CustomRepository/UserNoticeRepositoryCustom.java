@@ -7,4 +7,5 @@ import java.util.List;
 public interface UserNoticeRepositoryCustom {
     public List<NoticeResponseDTO.refusedReservationsResultDTO> getRefusedReservationsNotices(Long userID);
     public List<NoticeResponseDTO.confirmedReservationsResultDTO> getConfirmedReservationsNotices(Long userID);
+    public List<NoticeResponseDTO.todoReservationsResultDTO> getTodoReservationsNotices(Long userId);
 }

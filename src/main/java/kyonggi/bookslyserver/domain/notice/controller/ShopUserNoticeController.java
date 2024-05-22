@@ -22,4 +22,8 @@ public class ShopUserNoticeController {
     public ResponseEntity<SuccessResponse<?>> getConfirmedReservationsNotices(@UserId Long userId){
         return SuccessResponse.ok(noticeCommandService.getConfirmedReservationsNotices(userId));
     }
+    @GetMapping("/todo")
+    public ResponseEntity<SuccessResponse<?>> getTodoReservationsNotices(@UserId Long userId){
+        return SuccessResponse.ok(noticeCommandService.getTodoReservationsNotices(userId));
+    }
 }

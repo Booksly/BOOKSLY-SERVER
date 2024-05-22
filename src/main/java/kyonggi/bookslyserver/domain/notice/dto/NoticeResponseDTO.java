@@ -28,4 +28,13 @@ public class NoticeResponseDTO {
         @Builder.Default
         private String staticWords="예약이 확정되었습니다";
     }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class todoReservationsResultDTO{
+        private String employeeName;
+        private String reservationTime;
+    }
 }
