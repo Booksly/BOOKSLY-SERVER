@@ -23,7 +23,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
     QShop shop=QShop.shop;
     @Override
     public List<NoticeResponseDTO.refusedReservationsResultDTO> getRefusedReservationsNotices(Long userID) {
-        List<NoticeResponseDTO.refusedReservationsResultDTO> results= queryFactory.select(
+        return queryFactory.select(
                 Projections.fields(NoticeResponseDTO.refusedReservationsResultDTO.class,
                         userNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
@@ -43,6 +43,28 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                 )
                 .orderBy(userNotice.createDate.desc())
                 .fetch();
-        return results;
+    }
+
+    @Override
+    public List<NoticeResponseDTO.confirmedReservationsResultDTO> getConfirmedReservationsNotices(Long userID) {
+        return queryFactory.select(
+                Projections.fields(NoticeResponseDTO.confirmedReservationsResultDTO.class,
+                        userNotice.createDate.as("createdTime"),
+                        shop.name.as("shopName"),
+                        Expressions.stringTemplate("CONCAT({0},'T',{1})",
+                                reservationSchedule.workDate,
+                                reservationSchedule.startTime
+                        ).as("reservationTime"),
+                        reservationSchedule.workDate, reservationSchedule.startTime
+                        ))
+                .from(userNotice)
+                .join(userNotice.reservation,reservation)
+                .join(reservation.reservationSchedule,reservationSchedule)
+                .join(reservationSchedule.shop,shop)
+                .where(
+                        reservation.isConfirmed.isTrue()
+                )
+                .orderBy(userNotice.createDate.desc())
+                .fetch();
     }
 }
