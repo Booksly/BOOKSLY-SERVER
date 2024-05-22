@@ -18,4 +18,8 @@ public class ShopUserNoticeController {
     public ResponseEntity<SuccessResponse<?>> getRefusedReservationsNotices(@UserId Long userId){
         return SuccessResponse.ok(noticeCommandService.getRefusedReservationsNotices(userId));
     }
+    @GetMapping("/confirm")
+    public ResponseEntity<SuccessResponse<?>> getConfirmedReservationsNotices(@UserId Long userId){
+        return SuccessResponse.ok(noticeCommandService.getConfirmedReservationsNotices(userId));
+    }
 }

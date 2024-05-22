@@ -153,6 +153,14 @@ public class ReserveOwnerCommandService {
                 .orElseThrow(()->new EntityNotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
         reservation.setConfirmed(true);
         reservationRepository.save(reservation);
+
+        userNoticeRepository.save(
+                UserNotice.builder()
+                        .noticeType(NoticeType.CONFIRM)
+                        .reservation(reservation)
+                        .user(reservation.getUser())
+                        .build()
+        );
         return "예약이 확정되었습니다";
     }
     public String refuseReservationRequest(Long reservationId, ReserveRequestDTO.refuseReasonRequestDTO requestDTO){
