@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.event.service;
 
 import kyonggi.bookslyserver.domain.event.dto.response.GetAvailableDatesResponseDto;
 import kyonggi.bookslyserver.domain.event.dto.response.GetTimeEventsResponseDto;
+import kyonggi.bookslyserver.domain.event.dto.response.GetTodayTimeEventsResponseDto;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
 import kyonggi.bookslyserver.domain.event.repository.TimeEventScheduleRepository;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSetting;
@@ -73,7 +74,6 @@ public class TimeEventQueryService {
 
         while (!currentDate.isAfter(plusDate)) {
             DayName dayName = convertDayOfWeekToDayName(currentDate.getDayOfWeek());
-            log.info(dayName+"==============");
             Boolean isDayOff = workInfo.get(dayName);
             if (!isDayOff) workdays.add(currentDate);
 
@@ -104,4 +104,8 @@ public class TimeEventQueryService {
         }
     }
 
+    public GetTodayTimeEventsResponseDto getTodayTimeEvents(List<String> regions, List<String> timeSlots, List<Long> categories) {
+
+        return null;
+    }
 }

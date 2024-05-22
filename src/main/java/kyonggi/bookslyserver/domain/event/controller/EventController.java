@@ -60,6 +60,15 @@ public class EventController {
         return SuccessResponse.ok(deleteTimeEventResponseDto);
     }
 
+    @GetMapping("/time-events/today")
+    public ResponseEntity<SuccessResponse<?>> getTodayTimeEvents(@RequestParam(value = "region", required = false) List<String> regions,
+                                                                    @RequestParam(value = "time_slot", required = false) @TimeSlotFormat List<String> timeSlots,
+                                                                    @RequestParam(value = "category",required = false)List<Long> categories) {
+
+        GetTodayTimeEventsResponseDto getTodayTimeEventsResponseDto = timeEventQueryService.getTodayTimeEvents(regions, timeSlots, categories);
+        return SuccessResponse.ok(getTodayTimeEventsResponseDto);
+    }
+
 
     @PostMapping("/closing-events")
     public ResponseEntity<SuccessResponse<?>> createClosingEvent(@RequestBody CreateClosingEventRequestDto createClosingEventRequestDto, @OwnerId Long ownerId) {
