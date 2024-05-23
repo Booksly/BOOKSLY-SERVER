@@ -64,36 +64,8 @@ public class MenuService {
         return menuReadDtos;
     }
 
-    public List<EventRegisterMenuNamesDto> readMenuNamesClosingEventRegister(Long id){
-        Optional<Employee> employee = employeeRepository.findById(id);
-        List<Menu> menus = new ArrayList<>();
-        List<Menu> deletemenus = new ArrayList<>();
-        if(!employee.isPresent()){
-            throw new EntityNotFoundException(ErrorCode.EMPLOYEE_NOT_FOUND);
-        }
 
-        for(EmployeeMenu employeeMenu : employee.get().getEmployeeMenus()){
-            menus.add(employeeMenu.getMenu());
-        }
-
-        for(Menu menu : menus){
-            for(ClosingEventMenu closingEventMenu : menu.getClosingEventMenus()){
-                if(closingEventMenu.getClosingEvent().getEmployee() == employee.get()){
-                    deletemenus.add(menu);
-                }
-            }
-        }
-
-        for(Menu menu : deletemenus){
-            menus.remove(menu);
-        }
-
-        List<EventRegisterMenuNamesDto> result = menus.stream().map(menu -> new EventRegisterMenuNamesDto(menu)).collect(Collectors.toList());
-
-        return result;
-    }
-
-    public List<EventRegisterMenuNamesDto> readMenuNamesTimeEventRegister(Long id){
+    public List<EventRegisterMenuNamesDto> readMenuNamesEventRegister(Long id){
         Optional<Employee> employee = employeeRepository.findById(id);
         List<Menu> menus = new ArrayList<>();
         if(!employee.isPresent()){
