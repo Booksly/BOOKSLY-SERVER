@@ -62,7 +62,7 @@ public class TimeEventQueryService {
         if (date == null) date = LocalDate.now();
 
         LocalDateTime dateTimeStart = date.atStartOfDay();
-        LocalDateTime dateTimeEnd = date.atTime(LocalTime.MAX);
+        LocalDateTime dateTimeEnd = date.atTime(LocalTime.of(23, 59, 59));
 
         Optional<List<TimeEvent>> timeEvents = timeEventScheduleRepository.findTimeEventsByEmployeeIdAndDateTime(employee.getId(), dateTimeStart, dateTimeEnd);
         return GetTimeEventsResponseDto.of(timeEvents);

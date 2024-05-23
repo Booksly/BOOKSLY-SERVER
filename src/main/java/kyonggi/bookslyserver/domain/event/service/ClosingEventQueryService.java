@@ -73,7 +73,7 @@ public class ClosingEventQueryService {
         if (categories != null && !categories.isEmpty()) shops = shopService.getCategoryFilteredShops(categories, shops);
 
         if (timeSlots == null || timeSlots.isEmpty()){
-            String timeSlot = LocalTime.now() + "-" + LocalTime.MAX;
+            String timeSlot = LocalTime.now() + "-" + LocalTime.of(23, 59, 59);
             timeSlots = new ArrayList<>();
             timeSlots.add(timeSlot);
         }
