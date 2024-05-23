@@ -15,8 +15,6 @@ import java.util.List;
 @Repository
 public interface EmployeeMenuRepository extends JpaRepository<EmployeeMenu,Long> {
 
-    boolean existsByMenuId(Long menuId);
-
     @Modifying
     @Transactional
     @Query("select em from EmployeeMenu em where em.employee.id = :employee_id")
@@ -25,4 +23,8 @@ public interface EmployeeMenuRepository extends JpaRepository<EmployeeMenu,Long>
     @Query("SELECT COUNT(em) "+
             "FROM EmployeeMenu em WHERE em.employee = :employee_id AND em.menu IN :menus")
     int findByMenuAndEmployee(@Param("menus") List<Menu> menus, @Param("employee_id") Employee employee);
+
+    @Query("select em.menu from EmployeeMenu em where em.menu.id in :menuIds and em.employee in :employees")
+    List<Menu> findMenusByMenuIdsAndEmployees(@Param("menuIds") List<Long> menus, @Param("employees")List<Employee> employees);
+
 }
