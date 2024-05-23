@@ -2,11 +2,16 @@ package kyonggi.bookslyserver.domain.event.service;
 
 import kyonggi.bookslyserver.domain.event.dto.response.GetAvailableDatesResponseDto;
 import kyonggi.bookslyserver.domain.event.dto.response.GetTimeEventsResponseDto;
+import kyonggi.bookslyserver.domain.event.dto.response.GetTodayClosingEventsResponseDto;
 import kyonggi.bookslyserver.domain.event.dto.response.GetTodayTimeEventsResponseDto;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
+import kyonggi.bookslyserver.domain.event.repository.TimeEventRepository;
 import kyonggi.bookslyserver.domain.event.repository.TimeEventScheduleRepository;
+import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSetting;
+import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRepository;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationSettingRepository;
+import kyonggi.bookslyserver.domain.reservation.service.ReserveQueryService;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.DayName;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
@@ -14,8 +19,11 @@ import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +50,9 @@ public class TimeEventQueryService {
     private final EmployeeRepository employeeRepository;
     private final TimeEventScheduleRepository timeEventScheduleRepository;
     private final ReservationSettingRepository reservationSettingRepository;
+    private final TimeEventRepository timeEventRepository;
+    private final ReserveQueryService reserveQueryService;
+    private final ReservationScheduleRepository reservationScheduleRepository;
 
     public GetTimeEventsResponseDto getTimeEvents(Long shopId, Long employeeId, LocalDate date, Long ownerId) {
         Shop shop = shopService.findShop(shopId, ownerId);
@@ -106,6 +117,41 @@ public class TimeEventQueryService {
 
     public GetTodayTimeEventsResponseDto getTodayTimeEvents(List<String> regions, List<String> timeSlots, List<Long> categories) {
 
-        return null;
+        List<Shop> shops = timeEventRepository.findShopsByTimeEvent();
+
+        //지역 필터링 조건 적용
+        if (regions != null && !regions.isEmpty()) shops = shopService.getRegionFilteredShops(regions, shops);
+
+        //카테고리 필터링 조건 적용
+        if (categories != null && !categories.isEmpty()) shops = shopService.getCategoryFilteredShops(categories, shops);
+
+        if (timeSlots == null || timeSlots.isEmpty()){
+            String timeSlot = LocalTime.now() + "-" + LocalTime.of(23, 59, 59);
+            timeSlots = new ArrayList<>();
+            timeSlots.add(timeSlot);
+        }
+        List<ReservationSchedule> timeSlotFilteredEventSchedules = getTimeSlotFilteredEventSchedules(timeSlots, shops);
+
+        return GetTodayTimeEventsResponseDto.of(reserveQueryService.sortSchedulesByStartTimeThenRating(timeSlotFilteredEventSchedules));
+
+    }
+
+    private List<ReservationSchedule> getTimeSlotFilteredEventSchedules(List<String> timeSlots, List<Shop> shops) {
+        List<ReservationSchedule> earliestEventSchedulesForTimeSlot = new ArrayList<>();
+        Pageable firstResult = PageRequest.of(0, 1);
+        LocalDate nowDate = LocalDate.now();
+
+        timeSlots.forEach(timeSlot -> {
+            LocalTime[] times = TimeUtil.parseTimeSlot(timeSlot);
+            LocalTime startTime = times[0];
+            LocalTime endTime = times[1];
+
+            shops.stream()
+                    .map(shop -> reservationScheduleRepository.findTimeEventSchedules(nowDate, startTime, endTime, shop, firstResult))
+                    .filter(reservationSchedules -> !reservationSchedules.isEmpty())
+                    .forEach(reservationSchedules -> earliestEventSchedulesForTimeSlot.add(reservationSchedules.get(0)));
+        });
+
+        return earliestEventSchedulesForTimeSlot;
     }
 }
