@@ -42,6 +42,27 @@ public class ShopOwnerNoticeRepositoryCustomImpl implements ShopOwnerNoticeRepos
                 .orderBy(shopOwnerNotice.createDate.desc())
                 .fetch();
     }
+
+    @Override
+    public List<NoticeResponseDTO.ReservationRequestsResultDTO> getReservationRequestsNotices(Long shopId) {
+        return queryFactory.select(
+                Projections.fields(NoticeResponseDTO.ReservationRequestsResultDTO.class,
+                        shopOwnerNotice.createDate.as("createdTime"),
+                        shop.name.as("shopName"),
+                        formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime")
+                        ))
+                .from(shopOwnerNotice)
+                .join(shopOwnerNotice.reservation,reservation)
+                .join(reservation.reservationSchedule,reservationSchedule)
+                .join(reservationSchedule.shop,shop)
+                .where(
+                        reservation.isCanceled.isFalse().and(reservation.isConfirmed.isFalse()).and(reservation.isRefused.isFalse()),
+                        shop.id.eq(shopId)
+                )
+                .orderBy(shopOwnerNotice.createDate.desc())
+                .fetch();
+    }
+
     private StringTemplate formatReservationTime(Expression<?> workDate, Expression<?> startTime) {
         return Expressions.stringTemplate("CONCAT({0}, ' ', DATE_FORMAT({1}, '%H:%i:%s'))", workDate, startTime);
     }

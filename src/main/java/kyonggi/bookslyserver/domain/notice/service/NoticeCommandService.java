@@ -29,4 +29,7 @@ public class NoticeCommandService {
     public List<NoticeResponseDTO.CanceledReservationsResultDTO> getCanceledReservationsNotices(Long shopId){
         return shopOwnerNoticeRepository.getCanceledReservationsNotices(shopId);
     }
+    public List<NoticeResponseDTO.ReservationRequestsResultDTO> getReservationRequestsNotices(Long shopId){
+        return shopOwnerNoticeRepository.getReservationRequestsNotices(shopId);
+    }
 }

@@ -20,6 +20,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeMenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
+import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
@@ -128,7 +129,15 @@ public class ReserveCommandService {
         });
 
         if(reservationSchedule.isAutoConfirmed()) autoReservationClose(reservationSchedule);
+        /**
+         * 예약 요청 알림 생성
+         */
 
+        shopOwnerNoticeRepository.save(ShopOwnerNotice.builder()
+                .reservation(newReservation)
+                .noticeType(NoticeType.REQUEST)
+                .shopOwner(reservationSchedule.getShop().getShopOwner())
+                .build());
         return ReservationConverter.toCreateReservationResultDTO(newReservation);
     }
     /**

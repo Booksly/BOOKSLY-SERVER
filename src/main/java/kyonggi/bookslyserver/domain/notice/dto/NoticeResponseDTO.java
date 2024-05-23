@@ -54,7 +54,7 @@ public class NoticeResponseDTO {
     @Getter
     public static class ReservationRequestsResultDTO extends BaseReservationDTO{
         @Builder.Default
-        private String staticWords="고객이 예약을 취소했습니다";
+        private String staticWords="새로운 예약 요청 건이 있습니다";
     }
     @Builder
     @NoArgsConstructor

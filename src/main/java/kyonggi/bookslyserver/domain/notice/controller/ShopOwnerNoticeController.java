@@ -18,5 +18,9 @@ public class ShopOwnerNoticeController {
     public ResponseEntity<SuccessResponse<?>> getCanceledReservationsNotices(@PathVariable("shopId")Long shopId){
         return SuccessResponse.ok(noticeCommandService.getCanceledReservationsNotices(shopId));
     }
+    @GetMapping("/requests")
+    public ResponseEntity<SuccessResponse<?>> getReservationRequestsNotices(@PathVariable("shopId")Long shopId){
+        return SuccessResponse.ok(noticeCommandService.getReservationRequestsNotices(shopId));
+    }
 
 }

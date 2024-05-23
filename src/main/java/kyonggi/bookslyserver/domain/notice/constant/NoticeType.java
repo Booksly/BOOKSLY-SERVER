@@ -1,5 +1,5 @@
 package kyonggi.bookslyserver.domain.notice.constant;
 
 public enum NoticeType {
-    REFUSE, CONFIRM, TODO, CANCEL
+    REFUSE, CONFIRM, TODO, CANCEL, REQUEST
 }
