@@ -38,7 +38,7 @@ public interface ReservationScheduleRepository extends JpaRepository<Reservation
     List<ReservationSchedule> findByTimeEventSchedules(@Param(("timeEventSchedules")) List<TimeEventSchedule> timeEventSchedules);
 
     @Query("select rs from ReservationSchedule rs " +
-            "where rs.workDate = :today and rs.startTime <= :endTime and rs.endTime >= :startTime " +
+            "where rs.workDate = :today and rs.startTime >= :startTime and rs.startTime <= :endTime " +
             "and rs.isClosingEvent = true and rs.isClosed = false and rs.shop = :shop " +
             "order by rs.startTime asc")
     List<ReservationSchedule> findWithAppliedClosingEvent(@Param("today") LocalDate nowDate,
@@ -46,5 +46,14 @@ public interface ReservationScheduleRepository extends JpaRepository<Reservation
                                            @Param("endTime") LocalTime endTime,
                                            @Param("shop") Shop shop, Pageable pageable);
 
+
+    @Query("select rs from ReservationSchedule rs " +
+            "where rs.workDate = :today and rs.startTime >= :startTime and rs.startTime <= :endTime " +
+            "and rs.timeEventSchedule.id is not null and rs.isClosed = false and rs.shop = :shop " +
+            "order by rs.startTime asc")
+    List<ReservationSchedule> findTimeEventSchedules(@Param("today") LocalDate nowDate,
+                                                          @Param("startTime") LocalTime startTime,
+                                                          @Param("endTime") LocalTime endTime,
+                                                          @Param("shop") Shop shop, Pageable pageable);
 
 }
