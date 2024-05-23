@@ -14,6 +14,7 @@ import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
+import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static kyonggi.bookslyserver.global.error.ErrorCode.EMPLOYEE_NOT_FOUND;
-import static kyonggi.bookslyserver.global.error.ErrorCode.SHOP_NOT_FOUND;
+import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
 @Service
 @Transactional
@@ -205,7 +205,20 @@ public class EmployeeService {
             currentDate = currentDate.plusDays(1);
         }
 
-
         return GetCalendarDatesResponseDto.of(employee.getId(), workdays, holidays);
     }
+
+    public Employee findEmployeeById(Long employeeId) {
+        return employeeRepository
+                .findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_FOUND));
+
+    }
+
+    public void validateBelongShop(Long employeeId, Long shopId) {
+        if (!employeeRepository.existsByIdAndShopId(employeeId, shopId))
+            throw new InvalidValueException(EMPLOYEE_NOT_BELONG_SHOP);
+    }
+
+
 }
