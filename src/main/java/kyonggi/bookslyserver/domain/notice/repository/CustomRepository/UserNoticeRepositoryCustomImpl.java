@@ -31,7 +31,6 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                         userNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
                         formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime"),
-                        reservationSchedule.workDate, reservationSchedule.startTime,
                         reservation.refuseReason.as("refuseReason")
                         ))
                 .from(userNotice)
@@ -51,8 +50,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                 Projections.fields(NoticeResponseDTO.ConfirmedReservationsResultDTO.class,
                         userNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
-                        formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime"),
-                        reservationSchedule.workDate, reservationSchedule.startTime
+                        formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime")
                         ))
                 .from(userNotice)
                 .join(userNotice.reservation,reservation)
