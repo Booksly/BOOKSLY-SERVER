@@ -5,15 +5,25 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 public class NoticeResponseDTO {
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static abstract class BaseReservationDTO {
+        private LocalDateTime createdTime;
+        private String shopName;
+        private String reservationTime;
+    }
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     @Setter
     @Getter
-    public static class refusedReservationsResultDTO{
-        private LocalDateTime createdTime;
-        private String shopName;
-        private String reservationTime;
+    public static class RefusedReservationsResultDTO extends BaseReservationDTO{
+//        private LocalDateTime createdTime;
+//        private String shopName;
+//        private String reservationTime;
         private String refuseReason;
     }
     @Builder
@@ -21,10 +31,10 @@ public class NoticeResponseDTO {
     @AllArgsConstructor
     @Setter
     @Getter
-    public static class confirmedReservationsResultDTO{
-        private LocalDateTime createdTime;
-        private String shopName;
-        private String reservationTime;
+    public static class ConfirmedReservationsResultDTO extends BaseReservationDTO{
+//        private LocalDateTime createdTime;
+//        private String shopName;
+//        private String reservationTime;
         @Builder.Default
         private String staticWords="예약이 확정되었습니다";
     }
@@ -33,8 +43,27 @@ public class NoticeResponseDTO {
     @AllArgsConstructor
     @Setter
     @Getter
-    public static class todoReservationsResultDTO{
+    public static class CanceledReservationsResultDTO extends BaseReservationDTO{
+        @Builder.Default
+        private String staticWords="고객이 예약을 취소했습니다";
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class ReservationRequestsResultDTO extends BaseReservationDTO{
+        @Builder.Default
+        private String staticWords="고객이 예약을 취소했습니다";
+    }
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class TodoReservationsResultDTO {
         private String employeeName;
         private String reservationTime;
     }
+
 }

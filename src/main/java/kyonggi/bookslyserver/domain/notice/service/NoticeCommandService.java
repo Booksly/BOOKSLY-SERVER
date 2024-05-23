@@ -15,13 +15,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NoticeCommandService {
     private final UserNoticeRepository userNoticeRepository;
-    public List<NoticeResponseDTO.refusedReservationsResultDTO> getRefusedReservationsNotices(Long userID){
+    public List<NoticeResponseDTO.RefusedReservationsResultDTO> getRefusedReservationsNotices(Long userID){
         return userNoticeRepository.getRefusedReservationsNotices(userID);
     }
-    public List<NoticeResponseDTO.confirmedReservationsResultDTO> getConfirmedReservationsNotices(Long userID){
+    public List<NoticeResponseDTO.ConfirmedReservationsResultDTO> getConfirmedReservationsNotices(Long userID){
         return userNoticeRepository.getConfirmedReservationsNotices(userID);
     }
-    public List<NoticeResponseDTO.todoReservationsResultDTO> getTodoReservationsNotices(Long userId){
+    public List<NoticeResponseDTO.TodoReservationsResultDTO> getTodoReservationsNotices(Long userId){
         return userNoticeRepository.getTodoReservationsNotices(userId);
     }
 }
