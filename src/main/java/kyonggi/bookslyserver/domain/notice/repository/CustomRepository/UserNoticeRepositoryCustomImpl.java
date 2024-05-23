@@ -14,9 +14,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Shop.QShop;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 @Repository
 @RequiredArgsConstructor
@@ -27,13 +25,12 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
     QUserNotice userNotice=QUserNotice.userNotice;
     QShop shop=QShop.shop;
     @Override
-    public List<NoticeResponseDTO.refusedReservationsResultDTO> getRefusedReservationsNotices(Long userID) {
+    public List<NoticeResponseDTO.RefusedReservationsResultDTO> getRefusedReservationsNotices(Long userID) {
         return queryFactory.select(
-                Projections.fields(NoticeResponseDTO.refusedReservationsResultDTO.class,
+                Projections.fields(NoticeResponseDTO.RefusedReservationsResultDTO.class,
                         userNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
                         formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime"),
-                        reservationSchedule.workDate, reservationSchedule.startTime,
                         reservation.refuseReason.as("refuseReason")
                         ))
                 .from(userNotice)
@@ -48,13 +45,12 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
     }
 
     @Override
-    public List<NoticeResponseDTO.confirmedReservationsResultDTO> getConfirmedReservationsNotices(Long userID) {
+    public List<NoticeResponseDTO.ConfirmedReservationsResultDTO> getConfirmedReservationsNotices(Long userID) {
         return queryFactory.select(
-                Projections.fields(NoticeResponseDTO.confirmedReservationsResultDTO.class,
+                Projections.fields(NoticeResponseDTO.ConfirmedReservationsResultDTO.class,
                         userNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
-                        formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime"),
-                        reservationSchedule.workDate, reservationSchedule.startTime
+                        formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime")
                         ))
                 .from(userNotice)
                 .join(userNotice.reservation,reservation)
@@ -68,9 +64,9 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
     }
 
     @Override
-    public List<NoticeResponseDTO.todoReservationsResultDTO> getTodoReservationsNotices(Long userId) {
+    public List<NoticeResponseDTO.TodoReservationsResultDTO> getTodoReservationsNotices(Long userId) {
         return queryFactory.select(
-                Projections.fields(NoticeResponseDTO.todoReservationsResultDTO.class,
+                Projections.fields(NoticeResponseDTO.TodoReservationsResultDTO.class,
                         reservation.reservationSchedule.employee.name.as("employeeName"),
                         formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime")
                         ))
