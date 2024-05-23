@@ -16,6 +16,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeMenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
+import kyonggi.bookslyserver.domain.shop.service.EmployeeService;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.global.error.exception.ConflictException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
@@ -37,25 +38,14 @@ import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 public class ClosingEventCommandService {
     private final ClosingEventRepository closingEventRepository;
     private final MenuRepository menuRepository;
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
     private final ShopService shopService;
     private final ReservationScheduleRepository reservationScheduleRepository;
     private final EmployeeMenuRepository employeeMenuRepository;
 
-    private Employee findEmployee(Long ownerId, Long shopId, Long employeeId) {
-        Shop shop = shopService.findShop(ownerId, shopId);
-
-        Employee employee = employeeRepository
-                .findById(employeeId)
-                .orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_FOUND));
-
-        if (!employeeRepository.existsByIdAndShopId(employeeId, shop.getId())) {
-            throw new InvalidValueException(EMPLOYEE_NOT_BELONG_SHOP);
-        }
-
-        if (closingEventRepository.existsByEmployeeId(employeeId)) {
-            throw new ConflictException(EVENT_SETTING_ALREADY_EXISTS);
-        }
+    private Employee findEmployee(Long employeeId, Long shopId) {
+        Employee employee = employeeService.findEmployeeById(employeeId);
+        employeeService.validateBelongShop(employeeId,shopId);
 
         return employee;
     }
@@ -72,8 +62,11 @@ public class ClosingEventCommandService {
     }
 
     public CreateClosingEventResponseDto createClosingEvent(CreateClosingEventRequestDto createClosingEventRequestDto, Long ownerId) {
+        Shop shop = shopService.findShop(ownerId, createClosingEventRequestDto.shopId());
+        Employee employee = findEmployee(createClosingEventRequestDto.employeeId(), shop.getId());
 
-        Employee employee = findEmployee(ownerId, createClosingEventRequestDto.shopId(),createClosingEventRequestDto.employeeId());
+        if (closingEventRepository.existsByEmployeeId(employee.getId()))
+            throw new ConflictException(EVENT_SETTING_ALREADY_EXISTS);
 
         ClosingEvent closingEvent = ClosingEvent.builder()
                 .eventMessage(createClosingEventRequestDto.message())
