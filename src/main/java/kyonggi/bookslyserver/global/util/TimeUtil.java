@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.global.util;
 
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Component
@@ -17,4 +18,23 @@ public class TimeUtil {
         return new LocalTime[]{startTime, endTime};
     }
 
+    public static boolean isTimeAfterNow(LocalTime time) {
+        if (time.isBefore(LocalTime.now())) return false;
+        return true;
+    }
+
+    public static boolean checkTimeOrder(LocalTime startTime, LocalTime endTime) {
+        if (startTime.isAfter(endTime)) return false;
+        return true;
+    }
+
+    public static boolean checkDateOrder(LocalDate startDate, LocalDate endDate) {
+        if (startDate.isAfter(endDate)) return false;
+        return true;
+    }
+
+    public static boolean isDateAfterNow(LocalDate date) {
+        if (date.isBefore(LocalDate.now())) return false;
+        return true;
+    }
 }
