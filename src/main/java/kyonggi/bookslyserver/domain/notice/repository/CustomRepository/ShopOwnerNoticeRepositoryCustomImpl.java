@@ -5,6 +5,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import kyonggi.bookslyserver.domain.notice.constant.NoticeType;
 import kyonggi.bookslyserver.domain.notice.dto.NoticeResponseDTO;
 import kyonggi.bookslyserver.domain.notice.entity.QShopOwnerNotice;
 import kyonggi.bookslyserver.domain.reservation.entity.QReservation;
@@ -27,6 +28,7 @@ public class ShopOwnerNoticeRepositoryCustomImpl implements ShopOwnerNoticeRepos
     public List<NoticeResponseDTO.CanceledReservationsResultDTO> getCanceledReservationsNotices(Long shopId) {
         return queryFactory.select(
                 Projections.fields(NoticeResponseDTO.CanceledReservationsResultDTO.class,
+                        shopOwnerNotice.id.as("noticeId"),
                         shopOwnerNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
                         formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime")
@@ -36,6 +38,7 @@ public class ShopOwnerNoticeRepositoryCustomImpl implements ShopOwnerNoticeRepos
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .where(
+                        shopOwnerNotice.noticeType.eq(NoticeType.CANCEL).and(shopOwnerNotice.isDeleted.isFalse()),
                         reservation.isCanceled.isTrue(),
                         shop.id.eq(shopId)
                 )
@@ -47,6 +50,7 @@ public class ShopOwnerNoticeRepositoryCustomImpl implements ShopOwnerNoticeRepos
     public List<NoticeResponseDTO.ReservationRequestsResultDTO> getReservationRequestsNotices(Long shopId) {
         return queryFactory.select(
                 Projections.fields(NoticeResponseDTO.ReservationRequestsResultDTO.class,
+                        shopOwnerNotice.id.as("noticeId"),
                         shopOwnerNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
                         formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime")
@@ -56,7 +60,8 @@ public class ShopOwnerNoticeRepositoryCustomImpl implements ShopOwnerNoticeRepos
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .where(
-                        reservation.isCanceled.isFalse().and(reservation.isConfirmed.isFalse()).and(reservation.isRefused.isFalse()),
+                        shopOwnerNotice.noticeType.eq(NoticeType.REQUEST).and(shopOwnerNotice.isDeleted.isFalse()),
+                        reservation.isCanceled.isFalse(),
                         shop.id.eq(shopId)
                 )
                 .orderBy(shopOwnerNotice.createDate.desc())

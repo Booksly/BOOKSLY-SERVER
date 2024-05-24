@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import kyonggi.bookslyserver.domain.notice.constant.NoticeType;
 import kyonggi.bookslyserver.domain.notice.dto.NoticeResponseDTO;
 import kyonggi.bookslyserver.domain.notice.entity.QUserNotice;
 import kyonggi.bookslyserver.domain.reservation.entity.QReservation;
@@ -28,6 +29,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
     public List<NoticeResponseDTO.RefusedReservationsResultDTO> getRefusedReservationsNotices(Long userID) {
         return queryFactory.select(
                 Projections.fields(NoticeResponseDTO.RefusedReservationsResultDTO.class,
+                        userNotice.id.as("noticeId"),
                         userNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
                         formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime"),
@@ -38,7 +40,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .where(
-                        reservation.isRefused.isTrue()
+                        userNotice.noticeType.eq(NoticeType.REFUSE).and(userNotice.isDeleted.isFalse())
                 )
                 .orderBy(userNotice.createDate.desc())
                 .fetch();
@@ -48,6 +50,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
     public List<NoticeResponseDTO.ConfirmedReservationsResultDTO> getConfirmedReservationsNotices(Long userID) {
         return queryFactory.select(
                 Projections.fields(NoticeResponseDTO.ConfirmedReservationsResultDTO.class,
+                        userNotice.id.as("noticeId"),
                         userNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
                         formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime")
@@ -57,7 +60,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .where(
-                        reservation.isConfirmed.isTrue()
+                        userNotice.noticeType.eq(NoticeType.CONFIRM).and(userNotice.isDeleted.isFalse())
                 )
                 .orderBy(userNotice.createDate.desc())
                 .fetch();

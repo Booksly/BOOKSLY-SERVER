@@ -19,7 +19,11 @@ public class UserNotice extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(value = EnumType.STRING)
     private NoticeType noticeType;
+
+    @Column(columnDefinition = "tinyint(0) default 0")
+    private boolean isDeleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

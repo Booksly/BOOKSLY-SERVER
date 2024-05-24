@@ -5,7 +5,9 @@ import kyonggi.bookslyserver.global.auth.principal.user.UserId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,5 +27,9 @@ public class ShopUserNoticeController {
     @GetMapping("/todo")
     public ResponseEntity<SuccessResponse<?>> getTodoReservationsNotices(@UserId Long userId){
         return SuccessResponse.ok(noticeCommandService.getTodoReservationsNotices(userId));
+    }
+    @GetMapping("/{noticeId}/delete")
+    public ResponseEntity<SuccessResponse<?>> deleteNotices(@PathVariable("noticeId")Long noticeId){
+        return SuccessResponse.ok(noticeCommandService.deleteNotices(noticeId,true));
     }
 }

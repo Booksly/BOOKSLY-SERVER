@@ -22,5 +22,9 @@ public class ShopOwnerNoticeController {
     public ResponseEntity<SuccessResponse<?>> getReservationRequestsNotices(@PathVariable("shopId")Long shopId){
         return SuccessResponse.ok(noticeCommandService.getReservationRequestsNotices(shopId));
     }
+    @GetMapping("/delete/{noticeId}")
+    public ResponseEntity<SuccessResponse<?>> deleteNotices(@PathVariable("shopId")Long shopId,@PathVariable("noticeId")Long noticeId){
+        return SuccessResponse.ok(noticeCommandService.deleteNotices(noticeId,false));
+    }
 
 }
