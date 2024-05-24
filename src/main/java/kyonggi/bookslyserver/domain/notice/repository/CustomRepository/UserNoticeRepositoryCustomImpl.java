@@ -29,6 +29,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
     public List<NoticeResponseDTO.RefusedReservationsResultDTO> getRefusedReservationsNotices(Long userID) {
         return queryFactory.select(
                 Projections.fields(NoticeResponseDTO.RefusedReservationsResultDTO.class,
+                        userNotice.id.as("noticeId"),
                         userNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
                         formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime"),
@@ -49,6 +50,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
     public List<NoticeResponseDTO.ConfirmedReservationsResultDTO> getConfirmedReservationsNotices(Long userID) {
         return queryFactory.select(
                 Projections.fields(NoticeResponseDTO.ConfirmedReservationsResultDTO.class,
+                        userNotice.id.as("noticeId"),
                         userNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
                         formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime")

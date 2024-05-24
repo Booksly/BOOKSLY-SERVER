@@ -28,6 +28,7 @@ public class ShopOwnerNoticeRepositoryCustomImpl implements ShopOwnerNoticeRepos
     public List<NoticeResponseDTO.CanceledReservationsResultDTO> getCanceledReservationsNotices(Long shopId) {
         return queryFactory.select(
                 Projections.fields(NoticeResponseDTO.CanceledReservationsResultDTO.class,
+                        shopOwnerNotice.id.as("noticeId"),
                         shopOwnerNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
                         formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime")
@@ -49,6 +50,7 @@ public class ShopOwnerNoticeRepositoryCustomImpl implements ShopOwnerNoticeRepos
     public List<NoticeResponseDTO.ReservationRequestsResultDTO> getReservationRequestsNotices(Long shopId) {
         return queryFactory.select(
                 Projections.fields(NoticeResponseDTO.ReservationRequestsResultDTO.class,
+                        shopOwnerNotice.id.as("noticeId"),
                         shopOwnerNotice.createDate.as("createdTime"),
                         shop.name.as("shopName"),
                         formatReservationTime(reservationSchedule.workDate,reservationSchedule.startTime).as("reservationTime")

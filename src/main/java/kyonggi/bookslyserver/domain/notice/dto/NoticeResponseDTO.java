@@ -11,6 +11,7 @@ public class NoticeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static abstract class BaseReservationDTO {
+        private Long noticeId;
         private LocalDateTime createdTime;
         private String shopName;
         private String reservationTime;
@@ -21,9 +22,6 @@ public class NoticeResponseDTO {
     @Setter
     @Getter
     public static class RefusedReservationsResultDTO extends BaseReservationDTO{
-//        private LocalDateTime createdTime;
-//        private String shopName;
-//        private String reservationTime;
         private String refuseReason;
     }
     @Builder
@@ -32,9 +30,6 @@ public class NoticeResponseDTO {
     @Setter
     @Getter
     public static class ConfirmedReservationsResultDTO extends BaseReservationDTO{
-//        private LocalDateTime createdTime;
-//        private String shopName;
-//        private String reservationTime;
         @Builder.Default
         private String staticWords="예약이 확정되었습니다";
     }
