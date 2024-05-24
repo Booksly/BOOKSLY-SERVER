@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import kyonggi.bookslyserver.domain.notice.constant.NoticeType;
 import kyonggi.bookslyserver.domain.notice.dto.NoticeResponseDTO;
 import kyonggi.bookslyserver.domain.notice.entity.QUserNotice;
 import kyonggi.bookslyserver.domain.reservation.entity.QReservation;
@@ -38,6 +39,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .where(
+                        userNotice.noticeType.eq(NoticeType.REFUSE),
                         reservation.isRefused.isTrue()
                 )
                 .orderBy(userNotice.createDate.desc())
@@ -57,6 +59,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .where(
+                        userNotice.noticeType.eq(NoticeType.CONFIRM),
                         reservation.isConfirmed.isTrue()
                 )
                 .orderBy(userNotice.createDate.desc())

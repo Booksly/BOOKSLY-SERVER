@@ -19,6 +19,7 @@ public class ShopOwnerNotice extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(value = EnumType.STRING)
     private NoticeType noticeType;
 
     @ManyToOne(fetch = FetchType.LAZY)

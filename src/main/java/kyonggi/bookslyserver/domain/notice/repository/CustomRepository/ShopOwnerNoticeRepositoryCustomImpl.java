@@ -5,6 +5,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import kyonggi.bookslyserver.domain.notice.constant.NoticeType;
 import kyonggi.bookslyserver.domain.notice.dto.NoticeResponseDTO;
 import kyonggi.bookslyserver.domain.notice.entity.QShopOwnerNotice;
 import kyonggi.bookslyserver.domain.reservation.entity.QReservation;
@@ -36,6 +37,7 @@ public class ShopOwnerNoticeRepositoryCustomImpl implements ShopOwnerNoticeRepos
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .where(
+                        shopOwnerNotice.noticeType.eq(NoticeType.CANCEL),
                         reservation.isCanceled.isTrue(),
                         shop.id.eq(shopId)
                 )
@@ -56,6 +58,7 @@ public class ShopOwnerNoticeRepositoryCustomImpl implements ShopOwnerNoticeRepos
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .where(
+                        shopOwnerNotice.noticeType.eq(NoticeType.REQUEST),
                         reservation.isCanceled.isFalse().and(reservation.isConfirmed.isFalse()).and(reservation.isRefused.isFalse()),
                         shop.id.eq(shopId)
                 )
