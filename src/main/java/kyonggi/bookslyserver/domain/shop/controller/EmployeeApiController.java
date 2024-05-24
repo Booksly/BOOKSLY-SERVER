@@ -69,9 +69,9 @@ public class EmployeeApiController {
     }
 
     @GetMapping("/api/shops/{shopId}/employees/{employeeId}/events/status")
-    public ResponseEntity<SuccessResponse<?>> getEventsStatus(@PathVariable("shopId")Long shopId,
-                                                              @PathVariable("employeeId")Long employeeId,
-                                                              @RequestParam("schedule") Long reservationScheduleId) {
+    public ResponseEntity<SuccessResponse<?>> checkReservationScheduleEventsStatus(@PathVariable("shopId")Long shopId,
+                                                                                   @PathVariable("employeeId")Long employeeId,
+                                                                                   @RequestParam("schedule") Long reservationScheduleId) {
         CheckEventStatusResponseDto checkEventStatusResponseDto = employeeService.checkEventStatus(shopId, employeeId, reservationScheduleId);
         return SuccessResponse.ok(checkEventStatusResponseDto);
     }
