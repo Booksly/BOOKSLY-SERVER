@@ -37,7 +37,7 @@ public class ShopOwnerNoticeRepositoryCustomImpl implements ShopOwnerNoticeRepos
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .where(
-                        shopOwnerNotice.noticeType.eq(NoticeType.CANCEL),
+                        shopOwnerNotice.noticeType.eq(NoticeType.CANCEL).and(shopOwnerNotice.isDeleted.isFalse()),
                         reservation.isCanceled.isTrue(),
                         shop.id.eq(shopId)
                 )
@@ -58,8 +58,8 @@ public class ShopOwnerNoticeRepositoryCustomImpl implements ShopOwnerNoticeRepos
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .where(
-                        shopOwnerNotice.noticeType.eq(NoticeType.REQUEST),
-                        reservation.isCanceled.isFalse().and(reservation.isConfirmed.isFalse()).and(reservation.isRefused.isFalse()),
+                        shopOwnerNotice.noticeType.eq(NoticeType.REQUEST).and(shopOwnerNotice.isDeleted.isFalse()),
+                        reservation.isCanceled.isFalse(),
                         shop.id.eq(shopId)
                 )
                 .orderBy(shopOwnerNotice.createDate.desc())

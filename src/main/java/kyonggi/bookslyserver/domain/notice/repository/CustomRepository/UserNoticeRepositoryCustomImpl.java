@@ -39,8 +39,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .where(
-                        userNotice.noticeType.eq(NoticeType.REFUSE),
-                        reservation.isRefused.isTrue()
+                        userNotice.noticeType.eq(NoticeType.REFUSE).and(userNotice.isDeleted.isFalse())
                 )
                 .orderBy(userNotice.createDate.desc())
                 .fetch();
@@ -59,8 +58,7 @@ public class UserNoticeRepositoryCustomImpl implements UserNoticeRepositoryCusto
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
                 .where(
-                        userNotice.noticeType.eq(NoticeType.CONFIRM),
-                        reservation.isConfirmed.isTrue()
+                        userNotice.noticeType.eq(NoticeType.CONFIRM).and(userNotice.isDeleted.isFalse())
                 )
                 .orderBy(userNotice.createDate.desc())
                 .fetch();

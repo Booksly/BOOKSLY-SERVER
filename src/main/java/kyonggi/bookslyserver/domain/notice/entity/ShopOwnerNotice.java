@@ -22,6 +22,9 @@ public class ShopOwnerNotice extends BaseTimeEntity {
     @Enumerated(value = EnumType.STRING)
     private NoticeType noticeType;
 
+    @Column(columnDefinition = "tinyint(0) default 0")
+    private boolean isDeleted;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shopOwner_id")
     private ShopOwner shopOwner;
