@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.shop.service;
 
-import jakarta.transaction.Transactional;
+import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
+import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRepository;
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeWorkScheduleDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.*;
@@ -17,6 +18,7 @@ import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
 import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -42,6 +44,8 @@ public class EmployeeService {
     private final ShopRepository shopRepository;
 
     private final MenuRepository menuRepository;
+
+    private final ReservationScheduleRepository reservationScheduleRepository;
 
     public List<EmployeeReadDto> readEmployee(Long id){
         Optional<Shop> shop = shopRepository.findById(id);
@@ -221,4 +225,22 @@ public class EmployeeService {
     }
 
 
+    private void validateReservationScheduleBelongEmployee(Employee employee, ReservationSchedule reservationSchedule) {
+        if (reservationSchedule.getEmployee().getId() != employee.getId()) {
+            throw new InvalidValueException(EMPLOYEE_NOT_OWN_RESERVATION_SCHEDULE);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public CheckEventStatusResponseDto checkEventStatus(Long shopId, Long employeeId, Long reservationScheduleId) {
+        Employee employee = findEmployeeById(employeeId);
+        validateBelongShop(employeeId,shopId);
+
+        ReservationSchedule reservationSchedule = reservationScheduleRepository.findById(reservationScheduleId).orElseThrow(() -> new EntityNotFoundException(RESERVATION_SCHEDULE_NOT_FOUND));
+        validateReservationScheduleBelongEmployee(employee, reservationSchedule);
+        boolean hasEvent = !reservationSchedule.isClosed() &&
+                (reservationSchedule.isClosingEvent() || reservationSchedule.getTimeEventSchedule() != null);
+
+        return CheckEventStatusResponseDto.of(hasEvent);
+    }
 }
