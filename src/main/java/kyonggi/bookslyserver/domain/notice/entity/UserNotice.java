@@ -1,6 +1,8 @@
 package kyonggi.bookslyserver.domain.notice.entity;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.notice.constant.NoticeType;
+import kyonggi.bookslyserver.domain.reservation.entity.Reservation;
 import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
@@ -17,7 +19,17 @@ public class UserNotice extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(value = EnumType.STRING)
+    private NoticeType noticeType;
+
+    @Column(columnDefinition = "tinyint(0) default 0")
+    private boolean isDeleted;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="reservation_id")
+    private Reservation reservation;
 }

@@ -9,14 +9,15 @@ import kyonggi.bookslyserver.domain.event.repository.TimeEventScheduleRepository
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRepository;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeMenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
-import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.*;
+import kyonggi.bookslyserver.global.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,16 +48,19 @@ public class TimeEventCommandService {
 
     public CreateTimeEventsResponseDto createTimeEvents(Long ownerId, CreateLocalTimeEventsRequestDto requestDto) {
 
-        validateRepeatSettings(requestDto.isRepeat(), requestDto.isDateRepeat(), requestDto.isDayOfWeekRepeat());
-        validateTimeRequest(requestDto);
-        validateMenuIsEmployeeMenu(requestDto);
+        validateRepeatSettings(requestDto);
+        validateEventTiming(requestDto);
+
+        List<Employee> employees = getEmployees(requestDto.employeeIds());
+        validateEmployeesBelongToShop(requestDto, employees);
+        validateEmployeeMenus(requestDto.menus(), employees);
 
         Shop shop = shopService.findShop(ownerId, requestDto.shopId());
         List<DayOfWeek> dayOfWeeks = createRepeatDayOfWeeks(requestDto);
         TimeEvent timeEvent = createTimeEvent(requestDto, shop, dayOfWeeks);
         timeEventRepository.save(timeEvent);
 
-        createTimeEventSchedulesForEmployee(requestDto,dayOfWeeks,timeEvent);
+        createTimeEventSchedulesForEmployee(requestDto,dayOfWeeks,timeEvent,employees);
 
         setMenuAndTimeEventToTimeEventMenu(requestDto, timeEvent);
         setEmployeeAndTimeEventToEmployeeTimeEvent(requestDto, timeEvent);
@@ -64,41 +68,65 @@ public class TimeEventCommandService {
         return CreateTimeEventsResponseDto.of(timeEvent);
     }
 
-    private void validateMenuIsEmployeeMenu(CreateLocalTimeEventsRequestDto requestDto) {
-        requestDto.menus().stream().forEach(menu-> {
-            if(!employeeMenuRepository.existsByMenuId(menu)){
-                throw new InvalidValueException(MENU_IS_NOT_EMPLOYEEMENU);
-            }});
+    private void validateRepeatSettings(CreateLocalTimeEventsRequestDto requestDto) {
+        boolean isRepeat = requestDto.isRepeat();
+        boolean isDateRepeat = requestDto.isDateRepeat();
+        boolean isDayOfWeekRepeat = requestDto.isDayOfWeekRepeat();
+
+        if (isRepeat && isDateRepeat && isDayOfWeekRepeat) {
+            throw new InvalidValueException(DUPLICATED_REPEAT_SETTING_BAD_REQUEST);
+        }
+        if (isRepeat && !isDateRepeat && !isDayOfWeekRepeat) {
+            throw new InvalidValueException(INCOMPLETE_REPEAT_SETTING_BAD_REQUEST);
+        }
+        if (!isRepeat && (isDateRepeat || isDayOfWeekRepeat)) {
+            throw new InvalidValueException(BAD_REQUEST);
+        }
     }
 
-    private void validateTimeRequest(CreateLocalTimeEventsRequestDto requestDto) {
+    private void validateEventTiming(CreateLocalTimeEventsRequestDto requestDto) {
+        if (requestDto.isDateRepeat()) {
+            validateDate(requestDto.startDate(), requestDto.endDate());
+        } else {
+            validateTimeOrder(requestDto.startTime(), requestDto.endTime());
+        }
+        if (requestDto.isRepeat()) {
+            validateStartTimeIsAfterNow(requestDto.startTime());
+        }
+    }
 
-        if (requestDto.isDateRepeat() && requestDto.startDate().isAfter(requestDto.endDate())) {
+    private void validateDate(LocalDate startDate, LocalDate endDate) {
+        if (!TimeUtil.checkDateOrder(startDate, endDate)) {
             throw new InvalidValueException(START_DATE_IS_AFTER_END_DATE);
         }
-
-        boolean dateRequest = requestDto.isDateRepeat() && requestDto.startDate().isBefore(requestDto.endDate());
-
-        if (requestDto.startTime().isAfter(requestDto.endTime()) && !dateRequest) {
-            throw new InvalidValueException(START_TIME_IS_AFTER_END_TIME);
+        if (!TimeUtil.isDateAfterNow(startDate)) {
+            throw new InvalidValueException(START_DATE_IS_BEFORE_NOW_DATE);
         }
-
     }
 
-    private void validateRepeatSettings(boolean isRepeat, boolean isDateRepeat, boolean isDayOfWeekRepeat) {
+    private void validateTimeOrder(LocalTime startTime, LocalTime endTime) {
+        if (!TimeUtil.checkTimeOrder(startTime, endTime)) {
+            throw new InvalidValueException(START_TIME_IS_AFTER_END_TIME);
+        }
+    }
 
-        // true, true, true 불가
-        if (isRepeat && isDateRepeat && isDayOfWeekRepeat)
-            throw new BusinessException(DUPLICATED_REPEAT_SETTING_BAD_REQUEST);
+    private void validateStartTimeIsAfterNow(LocalTime startTime) {
+        if (!TimeUtil.isTimeAfterNow(startTime)) {
+            throw new InvalidValueException(STRAT_TIME_IS_BEFORE_NOW);
+        }
+    }
 
-        // true, false, false 불가
-        if (isRepeat && !isDateRepeat && !isDayOfWeekRepeat)
-            throw new BusinessException(INCOMPLETE_REPEAT_SETTING_BAD_REQUEST);
+    private void validateEmployeesBelongToShop(CreateLocalTimeEventsRequestDto requestDto, List<Employee> employees) {
+        if (employeeRepository.countByEmployeesAndShop(employees, requestDto.shopId()) != requestDto.employeeIds().size())
+            throw new InvalidValueException(EMPLOYEE_NOT_BELONG_SHOP);
+    }
 
-        // isRepeat가 false이면 isDateRepeat, isDayOfWeekRepeat는 모두 false
-        if (!isRepeat && (isDateRepeat || isDayOfWeekRepeat))
-            throw new BusinessException(BAD_REQUEST);
-
+    private void validateEmployeeMenus(List<Long> menuIds, List<Employee> employees) {
+        // 등록 요청 메뉴를 직원 누구도 담당하고 있지 않을 때 에러 반환
+        List<Menu> menus = employeeMenuRepository.findMenusByMenuIdsAndEmployees(menuIds, employees);
+        if (menus.size() != menuIds.size()) {
+            throw new InvalidValueException(MENU_IS_NOT_EMPLOYEEMENU);
+        }
     }
 
     private List<DayOfWeek> createRepeatDayOfWeeks(CreateLocalTimeEventsRequestDto requestDto) {
@@ -110,23 +138,16 @@ public class TimeEventCommandService {
         return requestDto.dayOfWeeks();
     }
     
-    private void createTimeEventSchedulesForEmployee(CreateLocalTimeEventsRequestDto requestDto, List<DayOfWeek> dayOfWeeks, TimeEvent timeEvent) {
+    private void createTimeEventSchedulesForEmployee(CreateLocalTimeEventsRequestDto requestDto, List<DayOfWeek> dayOfWeeks, TimeEvent timeEvent, List<Employee> employees) {
 
         if (requestDto.isDayOfWeekRepeat())
-            processTimeEventScheduleByDayOfWeeks(requestDto, dayOfWeeks, timeEvent);
+            processTimeEventScheduleByDayOfWeeks(requestDto, dayOfWeeks, timeEvent, employees);
 
         if (requestDto.isDateRepeat()){
-            validateDateIsNull(requestDto);
-            processTimeEventScheduleByDateRepeat(requestDto, timeEvent);}
+            processTimeEventScheduleByDateRepeat(requestDto, timeEvent, employees);}
 
         if (!requestDto.isRepeat())
-            processTimeEventScheduleToday(requestDto, timeEvent);
-    }
-
-    private void validateDateIsNull(CreateLocalTimeEventsRequestDto requestDto) {
-        if (requestDto.startDate() == null || requestDto.endDate() == null) {
-            throw new InvalidValueException();
-        }
+            processTimeEventScheduleToday(requestDto, timeEvent, employees);
     }
 
     /**
@@ -197,23 +218,23 @@ public class TimeEventCommandService {
         }
     }
 
-    private List<Employee> getEmployees(CreateLocalTimeEventsRequestDto requestDto) {
-        List<Employee> employees = requestDto.employeeIds().stream().map(employId ->
+    private List<Employee> getEmployees(List<Long> employeeIds) {
+        List<Employee> employees = employeeIds.stream().map(employId ->
                 employeeRepository.findById(employId).orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_FOUND))).collect(Collectors.toList());
         return employees;
     }
 
     /**
      * 요일 반복 요청에 따른 TimeEventSchedule 생성
-     *
+     * <p>
      * 1. 직원이 가지고 있는 여러 예약 일정 중, 타임이벤트 생성을 요청한 요일에 해당하는 날짜인 경우를 찾습니다.
      * 2. startTime ~ endTime 에 따라 TimeEventSchedule을 생성하고 이를 해당 예약 일정에 추가합니다.
      *
      * @param requestDto
      * @param newDayOfWeeks 반복 요청된 요일 ex. [MONDAY,TUESDAY ...]
+     * @param employees
      */
-    private void processTimeEventScheduleByDayOfWeeks(CreateLocalTimeEventsRequestDto requestDto, List<DayOfWeek> newDayOfWeeks, TimeEvent timeEvent) {
-        List<Employee> employees = getEmployees(requestDto);
+    private void processTimeEventScheduleByDayOfWeeks(CreateLocalTimeEventsRequestDto requestDto, List<DayOfWeek> newDayOfWeeks, TimeEvent timeEvent, List<Employee> employees) {
 
         for (Employee em : employees) {
             List<ReservationSchedule> reservationSchedules = reservationScheduleRepository
@@ -292,9 +313,8 @@ public class TimeEventCommandService {
 
     }
 
-    private void processTimeEventSchedule(CreateLocalTimeEventsRequestDto requestDto, TimeEvent timeEvent, LocalDateTime newStartEventDateTime, LocalDateTime newEndEventDateTime) {
-        getEmployees(requestDto).stream()
-                .forEach(employee -> {
+    private void processTimeEventSchedule(TimeEvent timeEvent, LocalDateTime newStartEventDateTime, LocalDateTime newEndEventDateTime, List<Employee> employees) {
+        employees.forEach(employee -> {
                     List<ReservationSchedule> filteredReservationSchedules = findReservationScheduleWithinEventPeriod(newStartEventDateTime, newEndEventDateTime, employee);
                     validateScheduleSize(filteredReservationSchedules);
 
@@ -304,33 +324,35 @@ public class TimeEventCommandService {
 
     /**
      * 기간 반복 요청에 따른 TimeEventSchedule 처리
-     *
+     * <p>
      * requestDto의 startDate, startTime을 타임이벤트 시작 날짜,
      * endDate, endTime을 타임이벤트 마감 날짜로 설정하여 타임이벤트스케쥴을 생성합니다.
      * 직원의 예약 일정이 생성된 타임이벤트 일정에 포함되어 있으면 예약 일정에 타임이벤트 일정을 추가합니다.
      *
      * @param requestDto
+     * @param employees
      */
-    private void processTimeEventScheduleByDateRepeat(CreateLocalTimeEventsRequestDto requestDto, TimeEvent timeEvent) {
+    private void processTimeEventScheduleByDateRepeat(CreateLocalTimeEventsRequestDto requestDto, TimeEvent timeEvent, List<Employee> employees) {
         LocalDateTime newStartEventDateTime = LocalDateTime.of(requestDto.startDate(), requestDto.startTime());
         LocalDateTime newEndEventDateTime = LocalDateTime.of(requestDto.endDate(), requestDto.endTime());
 
-        processTimeEventSchedule(requestDto, timeEvent, newStartEventDateTime, newEndEventDateTime);
+        processTimeEventSchedule(timeEvent, newStartEventDateTime, newEndEventDateTime, employees);
     }
 
     /**
      * 반복 요청을 하지 않은 경우의 TimeEventSchedule 처리
-     *
+     * <p>
      * 이벤트 생성 요청을 한 날짜와, requestDto의 startTime, endTime을 기반으로 새로운 타임이벤트 일정을 생성합니다.
      * 직원의 예약 일정이 생성된 타임이벤트 일정에 포함되어 있으면 예약 일정에 타임이벤트 일정을 추가합니다.
      *
      * @param requestDto
+     * @param employees
      */
-    private void processTimeEventScheduleToday(CreateLocalTimeEventsRequestDto requestDto, TimeEvent timeEvent) {
+    private void processTimeEventScheduleToday(CreateLocalTimeEventsRequestDto requestDto, TimeEvent timeEvent, List<Employee> employees) {
         LocalDateTime newStartEventDateTime = LocalDateTime.of(LocalDate.now(), requestDto.startTime());
         LocalDateTime newEndEventDateTime = LocalDateTime.of(LocalDate.now(), requestDto.endTime());
 
-        processTimeEventSchedule(requestDto, timeEvent, newStartEventDateTime, newEndEventDateTime);
+        processTimeEventSchedule(timeEvent, newStartEventDateTime, newEndEventDateTime, employees);
     }
 
 
