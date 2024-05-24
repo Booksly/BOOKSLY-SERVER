@@ -2,6 +2,9 @@ package kyonggi.bookslyserver.domain.shop.repository;
 
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Category;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

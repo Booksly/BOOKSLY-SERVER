@@ -21,6 +21,8 @@ import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -69,6 +71,9 @@ public class ShopService {
         List<Employee> employeeList = shop.get().getEmployees();
         List<EmployeeUserResponseDto> employees = employeeList.stream().map(employee -> new EmployeeUserResponseDto(employee)).collect(Collectors.toList());
 
+        int visit = shop.get().getTotalVisitors() + 1;
+        shop.get().setTotalVisitors(visit);
+
         return ShopUserReadOneDto
                 .builder()
                 .Name(name)
@@ -80,6 +85,12 @@ public class ShopService {
                 .employees(employees)
                 .address(new AddressDto(shop.get().getAddress()))
                 .build();
+    }
+
+    public List<ShopFilterDto> readTopShops(Pageable pageable){
+        Page<Shop> shopPage = shopRepository.findAll(pageable);
+        List<ShopFilterDto> result = shopPage.stream().map(shop -> new ShopFilterDto(shop)).collect(Collectors.toList());
+        return result;
     }
 
     @Transactional
