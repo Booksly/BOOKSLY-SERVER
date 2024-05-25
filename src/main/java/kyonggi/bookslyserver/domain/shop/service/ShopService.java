@@ -176,10 +176,14 @@ public class ShopService {
 
     public Shop findShop(Long ownerId, Long shopId) {
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        checkShopOwner(ownerId, shop);
+        return shop;
+    }
+
+    private void checkShopOwner(Long ownerId, Shop shop) {
         if (shop.getShopOwner().getId() != ownerId) {
             throw new InvalidValueException(NOT_OWNER_OF_SHOP);
         }
-        return shop;
     }
 
     private List<Shop> filterShopsByAddress(List<Shop> shops, String region) {
