@@ -1,9 +1,11 @@
 package kyonggi.bookslyserver.domain.user.service;
 
 import kyonggi.bookslyserver.domain.user.constant.Role;
+import kyonggi.bookslyserver.domain.user.dto.request.UpdateUserInfoRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.response.GetUserDetailInfoResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.GetUserNicknameResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.GetUserProfileResponseDto;
+import kyonggi.bookslyserver.domain.user.dto.response.UpdateUserInfoResponseDto;
 import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.auth.principal.user.userInfo.OAuth2UserInfo;
@@ -80,5 +82,20 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
         return GetUserDetailInfoResponseDto.of(user);
+    }
+
+    public UpdateUserInfoResponseDto updateUserInfo(Long userId, UpdateUserInfoRequestDto updateUserInfoRequestDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        
+        String phoneNumber = updateUserInfoRequestDto.phoneNumber();
+        String nickname = updateUserInfoRequestDto.nickname();
+        
+        if (phoneNumber != null) user.updatePhoneNumber(phoneNumber);
+        if (nickname != null) user.updateNickname(nickname);
+
+        userRepository.save(user);
+
+        return UpdateUserInfoResponseDto.of(user);
     }
 }

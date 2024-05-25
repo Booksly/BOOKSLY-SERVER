@@ -20,7 +20,7 @@ public class VerifyPhoneNumValidator implements ConstraintValidator<VerifyPhoneN
     public boolean isValid(String phoneNumber, ConstraintValidatorContext context) {
 
         if (phoneNumber == null) {
-            return false;
+            return true; //@NotNull 이 처리
         }
 
         if (phoneNumber.contains("-")) {

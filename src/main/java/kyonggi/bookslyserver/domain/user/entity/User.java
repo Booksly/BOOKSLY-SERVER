@@ -64,4 +64,12 @@ public class User extends BaseTimeEntity {
         this.phoneNum = phoneNum;
         this.isVerified = true;
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updatePhoneNumber(String phoneNum) {
+        this.phoneNum = phoneNum;
+    }
 }
