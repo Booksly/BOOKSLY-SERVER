@@ -79,7 +79,8 @@ public class MenuApiController {
     }
 
     @DeleteMapping("/api/shops/menuCategories/{categoryId}")
-    public void deleteMenuCategory(@PathVariable("categoryId") Long id){
-        menuService.deleteCategory(id);
+    public ResponseEntity<SuccessResponse<?>> deleteMenuCategory(@PathVariable("categoryId") Long id){
+        MenuCategoryDeleteResponseDto result = menuService.deleteCategory(id);
+        return SuccessResponse.ok(result);
     }
 }

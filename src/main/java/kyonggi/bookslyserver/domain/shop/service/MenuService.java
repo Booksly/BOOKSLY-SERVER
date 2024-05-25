@@ -204,7 +204,7 @@ public class MenuService {
     }
 
     @Transactional
-    public void deleteCategory(Long id){
+    public MenuCategoryDeleteResponseDto deleteCategory(Long id){
         Optional<MenuCategory> menuCategory = menuCategoryRepository.findById(id);
         if(!menuCategory.isPresent()){
             throw new EntityNotFoundException();
@@ -216,6 +216,7 @@ public class MenuService {
             menuCategory.get().getShop().getMenuCategories().remove(menuCategory.get());
             menuCategoryRepository.delete(menuCategory.get().getId());
         }
+        return new MenuCategoryDeleteResponseDto(menuCategory.get());
     }
 
 }
