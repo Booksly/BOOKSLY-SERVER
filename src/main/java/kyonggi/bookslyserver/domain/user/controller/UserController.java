@@ -1,5 +1,6 @@
 package kyonggi.bookslyserver.domain.user.controller;
 
+import kyonggi.bookslyserver.domain.user.dto.response.GetUserDetailInfoResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.GetUserNicknameResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.GetUserProfileResponseDto;
 import kyonggi.bookslyserver.domain.user.service.UserService;
@@ -11,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 @RestController
 @Slf4j
 public class UserController {
@@ -22,6 +23,12 @@ public class UserController {
     @GetMapping("/test")
     public ResponseEntity<SuccessResponse<?>> test() {
         return SuccessResponse.ok("임시 리다이렉트 페이지");
+    }
+
+    @GetMapping("/details")
+    public ResponseEntity<SuccessResponse<?>> getUserDetailInfo(@UserId Long userId) {
+        GetUserDetailInfoResponseDto getUserDetailInfoResponseDto = userService.getDetailInfo(userId);
+        return SuccessResponse.ok(getUserDetailInfoResponseDto);
     }
 
     @GetMapping("/details/nickname")
