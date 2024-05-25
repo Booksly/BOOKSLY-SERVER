@@ -1,14 +1,18 @@
 package kyonggi.bookslyserver.domain.user.controller;
 
+import jakarta.validation.Valid;
+import kyonggi.bookslyserver.domain.user.dto.request.UpdateUserInfoRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.response.GetUserDetailInfoResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.GetUserNicknameResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.GetUserProfileResponseDto;
+import kyonggi.bookslyserver.domain.user.dto.response.UpdateUserInfoResponseDto;
 import kyonggi.bookslyserver.domain.user.service.UserService;
 import kyonggi.bookslyserver.global.auth.principal.user.UserId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -35,6 +39,12 @@ public class UserController {
     public ResponseEntity<SuccessResponse<?>> getNickname(@UserId Long userId) {
         GetUserNicknameResponseDto getUserNicknameResponseDto = userService.getNickname(userId);
         return SuccessResponse.ok(getUserNicknameResponseDto);
+    }
+
+    @PatchMapping("/details")
+    public ResponseEntity<SuccessResponse<?>> updateUserInfo(@UserId Long userId, @RequestBody @Valid UpdateUserInfoRequestDto updateUserInfoRequestDto) {
+        UpdateUserInfoResponseDto updateUserInfoResponseDto = userService.updateUserInfo(userId,updateUserInfoRequestDto);
+        return SuccessResponse.ok(updateUserInfoResponseDto);
     }
 
     @GetMapping("/profile")
