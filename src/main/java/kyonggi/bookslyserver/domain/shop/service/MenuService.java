@@ -78,7 +78,7 @@ public class MenuService {
         for(Menu menu : menus){
             eventRegisterEmployeeMenuDtos.add(new EventRegisterEmployeeMenuDto(menu));
         }
-        //System.out.println("====================================================" + eventRegisterEmployeeMenuDtos.size() + "======================================================");
+
 
         List<EventRegisterEmployeeMenuDto> result = new ArrayList<>(eventRegisterEmployeeMenuDtos);
 
@@ -90,7 +90,6 @@ public class MenuService {
                 }
         }
 
-        //List<EventRegisterMenuNamesDto> result = menus.stream().map(menu -> new EventRegisterMenuNamesDto(menu)).collect(Collectors.toList());
         return result;
     }
 
