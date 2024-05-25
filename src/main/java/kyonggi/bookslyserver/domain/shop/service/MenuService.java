@@ -196,6 +196,9 @@ public class MenuService {
         if(!menuCategory.isPresent()){
             throw new EntityNotFoundException();
         }
+        if(menuCategoryRepository.existsByName(requestDto.categoryName())){
+            throw new BusinessException(ErrorCode.MENUCATEGORY_ALREADY_EXIST);
+        }
         menuCategory.get().setName(requestDto.categoryName());
         return MenuCategoryCreateDto.builder().categoryName(menuCategory.get().getName()).build();
     }
