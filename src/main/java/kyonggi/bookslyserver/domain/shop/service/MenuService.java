@@ -20,9 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,16 +63,34 @@ public class MenuService {
     }
 
 
-    public List<EventRegisterMenuNamesDto> readMenuNamesEventRegister(Long id){
+    public List<EventRegisterEmployeeMenuDto> readMenuNamesEventRegister(Long id){
         Optional<Employee> employee = employeeRepository.findById(id);
         List<Menu> menus = new ArrayList<>();
+        Set<EventRegisterEmployeeMenuDto> eventRegisterEmployeeMenuDtos = new HashSet<>();
+
         if(!employee.isPresent()){
             throw new EntityNotFoundException(ErrorCode.EMPLOYEE_NOT_FOUND);
         }
         for(EmployeeMenu employeeMenu : employee.get().getEmployeeMenus()){
             menus.add(employeeMenu.getMenu());
         }
-        List<EventRegisterMenuNamesDto> result = menus.stream().map(menu -> new EventRegisterMenuNamesDto(menu)).collect(Collectors.toList());
+
+        for(Menu menu : menus){
+            eventRegisterEmployeeMenuDtos.add(new EventRegisterEmployeeMenuDto(menu));
+        }
+        //System.out.println("====================================================" + eventRegisterEmployeeMenuDtos.size() + "======================================================");
+
+        List<EventRegisterEmployeeMenuDto> result = new ArrayList<>(eventRegisterEmployeeMenuDtos);
+
+        for(Menu menu : menus){
+                for(EventRegisterEmployeeMenuDto e : result){
+                    if(menu.getMenuCategory().getName().equals(e.getMenuCategoryName())){
+                        e.getMenu().add(new EventRegisterEmployeeMenuDto.MenuDto(menu));
+                    }
+                }
+        }
+
+        //List<EventRegisterMenuNamesDto> result = menus.stream().map(menu -> new EventRegisterMenuNamesDto(menu)).collect(Collectors.toList());
         return result;
     }
 

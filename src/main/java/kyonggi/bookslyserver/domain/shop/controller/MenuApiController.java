@@ -38,7 +38,7 @@ public class MenuApiController {
 
     @GetMapping("api/shops/employees/{employeeId}/menus/EventRegistration")
     public ResponseEntity<SuccessResponse<?>> readMenuNamesTimeEventRegister(@PathVariable("employeeId") Long id){
-        List<EventRegisterMenuNamesDto> result = menuService.readMenuNamesEventRegister(id);
+        List<EventRegisterEmployeeMenuDto> result = menuService.readMenuNamesEventRegister(id);
         return SuccessResponse.ok(result);
     }
 
