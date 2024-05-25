@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class EmployeeReadDto {
+    private Long id;
 
     private String imgUri;
 
@@ -15,6 +16,7 @@ public class EmployeeReadDto {
     private String description;
 
     public EmployeeReadDto(Employee employee){
+        this.id = employee.getId();
         this.imgUri = employee.getProfileImgUri();
         this.name = employee.getName();
         if(employee.getReviews() != null){
