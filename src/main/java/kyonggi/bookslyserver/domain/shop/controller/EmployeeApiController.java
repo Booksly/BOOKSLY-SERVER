@@ -75,4 +75,12 @@ public class EmployeeApiController {
         CheckEventStatusResponseDto checkEventStatusResponseDto = employeeService.checkEventStatus(shopId, employeeId, reservationScheduleId);
         return SuccessResponse.ok(checkEventStatusResponseDto);
     }
+
+    @GetMapping("/api/shops/{shopId}/employees/{employeeId}/events")
+    public ResponseEntity<SuccessResponse<?>> getEventMenus(@PathVariable("shopId")Long shopId,
+                                                            @PathVariable("employeeId")Long employeeId,
+                                                            @RequestParam("schedule") Long reservationScheduleId) {
+        GetEventMenusResponseDto getEventMenusResponseDto = employeeService.getEventMenus(shopId, employeeId, reservationScheduleId);
+        return SuccessResponse.ok(getEventMenusResponseDto);
+    }
 }

@@ -14,7 +14,6 @@ import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeMenuRepository;
-import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
 import kyonggi.bookslyserver.domain.shop.service.EmployeeService;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
@@ -23,7 +22,6 @@ import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
 import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +52,7 @@ public class ClosingEventCommandService {
         List<Menu> menus = createClosingEventRequestDto.menuIds().stream()
                 .map(id -> menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(MENU_NOT_FOUND))).collect(Collectors.toList());
 
-        int employeeMenuNum = employeeMenuRepository.findByMenuAndEmployee(menus, employee);
+        int employeeMenuNum = employeeMenuRepository.countByMenusAndEmployee(menus, employee);
         if (employeeMenuNum != menus.size()) {
             throw new InvalidValueException(MENU_IS_NOT_EMPLOYEEMENU);
         }
@@ -109,7 +107,7 @@ public class ClosingEventCommandService {
 
     private ClosingEvent getClosingEvent(ReservationSchedule reservationSchedule) {
         Employee employee = reservationSchedule.getEmployee();
-        ClosingEvent closingEvent = closingEventRepository.findByEmployee(employee).orElseThrow(() -> new EntityNotFoundException(CLOSING_EVENT_NOT_FOUND));
+        ClosingEvent closingEvent = closingEventRepository.findByEmployee(employee).orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_SETTING_CLOSING_EVENT));
         return closingEvent;
     }
 

@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.event.entity.timeEvent;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.event.entity.Event;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
@@ -18,7 +19,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class TimeEvent extends BaseTimeEntity {
+public class TimeEvent extends BaseTimeEntity implements Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,5 +60,6 @@ public class TimeEvent extends BaseTimeEntity {
     @OneToMany(mappedBy = "timeEvent", cascade = CascadeType.ALL)
     @Builder.Default
     private List<TimeEventSchedule> timeEventSchedules = new ArrayList<>();
+
 
 }

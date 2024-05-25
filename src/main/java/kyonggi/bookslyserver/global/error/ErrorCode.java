@@ -41,6 +41,7 @@ public enum ErrorCode implements BaseErrorCode{
     START_DATE_IS_BEFORE_NOW_DATE(HttpStatus.BAD_REQUEST, "이벤트 시작 날짜는 현재 날짜보다 이전일 수 없습니다."),
     STRAT_TIME_IS_BEFORE_NOW(HttpStatus.BAD_REQUEST,"이벤트 시작 시간은 현재 시각보다 이를 수 없습니다." ),
     EMPLOYEE_NOT_OWN_RESERVATION_SCHEDULE(HttpStatus.BAD_REQUEST,"직원 소유의 예약 일정이 아닙니다."),
+    EMPLOYEE_NOT_SETTING_CLOSING_EVENT(HttpStatus.BAD_REQUEST,"마감 이벤트 설정을 먼저 완료해주세요"),
 
 
     /**

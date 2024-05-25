@@ -22,7 +22,11 @@ public interface EmployeeMenuRepository extends JpaRepository<EmployeeMenu,Long>
 
     @Query("SELECT COUNT(em) "+
             "FROM EmployeeMenu em WHERE em.employee = :employee_id AND em.menu IN :menus")
-    int findByMenuAndEmployee(@Param("menus") List<Menu> menus, @Param("employee_id") Employee employee);
+    int countByMenusAndEmployee(@Param("menus") List<Menu> menus, @Param("employee_id") Employee employee);
+
+    @Query("SELECT em.menu "+
+            "FROM EmployeeMenu em WHERE em.employee = :employee_id AND em.menu IN :menus")
+    List<Menu> findByMenusAndEmployee(@Param("menus") List<Menu> menus, @Param("employee_id") Employee employee);
 
     @Query("select em.menu from EmployeeMenu em where em.menu.id in :menuIds and em.employee in :employees")
     List<Menu> findMenusByMenuIdsAndEmployees(@Param("menuIds") List<Long> menus, @Param("employees")List<Employee> employees);
