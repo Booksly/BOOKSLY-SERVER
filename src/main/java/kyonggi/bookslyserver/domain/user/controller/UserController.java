@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.user.controller;
 
 import kyonggi.bookslyserver.domain.user.dto.response.GetUserNicknameResponseDto;
+import kyonggi.bookslyserver.domain.user.dto.response.GetUserProfileResponseDto;
 import kyonggi.bookslyserver.domain.user.service.UserService;
 import kyonggi.bookslyserver.global.auth.principal.user.UserId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
@@ -27,5 +28,11 @@ public class UserController {
     public ResponseEntity<SuccessResponse<?>> getNickname(@UserId Long userId) {
         GetUserNicknameResponseDto getUserNicknameResponseDto = userService.getNickname(userId);
         return SuccessResponse.ok(getUserNicknameResponseDto);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<SuccessResponse<?>> getProfile(@UserId Long userId) {
+        GetUserProfileResponseDto getProfileResponseDto = userService.getProfile(userId);
+        return SuccessResponse.ok(getProfileResponseDto);
     }
 }
