@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/owner")
+@RequestMapping("/api/owners")
 @RestController
 @RequiredArgsConstructor
 public class ShopOwnerController {
@@ -23,8 +23,8 @@ public class ShopOwnerController {
         return SuccessResponse.ok(getOwnerLoginIdResponseDto);
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<SuccessResponse<?>> getShopOwnerProfile(@RequestParam("shop") Long shopId, @OwnerId Long ownerId) {
+    @GetMapping("/shops/{shopId}/profile")
+    public ResponseEntity<SuccessResponse<?>> getOwnerProfileByShop(@PathVariable("shopId") Long shopId, @OwnerId Long ownerId) {
         GetOwnerProfileResponseDto getOwnerProfileResponseDto = shopOwnerService.getOwnerProfile(shopId, ownerId);
         return SuccessResponse.ok(getOwnerProfileResponseDto);
     }
