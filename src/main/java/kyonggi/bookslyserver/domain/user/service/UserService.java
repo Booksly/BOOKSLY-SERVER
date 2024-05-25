@@ -57,7 +57,7 @@ public class UserService {
         return userRepository.save(createdUser);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = true)
     public User findUserByLoginId(String loginId) {
 
         return userRepository.findByLoginId(loginId).orElseThrow(()-> new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN_VALUE));
