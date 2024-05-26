@@ -1,11 +1,9 @@
 package kyonggi.bookslyserver.domain.user.controller;
 
 import jakarta.validation.Valid;
+import kyonggi.bookslyserver.domain.user.dto.request.CreateFavoriteShopRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.request.UpdateUserInfoRequestDto;
-import kyonggi.bookslyserver.domain.user.dto.response.GetUserDetailInfoResponseDto;
-import kyonggi.bookslyserver.domain.user.dto.response.GetUserNicknameResponseDto;
-import kyonggi.bookslyserver.domain.user.dto.response.GetUserProfileResponseDto;
-import kyonggi.bookslyserver.domain.user.dto.response.UpdateUserInfoResponseDto;
+import kyonggi.bookslyserver.domain.user.dto.response.*;
 import kyonggi.bookslyserver.domain.user.service.UserService;
 import kyonggi.bookslyserver.global.auth.principal.user.UserId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
@@ -43,7 +41,7 @@ public class UserController {
 
     @PatchMapping("/details")
     public ResponseEntity<SuccessResponse<?>> updateUserInfo(@UserId Long userId, @RequestBody @Valid UpdateUserInfoRequestDto updateUserInfoRequestDto) {
-        UpdateUserInfoResponseDto updateUserInfoResponseDto = userService.updateUserInfo(userId,updateUserInfoRequestDto);
+        UpdateUserInfoResponseDto updateUserInfoResponseDto = userService.updateUserInfo(userId, updateUserInfoRequestDto);
         return SuccessResponse.ok(updateUserInfoResponseDto);
     }
 
@@ -51,5 +49,11 @@ public class UserController {
     public ResponseEntity<SuccessResponse<?>> getProfile(@UserId Long userId) {
         GetUserProfileResponseDto getProfileResponseDto = userService.getProfile(userId);
         return SuccessResponse.ok(getProfileResponseDto);
+    }
+
+    @PostMapping("/favorite-shops")
+    public ResponseEntity<SuccessResponse<?>> createFavoriteShop(@UserId Long userId, @RequestBody CreateFavoriteShopRequestDto createFavoriteShopRequestDto) {
+        CreateFavoriteShopResponseDto createFavoriteShopResponseDto = userService.createFavoriteShop(userId, createFavoriteShopRequestDto);
+        return SuccessResponse.created(createFavoriteShopResponseDto);
     }
 }
