@@ -16,8 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
 @Service
@@ -28,7 +26,7 @@ public class ShopOwnerService {
     private final ShopOwnerRepository shopOwnerRepository;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
     private final ShopService shopService;
 
     public JoinOwnerResponseDto join(JoinOwnerRequestDto joinOwnerRequestDto) {
@@ -42,7 +40,7 @@ public class ShopOwnerService {
     }
 
     public ShopOwner findShopOwnerByLoginId(String loginId) {
-        User user = userService.findUserByLoginId(loginId);
+        User user = userQueryService.findUserByLoginId(loginId);
         ShopOwner shopOwner = findShopOwnerByUserId(user.getId());
         shopOwner.addUser(user);
 
