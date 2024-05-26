@@ -52,7 +52,7 @@ public class EmployeeApiController {
 
     @PutMapping("/api/shops/employees/{employeeId}")
     public ResponseEntity<SuccessResponse<?>> updateEmployee(@PathVariable("employeeId") Long id, @RequestBody @Validated EmployeeCreateRequestDto requestDto) {
-        Long result = employeeService.update(id, requestDto);
+        EmployeeUpdateResponseDto result = employeeService.update(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
