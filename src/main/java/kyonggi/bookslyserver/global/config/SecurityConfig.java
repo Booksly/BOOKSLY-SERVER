@@ -1,7 +1,7 @@
 package kyonggi.bookslyserver.global.config;
 
 import kyonggi.bookslyserver.domain.user.service.ShopOwnerService;
-import kyonggi.bookslyserver.domain.user.service.UserService;
+import kyonggi.bookslyserver.domain.user.service.UserQueryService;
 import kyonggi.bookslyserver.global.auth.handelr.CustomAccessDeniedHandler;
 import kyonggi.bookslyserver.global.auth.handelr.CustomAuthenticationSuccessHandler;
 import kyonggi.bookslyserver.global.auth.handelr.OAuthAuthenticationSuccessHandler;
@@ -41,7 +41,7 @@ public class SecurityConfig {
     private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
     private final UserDetailsService userDetailsService;
     private final ShopOwnerService shopOwnerService;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
 
 
     @Bean
@@ -110,7 +110,7 @@ public class SecurityConfig {
         http
                 .addFilter(corsConfig.corsFilter())
                 .addFilter(idPasswordAuthenticationFilter)
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil,userService,shopOwnerService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userQueryService,shopOwnerService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class);
 
         return http.build();
