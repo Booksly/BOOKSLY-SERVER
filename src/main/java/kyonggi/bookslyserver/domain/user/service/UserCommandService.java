@@ -6,12 +6,15 @@ import kyonggi.bookslyserver.domain.user.constant.Role;
 import kyonggi.bookslyserver.domain.user.dto.request.CreateFavoriteShopRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.request.UpdateUserInfoRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.response.CreateFavoriteShopResponseDto;
+import kyonggi.bookslyserver.domain.user.dto.response.DeleteFavoriteShopResponseDto;
 import kyonggi.bookslyserver.domain.user.dto.response.UpdateUserInfoResponseDto;
 import kyonggi.bookslyserver.domain.user.entity.FavoriteShop;
 import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.domain.user.repository.FavoriteShopRepository;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.auth.principal.user.userInfo.OAuth2UserInfo;
+import kyonggi.bookslyserver.global.error.ErrorCode;
+import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,4 +91,11 @@ public class UserCommandService {
         return CreateFavoriteShopResponseDto.of(saved);
     }
 
+    public DeleteFavoriteShopResponseDto deleteFavoriteShop(Long favoriteShopId) {
+        FavoriteShop favoriteShop = favoriteShopRepository.findById(favoriteShopId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        favoriteShopRepository.deleteById(favoriteShopId);
+        return DeleteFavoriteShopResponseDto.of(favoriteShop);
+    }
 }
