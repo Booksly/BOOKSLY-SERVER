@@ -71,27 +71,23 @@ public class UserService {
     }
 
     public GetUserNicknameResponseDto getNickname(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        User user = findUser(userId);
         return GetUserNicknameResponseDto.of(user);
     }
 
     public GetUserProfileResponseDto getProfile(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        User user = findUser(userId);
         return GetUserProfileResponseDto.of(user);
     }
 
     public GetUserDetailInfoResponseDto getDetailInfo(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        User user = findUser(userId);
         return GetUserDetailInfoResponseDto.of(user);
     }
 
     public UpdateUserInfoResponseDto updateUserInfo(Long userId, UpdateUserInfoRequestDto updateUserInfoRequestDto) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
-        
+        User user = findUser(userId);
+
         String phoneNumber = updateUserInfoRequestDto.phoneNumber();
         String nickname = updateUserInfoRequestDto.nickname();
         
@@ -104,7 +100,7 @@ public class UserService {
     }
 
     public CreateFavoriteShopResponseDto createFavoriteShop(Long userId, CreateFavoriteShopRequestDto createFavoriteShopRequestDto) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        User user = findUser(userId);
         Shop shop = shopService.findShop(createFavoriteShopRequestDto.shopId());
 
         FavoriteShop favoriteShop = FavoriteShop.builder()
@@ -113,5 +109,10 @@ public class UserService {
 
         FavoriteShop saved = favoriteShopRepository.save(favoriteShop);
         return CreateFavoriteShopResponseDto.of(saved);
+    }
+
+    private User findUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        return user;
     }
 }
