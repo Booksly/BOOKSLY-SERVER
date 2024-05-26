@@ -58,6 +58,12 @@ public class UserController {
         return SuccessResponse.created(createFavoriteShopResponseDto);
     }
 
+    @GetMapping("/favorite-shops")
+    public ResponseEntity<SuccessResponse<?>> getFavoriteShops(@UserId Long userId) {
+        GetFavoriteShopsResponseDto getFavoriteShopsResponseDto = userQueryService.getFavoriteShops(userId);
+        return SuccessResponse.ok(getFavoriteShopsResponseDto);
+    }
+
     @DeleteMapping("/favorite-shops/{favoriteShopId}")
     public ResponseEntity<SuccessResponse<?>> deleteFavoriteShop(@PathVariable("favoriteShopId") Long favoriteShopId) {
         DeleteFavoriteShopResponseDto deleteFavoriteShopResponseDto = userCommandService.deleteFavoriteShop(favoriteShopId);
