@@ -38,10 +38,28 @@ public class BaseController {
         }
     }
  */
+
+    /**
+     * 친구 목록 가져오기
+     */
+/*
     @GetMapping("")
     public ResponseEntity<?> serviceStart(@RequestParam("code") String code) {
         if(authService.getKakaoAuthToken(code)) {
             return ResponseEntity.ok(customMessageService.getFriendsList());
+        }else {
+            return ResponseEntity.ok("토큰 발급 실패");
+        }
+    }
+ */
+
+    /**
+     * 친구 목록 가져오기 + 가져온 친구 목록에 메세지 보내기
+     */
+    @GetMapping("")
+    public ResponseEntity<?> serviceStart(@RequestParam("code") String code) {
+        if(authService.getKakaoAuthToken(code)) {
+            return customMessageService.sendMessageToFriend(customMessageService.getFriendsList());
         }else {
             return ResponseEntity.ok("토큰 발급 실패");
         }

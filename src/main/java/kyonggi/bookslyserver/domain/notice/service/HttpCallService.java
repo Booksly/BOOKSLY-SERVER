@@ -11,12 +11,11 @@ public class HttpCallService {
     protected static final String APP_TYPE_URL_ENCODED = "application/x-www-form-urlencoded;charset=UTF-8";
     protected static final String APP_TYPE_JSON = "application/json;charset=UTF-8";
     /**
-     * HTTP 요청에 사용할 HTTP 객체를 생성
+     * HTTP 요청에 사용할 HTTP 객체 생성
      * 객체는 HTTP 헤더와 바디를 포함
-     * @param header 헤더 정보를 포함하는 객체
-     * @param params 바디 정보를 포함하는 객체
+     * @param header 헤더 정보를 포함
+     * @param params 바디 정보를 포함
      * @return 
-     * params가 null이거나 빈 문자열이라면 헤더만 포함된 HttpEntity를 반환하고 그렇지 않으면 바디까지 포함된 객체를 반환한다
      */
     public HttpEntity<?> httpClientEntity(HttpHeaders header,Object params){
         HttpHeaders requestHeaders=header;
