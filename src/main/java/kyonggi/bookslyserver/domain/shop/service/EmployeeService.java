@@ -139,7 +139,7 @@ public class EmployeeService {
     }
 
     @Transactional
-    public Long update(Long id, EmployeeCreateRequestDto requestDto){
+    public EmployeeUpdateResponseDto update(Long id, EmployeeCreateRequestDto requestDto){
         Optional<Employee> employee = employeeRepository.findById(id);
         if(!employee.isPresent()){
             throw new EntityNotFoundException();
@@ -155,21 +155,25 @@ public class EmployeeService {
         for(WorkSchedule workSchedule : workScheduleList){
             workScheduleRepository.delete(workSchedule);
         }
+
         if(requestDto.menus() != null){
             for(String menuName : requestDto.menus()){
                 Menu menu = menuRepository.findByMenuName(menuName);
-                employee.get().addMenu(employee.get(), menu);
+                EmployeeMenu employeeMenu = employee.get().addMenu(employee.get(), menu);
+                employeeMenuRepository.save(employeeMenu);
             }
         }
+
 
         for(EmployeeWorkScheduleDto employeeWorkScheduleDto : requestDto.workSchedules()){
             WorkSchedule workSchedule = WorkSchedule.createEntity(employee.get(), employeeWorkScheduleDto);
             employee.get().getWorkSchedules().add(workSchedule);
+            workScheduleRepository.save(workSchedule);
         }
 
         employee.get().update(requestDto);
 
-        return employee.get().getId();
+        return new EmployeeUpdateResponseDto(requestDto);
     }
 
     @Transactional

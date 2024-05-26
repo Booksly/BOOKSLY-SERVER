@@ -56,8 +56,10 @@ public class MenuApiController {
     }
 
     @DeleteMapping("/api/shops/menus/{menuId}")
-    public void delete(@PathVariable("menuId") Long id){
-        menuService.delete(id);
+    public ResponseEntity<SuccessResponse<?>> delete(@PathVariable("menuId") Long id){
+
+        MenuDeleteResponseDto result = menuService.delete(id);
+        return SuccessResponse.ok(result);
     }
 
     @GetMapping("/api/shops/{shopId}/categories")
@@ -79,7 +81,8 @@ public class MenuApiController {
     }
 
     @DeleteMapping("/api/shops/menuCategories/{categoryId}")
-    public void deleteMenuCategory(@PathVariable("categoryId") Long id){
-        menuService.deleteCategory(id);
+    public ResponseEntity<SuccessResponse<?>> deleteMenuCategory(@PathVariable("categoryId") Long id){
+        MenuCategoryDeleteResponseDto result = menuService.deleteCategory(id);
+        return SuccessResponse.ok(result);
     }
 }

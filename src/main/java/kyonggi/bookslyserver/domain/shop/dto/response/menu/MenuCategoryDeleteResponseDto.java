@@ -4,12 +4,10 @@ import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
 import lombok.Data;
 
 @Data
-public class MenuCategoryReadDto {
+public class MenuCategoryDeleteResponseDto {
     private Long id;
-    private String categoryName;
 
-    public MenuCategoryReadDto(MenuCategory menuCategory){
+    public MenuCategoryDeleteResponseDto(MenuCategory menuCategory){
         this.id = menuCategory.getId();
-        this.categoryName = menuCategory.getName();
     }
 }

@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 public class MenuReadDto {
+    private Long id;
+
     private String imgUrl;
 
     private String menuCategory;
@@ -16,6 +18,7 @@ public class MenuReadDto {
     private String description;
 
     public MenuReadDto(Menu menu){
+        this.id = menu.getId();
         if(menu.getMenuImages() != null){
             this.imgUrl = menu.getMenuImages().get(0).getMenuImgUri();
         }
