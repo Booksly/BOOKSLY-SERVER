@@ -1,12 +1,15 @@
 package kyonggi.bookslyserver.domain.user.service;
 
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
+import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
+import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.domain.user.constant.Role;
+import kyonggi.bookslyserver.domain.user.dto.request.CreateFavoriteShopRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.request.UpdateUserInfoRequestDto;
-import kyonggi.bookslyserver.domain.user.dto.response.GetUserDetailInfoResponseDto;
-import kyonggi.bookslyserver.domain.user.dto.response.GetUserNicknameResponseDto;
-import kyonggi.bookslyserver.domain.user.dto.response.GetUserProfileResponseDto;
-import kyonggi.bookslyserver.domain.user.dto.response.UpdateUserInfoResponseDto;
+import kyonggi.bookslyserver.domain.user.dto.response.*;
+import kyonggi.bookslyserver.domain.user.entity.FavoriteShop;
 import kyonggi.bookslyserver.domain.user.entity.User;
+import kyonggi.bookslyserver.domain.user.repository.FavoriteShopRepository;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.auth.principal.user.userInfo.OAuth2UserInfo;
 import kyonggi.bookslyserver.global.error.ErrorCode;
@@ -24,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ShopService shopService;
+    private final FavoriteShopRepository favoriteShopRepository;
 
     /**
      * 유저정보를 받아 회원가입한다.
@@ -55,7 +60,6 @@ public class UserService {
                 .role(Role.ROLE_USER)
                 .isVerified(false)
                 .build();
-
 
         return userRepository.save(createdUser);
     }
@@ -97,5 +101,17 @@ public class UserService {
         userRepository.save(user);
 
         return UpdateUserInfoResponseDto.of(user);
+    }
+
+    public CreateFavoriteShopResponseDto createFavoriteShop(Long userId, CreateFavoriteShopRequestDto createFavoriteShopRequestDto) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+        Shop shop = shopService.findShop(createFavoriteShopRequestDto.shopId());
+
+        FavoriteShop favoriteShop = FavoriteShop.builder()
+                .shop(shop)
+                .user(user).build();
+
+        FavoriteShop saved = favoriteShopRepository.save(favoriteShop);
+        return CreateFavoriteShopResponseDto.of(saved);
     }
 }

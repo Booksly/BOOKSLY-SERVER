@@ -171,7 +171,10 @@ public class ShopService {
         return new ShopOwnerDetailReadOneDto(shop.get(), businessScheduleDtos);
     }
 
-
+    public Shop findShop(Long shopId) {
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        return shop;
+    }
 
 
     public Shop findShop(Long ownerId, Long shopId) {
