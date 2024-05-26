@@ -57,4 +57,10 @@ public class UserController {
         CreateFavoriteShopResponseDto createFavoriteShopResponseDto = userCommandService.createFavoriteShop(userId, createFavoriteShopRequestDto);
         return SuccessResponse.created(createFavoriteShopResponseDto);
     }
+
+    @DeleteMapping("/favorite-shops/{favoriteShopId}")
+    public ResponseEntity<SuccessResponse<?>> deleteFavoriteShop(@PathVariable("favoriteShopId") Long favoriteShopId) {
+        DeleteFavoriteShopResponseDto deleteFavoriteShopResponseDto = userCommandService.deleteFavoriteShop(favoriteShopId);
+        return SuccessResponse.ok(deleteFavoriteShopResponseDto);
+    }
 }
