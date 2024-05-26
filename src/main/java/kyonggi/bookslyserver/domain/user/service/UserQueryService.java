@@ -1,16 +1,10 @@
 package kyonggi.bookslyserver.domain.user.service;
 
-import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
-import kyonggi.bookslyserver.domain.shop.service.ShopService;
-import kyonggi.bookslyserver.domain.user.constant.Role;
-import kyonggi.bookslyserver.domain.user.dto.request.CreateFavoriteShopRequestDto;
-import kyonggi.bookslyserver.domain.user.dto.request.UpdateUserInfoRequestDto;
 import kyonggi.bookslyserver.domain.user.dto.response.*;
 import kyonggi.bookslyserver.domain.user.entity.FavoriteShop;
 import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.domain.user.repository.FavoriteShopRepository;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
-import kyonggi.bookslyserver.global.auth.principal.user.userInfo.OAuth2UserInfo;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.UnauthorizedException;
@@ -19,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -26,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserQueryService {
 
     private final UserRepository userRepository;
+    private final FavoriteShopRepository favoriteShopRepository;
 
     public User findUserByLoginId(String loginId) {
 
@@ -50,5 +47,10 @@ public class UserQueryService {
     public User findUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
         return user;
+    }
+
+    public GetFavoriteShopsResponseDto getFavoriteShops(Long userId) {
+        List<FavoriteShop> favoriteShops = favoriteShopRepository.findByUserId(userId);
+        return GetFavoriteShopsResponseDto.of(favoriteShops);
     }
 }
