@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 
 
+import com.sun.net.httpserver.Authenticator;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
@@ -61,6 +62,14 @@ public class ShopApiController {
         return SuccessResponse.ok(result);
     }
 
+
+    //새로 입점한 가게 리스트 조회
+    @GetMapping("/api/shops/newshops")
+    public ResponseEntity<SuccessResponse<?>> readNewShops(@PageableDefault(size = 5, page = 0, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable){
+        List<NewShopFilterDto> result = shopService.readNewShops(pageable);
+        return SuccessResponse.ok(result);
+    }
+  
     //Top100 조회
     @GetMapping("/api/shops/top100")
     public ResponseEntity<SuccessResponse<?>> readTopShops(@PageableDefault(size = 10, page = 0, sort = "totalVisitors", direction = Sort.Direction.DESC) Pageable pageable){

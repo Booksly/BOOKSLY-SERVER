@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -113,7 +114,7 @@ public class ShopService {
 
         Optional<ShopOwner> owner = shopOwnerRepository.findById(ownerId);
         shop.getShopOwner(owner);
-
+        shop.setCreatedAt(LocalDate.now());
         return new ShopRegisterDto(shop);
     }
 
@@ -178,6 +179,14 @@ public class ShopService {
 
         return new ShopOwnerDetailReadOneDto(shop.get(), businessScheduleDtos);
     }
+
+
+    public List<NewShopFilterDto> readNewShops(Pageable pageable){
+        Page<Shop> shopPage = shopRepository.findNewShops(pageable, LocalDate.now(), LocalDate.now().minusMonths(3));
+        List<NewShopFilterDto> result = shopPage.stream().map(shop -> new NewShopFilterDto(shop)).collect(Collectors.toList());
+        return result;
+    }
+
 
     public Shop findShop(Long shopId) {
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
