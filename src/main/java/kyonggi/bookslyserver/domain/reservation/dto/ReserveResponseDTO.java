@@ -195,6 +195,8 @@ public class ReserveResponseDTO {
         private boolean isConfirmed;
         private boolean isRefused;
         private boolean isCanceled;
+        private boolean isFavor;
+        private boolean hasReview;
     }
     @Builder
     @NoArgsConstructor

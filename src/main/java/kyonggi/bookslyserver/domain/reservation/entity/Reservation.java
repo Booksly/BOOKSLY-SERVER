@@ -1,12 +1,11 @@
 package kyonggi.bookslyserver.domain.reservation.entity;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.review.entity.Review;
 import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class Reservation extends BaseTimeEntity {
     private boolean isDeleted;
 
     @Column
-    private String eventTitle;
+    private String timeEventTitle;
 
     @Column
     private String refuseReason;
@@ -56,5 +55,9 @@ public class Reservation extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "reservation",cascade = CascadeType.ALL)
     private List<ReservationMenu> reservationMenus=new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name="review_id")
+    private Review review;
 
 }
