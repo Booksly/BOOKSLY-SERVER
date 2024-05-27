@@ -32,7 +32,6 @@ public class ShopApiController {
 
     private final ShopService shopService;
 
-
     //가게 이름 조회(가게 주인)
     @GetMapping("/api/shops/shopnames")
     public ResponseEntity<SuccessResponse<?>> readShopNames(@OwnerId Long id){
@@ -44,6 +43,13 @@ public class ShopApiController {
     @GetMapping("/api/shops/{shopId}/profile/user")
     public ResponseEntity<SuccessResponse<?>> findShop(@PathVariable("shopId") Long id){
         ShopUserReadOneDto result = shopService.findOne(id);
+        return SuccessResponse.ok(result);
+    }
+
+    //가게 메인 페이지 조회(가게 주인)
+    @GetMapping("/api/shops/{shopId}/mainprofile/owner")
+    public ResponseEntity<SuccessResponse<?>> readMain(@PathVariable("shopId") Long id){
+        ShopOwnerMainReadOneDto result = shopService.readMain(id);
         return SuccessResponse.ok(result);
     }
 

@@ -156,10 +156,18 @@ public class ShopService {
         return result;
     }
 
+    public ShopOwnerMainReadOneDto readMain(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException(SHOP_NOT_FOUND);
+        }
+        return new ShopOwnerMainReadOneDto(shop.get());
+    }
+
     public ShopOwnerDetailReadOneDto readOne(Long id){
         Optional<Shop> shop = shopRepository.findById(id);
         if(!shop.isPresent()){
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(SHOP_NOT_FOUND);
         }
         List<BusinessScheduleDto> businessScheduleDtos = new ArrayList<>();
 
