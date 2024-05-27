@@ -14,7 +14,7 @@ public class CheckPasswordValidator implements ConstraintValidator<CheckPassword
     @Override
     public boolean isValid(String passwd, ConstraintValidatorContext context) {
         if (passwd == null) {
-            return false;
+            return true;
         }
 
         // 조건 1: 비밀번호는 최소한 8글자 이상

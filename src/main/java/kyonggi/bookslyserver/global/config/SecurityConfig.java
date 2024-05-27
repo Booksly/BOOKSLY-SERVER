@@ -1,7 +1,7 @@
 package kyonggi.bookslyserver.global.config;
 
 import kyonggi.bookslyserver.domain.user.service.ShopOwnerService;
-import kyonggi.bookslyserver.domain.user.service.UserService;
+import kyonggi.bookslyserver.domain.user.service.UserQueryService;
 import kyonggi.bookslyserver.global.auth.handelr.CustomAccessDeniedHandler;
 import kyonggi.bookslyserver.global.auth.handelr.CustomAuthenticationSuccessHandler;
 import kyonggi.bookslyserver.global.auth.handelr.OAuthAuthenticationSuccessHandler;
@@ -41,7 +41,7 @@ public class SecurityConfig {
     private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
     private final UserDetailsService userDetailsService;
     private final ShopOwnerService shopOwnerService;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
 
 
     @Bean
@@ -79,11 +79,14 @@ public class SecurityConfig {
          */
         http
                 .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers("/api/events/closing-events/today","/api/events/time-events/today").permitAll()
 
                         //인증이 필요한 uri - 일반 회원만 접근 가능
-                        .requestMatchers("/api/user/details/**","/api/auth/verify/user/**","api/reservations","api/reservations/all").hasRole("USER")
+                        .requestMatchers("/api/users/**","/api/auth/verify/user/**","api/reservations","api/reservations/all").hasRole("USER")
                         //인증이 필요한 uri - 기업 회원만 접근 가능
-                        .requestMatchers("/api/owner/**","/api/events/**","/api/shops/**","/api/employees/{employeeId}/reservations/**","api/reservations/owner/**").hasRole("ADMIN")
+                        .requestMatchers("/api/owners/**","/api/events/**","/api/shops/**","/api/employees/{employeeId}/reservations/**","api/reservations/owner/**"
+                            ,"api/notices/shops/**"
+                        ).hasRole("ADMIN")
                         // 그 외 요청, 인증이 필요없음 - 비회원도 접근 가능
                         .anyRequest().permitAll());
 
@@ -107,7 +110,7 @@ public class SecurityConfig {
         http
                 .addFilter(corsConfig.corsFilter())
                 .addFilter(idPasswordAuthenticationFilter)
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil,userService,shopOwnerService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userQueryService,shopOwnerService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class);
 
         return http.build();

@@ -42,9 +42,11 @@ public class User extends BaseTimeEntity {
     private boolean isKakaoNotiEnabled;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<FavoriteShop> favoriteShops = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    @Builder.Default
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
@@ -61,5 +63,17 @@ public class User extends BaseTimeEntity {
     public void updateVerifiedInfo(String phoneNum) {
         this.phoneNum = phoneNum;
         this.isVerified = true;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updatePhoneNumber(String phoneNum) {
+        this.phoneNum = phoneNum;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
     }
 }

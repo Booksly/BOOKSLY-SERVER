@@ -11,6 +11,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
 import kyonggi.bookslyserver.domain.shop.repository.BusinessScheduleRepository;
+import kyonggi.bookslyserver.domain.shop.repository.CategoryRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
@@ -18,6 +19,7 @@ import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +46,11 @@ public class ShopService {
 
     private final ShopOwnerRepository shopOwnerRepository;
 
+    private final CategoryRepository categoryRepository;
+
+    private final String ALL_REGION = "전체";
+
+
 
     public ShopUserReadOneDto findOne(Long id){
         Optional<Shop> shop = shopRepository.findById(id);
@@ -65,6 +72,9 @@ public class ShopService {
         List<Employee> employeeList = shop.get().getEmployees();
         List<EmployeeUserResponseDto> employees = employeeList.stream().map(employee -> new EmployeeUserResponseDto(employee)).collect(Collectors.toList());
 
+        int visit = shop.get().getTotalVisitors() + 1;
+        shop.get().setTotalVisitors(visit);
+
         return ShopUserReadOneDto
                 .builder()
                 .Name(name)
@@ -76,6 +86,12 @@ public class ShopService {
                 .employees(employees)
                 .address(new AddressDto(shop.get().getAddress()))
                 .build();
+    }
+
+    public List<ShopFilterDto> readTopShops(Pageable pageable){
+        Page<Shop> shopPage = shopRepository.findAll(pageable);
+        List<ShopFilterDto> result = shopPage.stream().map(shop -> new ShopFilterDto(shop)).collect(Collectors.toList());
+        return result;
     }
 
     @Transactional
@@ -141,10 +157,18 @@ public class ShopService {
         return result;
     }
 
+    public ShopOwnerMainReadOneDto readMain(Long id){
+        Optional<Shop> shop = shopRepository.findById(id);
+        if(!shop.isPresent()){
+            throw new EntityNotFoundException(SHOP_NOT_FOUND);
+        }
+        return new ShopOwnerMainReadOneDto(shop.get());
+    }
+
     public ShopOwnerDetailReadOneDto readOne(Long id){
         Optional<Shop> shop = shopRepository.findById(id);
         if(!shop.isPresent()){
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(SHOP_NOT_FOUND);
         }
         List<BusinessScheduleDto> businessScheduleDtos = new ArrayList<>();
 
@@ -156,6 +180,7 @@ public class ShopService {
         return new ShopOwnerDetailReadOneDto(shop.get(), businessScheduleDtos);
     }
 
+
     public List<NewShopFilterDto> readNewShops(Pageable pageable){
         Page<Shop> shopPage = shopRepository.findNewShops(pageable, LocalDate.now(), LocalDate.now().minusMonths(3));
         List<NewShopFilterDto> result = shopPage.stream().map(shop -> new NewShopFilterDto(shop)).collect(Collectors.toList());
@@ -163,13 +188,52 @@ public class ShopService {
     }
 
 
+    public Shop findShop(Long shopId) {
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        return shop;
+    }
+
 
     public Shop findShop(Long ownerId, Long shopId) {
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-        if (shop.getShopOwner().getId() != ownerId) {
-            throw new BusinessException(BAD_REQUEST);
-        }
+        checkShopOwner(ownerId, shop);
         return shop;
+    }
+
+    private void checkShopOwner(Long ownerId, Shop shop) {
+        if (shop.getShopOwner().getId() != ownerId) {
+            throw new InvalidValueException(NOT_OWNER_OF_SHOP);
+        }
+    }
+
+    private List<Shop> filterShopsByAddress(List<Shop> shops, String region) {
+        String[] address = region.split(" ");
+
+        if (address[2].equals(ALL_REGION)) {
+            shops = shopRepository.findShopsByOneAndTwoAddress(address[0], address[1], shops);
+        }else {
+            shops = shopRepository.findShopsByAddress(address[0], address[1], address[2], shops);
+        }
+        return shops;
+    }
+
+    public List<Shop> getRegionFilteredShops(List<String> regions, List<Shop> shops) {
+        List<Shop> filteredShops = new ArrayList<>();
+        regions.stream().forEach(region ->
+                filteredShops.addAll(filterShopsByAddress(shops, region)));
+        return filteredShops;
+    }
+
+    private void validateCategoriesExist(List<Long> categoryIds) {
+        List<Long> existingCategoryIds = categoryRepository.findByCategoryIds(categoryIds);
+        if (existingCategoryIds.size() != categoryIds.size()) {
+            throw new InvalidValueException(ErrorCode.CATEGORY_NOT_FOUNT);
+        }
+    }
+
+    public List<Shop> getCategoryFilteredShops(List<Long> categories, List<Shop> shops) {
+        validateCategoriesExist(categories);
+        return shopRepository.findByCategoryIds(categories,shops);
     }
 
 

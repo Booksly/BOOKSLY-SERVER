@@ -1,6 +1,9 @@
 package kyonggi.bookslyserver.domain.reservation.service;
 
 import jakarta.transaction.Transactional;
+import kyonggi.bookslyserver.domain.notice.constant.NoticeType;
+import kyonggi.bookslyserver.domain.notice.entity.ShopOwnerNotice;
+import kyonggi.bookslyserver.domain.notice.repository.ShopOwnerNoticeRepository;
 import kyonggi.bookslyserver.domain.reservation.converter.ReservationConverter;
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveRequestDTO;
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
@@ -17,6 +20,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeMenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
+import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
@@ -46,7 +50,7 @@ public class ReserveCommandService {
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
     private final ReservationMenuRepository reservationMenuRepository;
-    private final ShopRepository shopRepository;
+    private final ShopOwnerNoticeRepository shopOwnerNoticeRepository;
     @AllArgsConstructor
     @Getter
     public static class TimeRange{
@@ -125,7 +129,15 @@ public class ReserveCommandService {
         });
 
         if(reservationSchedule.isAutoConfirmed()) autoReservationClose(reservationSchedule);
+        /**
+         * 예약 요청 알림 생성
+         */
 
+        shopOwnerNoticeRepository.save(ShopOwnerNotice.builder()
+                .reservation(newReservation)
+                .noticeType(NoticeType.REQUEST)
+                .shopOwner(reservationSchedule.getShop().getShopOwner())
+                .build());
         return ReservationConverter.toCreateReservationResultDTO(newReservation);
     }
     /**
@@ -160,6 +172,17 @@ public class ReserveCommandService {
         if (reservationSchedule.isAutoConfirmed()&&reservationSchedule.isClosed()){
             reservationSchedule.setClosed(false);
         }
+
+        /**
+         * 예약 취소 알림 생성
+         */
+        shopOwnerNoticeRepository.save(
+                ShopOwnerNotice.builder()
+                        .noticeType(NoticeType.CANCEL)
+                        .reservation(reservation)
+                        .shopOwner(reservationSchedule.getShop().getShopOwner())
+                        .build()
+        );
 
         return reservation.getUser().getNickname()+"님의 "+"예약 ID"+reservation.getId()+"이(가) 취소되었습니다.";
     }

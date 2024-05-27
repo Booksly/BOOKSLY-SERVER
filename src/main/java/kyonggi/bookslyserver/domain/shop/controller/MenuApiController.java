@@ -5,12 +5,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCreateRequestDto;
 import com.sun.net.httpserver.Authenticator;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCategoryReadDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadOneDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuUpdateResponseDto;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.*;
 import kyonggi.bookslyserver.domain.shop.service.MenuService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +36,11 @@ public class MenuApiController {
         return SuccessResponse.ok(result);
     }
 
+    @GetMapping("api/shops/employees/{employeeId}/menus/EventRegistration")
+    public ResponseEntity<SuccessResponse<?>> readMenuNamesTimeEventRegister(@PathVariable("employeeId") Long id){
+        List<EventRegisterEmployeeMenuDto> result = menuService.readMenuNamesEventRegister(id);
+        return SuccessResponse.ok(result);
+    }
 
     @PostMapping("/api/shops/{shopId}/menus")
     public ResponseEntity<SuccessResponse<?>> createMenu(@PathVariable("shopId") Long id, @RequestBody @Validated MenuCreateRequestDto requestDto){
@@ -56,8 +56,10 @@ public class MenuApiController {
     }
 
     @DeleteMapping("/api/shops/menus/{menuId}")
-    public void delete(@PathVariable("menuId") Long id){
-        menuService.delete(id);
+    public ResponseEntity<SuccessResponse<?>> delete(@PathVariable("menuId") Long id){
+
+        MenuDeleteResponseDto result = menuService.delete(id);
+        return SuccessResponse.ok(result);
     }
 
     @GetMapping("/api/shops/{shopId}/categories")
@@ -79,7 +81,8 @@ public class MenuApiController {
     }
 
     @DeleteMapping("/api/shops/menuCategories/{categoryId}")
-    public void deleteMenuCategory(@PathVariable("categoryId") Long id){
-        menuService.deleteCategory(id);
+    public ResponseEntity<SuccessResponse<?>> deleteMenuCategory(@PathVariable("categoryId") Long id){
+        MenuCategoryDeleteResponseDto result = menuService.deleteCategory(id);
+        return SuccessResponse.ok(result);
     }
 }

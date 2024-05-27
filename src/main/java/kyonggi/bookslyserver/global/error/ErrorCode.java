@@ -35,6 +35,15 @@ public enum ErrorCode implements BaseErrorCode{
     START_TIME_IS_AFTER_END_TIME(HttpStatus.BAD_REQUEST,"이벤트 시작 시간은 이벤트 마감 시간 이전이어야 합니다."),
     START_DATE_IS_AFTER_END_DATE(HttpStatus.BAD_REQUEST,"이벤트 시작일은 이벤트 마감일 이전이어야 합니다."),
     MENU_IS_NOT_EMPLOYEEMENU(HttpStatus.BAD_REQUEST,"직원 담당 메뉴가 아닌 메뉴가 존재합니다."),
+    PAGE_NUMBER_OVER(HttpStatus.BAD_REQUEST, "페이지는 9 이하여야 합니다."),
+    EMPLOYEE_NOT_BELONG_SHOP(HttpStatus.BAD_REQUEST,"해당 가게의 직원이 아닙니다"),
+    NOT_OWNER_OF_SHOP(HttpStatus.BAD_REQUEST,"해당 가게의 주인이 아닙니다."),
+    START_DATE_IS_BEFORE_NOW_DATE(HttpStatus.BAD_REQUEST, "이벤트 시작 날짜는 현재 날짜보다 이전일 수 없습니다."),
+    STRAT_TIME_IS_BEFORE_NOW(HttpStatus.BAD_REQUEST,"이벤트 시작 시간은 현재 시각보다 이를 수 없습니다." ),
+    EMPLOYEE_NOT_OWN_RESERVATION_SCHEDULE(HttpStatus.BAD_REQUEST,"직원 소유의 예약 일정이 아닙니다."),
+    EMPLOYEE_NOT_SETTING_CLOSING_EVENT(HttpStatus.BAD_REQUEST,"마감 이벤트 설정을 먼저 완료해주세요"),
+    CURRENT_PASSWORD_IS_NULL(HttpStatus.BAD_REQUEST,"현재 비밀번호를 입력해주세요."),
+    PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 
 
     /**
@@ -78,6 +87,7 @@ public enum ErrorCode implements BaseErrorCode{
     MENUCATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "메뉴 카테고리가 존재하지 않습니다."),
     CLOSING_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 마감 이벤트입니다."),
     TIME_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 타임 이벤트입니다."),
+    CATEGORY_NOT_FOUNT(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리입니다."),
 
     /**
      * 405 Method Not Allowed
@@ -96,7 +106,7 @@ public enum ErrorCode implements BaseErrorCode{
     /**
      * 500 Internal Server Error
      */
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다.");
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."), ;
 
     private final HttpStatus httpStatus;
     private final String message;

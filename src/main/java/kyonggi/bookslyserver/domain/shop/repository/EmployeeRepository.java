@@ -1,7 +1,6 @@
 package kyonggi.bookslyserver.domain.shop.repository;
 
 import jakarta.transaction.Transactional;
-import kyonggi.bookslyserver.domain.shop.dto.response.employee.EventRegisterEmployeeNamesDto;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,4 +18,11 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     @Transactional
     @Query("select e from Employee e where e.shop.id = :shopId")
     List<Employee> findEmployeesByShopId(@Param("shopId") Long id);
+
+    @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END " +
+            "FROM Employee e WHERE e.id = :employeeId AND e.shop.id = :shopId")
+    boolean existsByIdAndShopId(@Param("employeeId") Long employeeId, @Param("shopId") Long shopId);
+
+    @Query("select count(e) from Employee e where e in :employees and e.shop.id = :shop")
+    int countByEmployeesAndShop(@Param("employees") List<Employee> employees, @Param("shop") Long shopId);
 }

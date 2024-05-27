@@ -7,6 +7,7 @@ import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -22,10 +23,12 @@ public class TimeEventMenu extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
+    //@ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
+    //@ManyToOne(fetch = LAZY)
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "timeEvent_id")
     private TimeEvent timeEvent;

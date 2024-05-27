@@ -11,6 +11,7 @@ import kyonggi.bookslyserver.domain.event.service.ClosingEventCommandService;
 import kyonggi.bookslyserver.domain.event.service.ClosingEventQueryService;
 import kyonggi.bookslyserver.domain.event.service.TimeEventCommandService;
 import kyonggi.bookslyserver.domain.event.service.TimeEventQueryService;
+import kyonggi.bookslyserver.domain.event.validation.annotation.TimeSlotFormat;
 import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,10 +60,19 @@ public class EventController {
         return SuccessResponse.ok(deleteTimeEventResponseDto);
     }
 
+    @GetMapping("/time-events/today")
+    public ResponseEntity<SuccessResponse<?>> getTodayTimeEvents(@RequestParam(value = "region", required = false) List<String> regions,
+                                                                    @RequestParam(value = "time_slot", required = false) @TimeSlotFormat List<String> timeSlots,
+                                                                    @RequestParam(value = "category",required = false)List<Long> categories) {
+
+        GetTodayTimeEventsResponseDto getTodayTimeEventsResponseDto = timeEventQueryService.getTodayTimeEvents(regions, timeSlots, categories);
+        return SuccessResponse.ok(getTodayTimeEventsResponseDto);
+    }
+
 
     @PostMapping("/closing-events")
-    public ResponseEntity<SuccessResponse<?>> createClosingEvent(@RequestBody CreateClosingEventRequestDto createClosingEventRequestDto) {
-        CreateClosingEventResponseDto createClosingEventResponseDto = closingEventCommandService.createClosingEvent(createClosingEventRequestDto);
+    public ResponseEntity<SuccessResponse<?>> createClosingEvent(@RequestBody CreateClosingEventRequestDto createClosingEventRequestDto, @OwnerId Long ownerId) {
+        CreateClosingEventResponseDto createClosingEventResponseDto = closingEventCommandService.createClosingEvent(createClosingEventRequestDto, ownerId);
         return SuccessResponse.created(createClosingEventResponseDto);
     }
 
@@ -78,8 +89,17 @@ public class EventController {
     }
 
     @DeleteMapping("/closing-events/{closingEventId}")
-    public ResponseEntity<SuccessResponse<?>> deleteClosingEvent(@PathVariable("closingEventId") Long eventId, @RequestParam("shop")Long shopId, @OwnerId Long ownerId) {
-        DeleteClosingEventResponseDto deleteClosingEventResponseDto = closingEventCommandService.deleteEvent(eventId, shopId ,ownerId);
+    public ResponseEntity<SuccessResponse<?>> deleteClosingEvent(@PathVariable("closingEventId") Long eventId, @RequestParam("shop") Long shopId, @OwnerId Long ownerId) {
+        DeleteClosingEventResponseDto deleteClosingEventResponseDto = closingEventCommandService.deleteEvent(eventId, shopId, ownerId);
         return SuccessResponse.ok(deleteClosingEventResponseDto);
+    }
+
+    @GetMapping("/closing-events/today")
+    public ResponseEntity<SuccessResponse<?>> getTodayClosingEvents(@RequestParam(value = "region", required = false) List<String> regions,
+                                                                    @RequestParam(value = "time_slot", required = false) @TimeSlotFormat List<String> timeSlots,
+                                                                    @RequestParam(value = "category",required = false)List<Long> categories) {
+
+        GetTodayClosingEventsResponseDto getTodayClosingEventsResponseDto = closingEventQueryService.getTodayClosingEvents(regions, timeSlots, categories);
+        return SuccessResponse.ok(getTodayClosingEventsResponseDto);
     }
 }

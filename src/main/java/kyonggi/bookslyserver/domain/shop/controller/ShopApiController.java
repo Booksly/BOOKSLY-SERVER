@@ -12,7 +12,12 @@ import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerId;
 import kyonggi.bookslyserver.global.auth.principal.user.UserId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
+import kyonggi.bookslyserver.global.error.ErrorCode;
+import kyonggi.bookslyserver.global.error.exception.BusinessException;
+import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -28,7 +33,6 @@ public class ShopApiController {
 
     private final ShopService shopService;
 
-
     //가게 이름 조회(가게 주인)
     @GetMapping("/api/shops/shopnames")
     public ResponseEntity<SuccessResponse<?>> readShopNames(@OwnerId Long id){
@@ -43,6 +47,13 @@ public class ShopApiController {
         return SuccessResponse.ok(result);
     }
 
+    //가게 메인 페이지 조회(가게 주인)
+    @GetMapping("/api/shops/{shopId}/mainprofile/owner")
+    public ResponseEntity<SuccessResponse<?>> readMain(@PathVariable("shopId") Long id){
+        ShopOwnerMainReadOneDto result = shopService.readMain(id);
+        return SuccessResponse.ok(result);
+    }
+
 
     //가게 상세 프로필 조회(가게 주인)
     @GetMapping("/api/shops/{shopId}/profile/owner")
@@ -51,10 +62,21 @@ public class ShopApiController {
         return SuccessResponse.ok(result);
     }
 
+
     //새로 입점한 가게 리스트 조회
     @GetMapping("/api/shops/newshops")
     public ResponseEntity<SuccessResponse<?>> readNewShops(@PageableDefault(size = 5, page = 0, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable){
         List<NewShopFilterDto> result = shopService.readNewShops(pageable);
+        return SuccessResponse.ok(result);
+    }
+  
+    //Top100 조회
+    @GetMapping("/api/shops/top100")
+    public ResponseEntity<SuccessResponse<?>> readTopShops(@PageableDefault(size = 10, page = 0, sort = "totalVisitors", direction = Sort.Direction.DESC) Pageable pageable){
+        if(pageable.getPageNumber() > 9){
+            throw new InvalidValueException(ErrorCode.PAGE_NUMBER_OVER);
+        }
+        List<ShopFilterDto> result = shopService.readTopShops(pageable);
         return SuccessResponse.ok(result);
     }
 
@@ -78,5 +100,6 @@ public class ShopApiController {
         ShopDeleteResponseDto result = shopService.delete(id);
         return SuccessResponse.ok(result);
     }
+
 
 }

@@ -1,8 +1,8 @@
 package kyonggi.bookslyserver.global.auth.principal.user;
 
 import kyonggi.bookslyserver.domain.user.entity.User;
-import kyonggi.bookslyserver.domain.user.service.UserService;
-import kyonggi.bookslyserver.global.auth.principal.user.OAuthPrincipalDetails;
+import kyonggi.bookslyserver.domain.user.service.UserCommandService;
+import kyonggi.bookslyserver.domain.user.service.UserQueryService;
 import kyonggi.bookslyserver.global.auth.principal.user.userInfo.OAuth2UserInfo;
 import kyonggi.bookslyserver.global.auth.principal.user.userInfo.OAuthAttributes;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class OAuthPrincipalService extends DefaultOAuth2UserService {
 
-    private final UserService userService;
+    private final UserCommandService userCommandService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -30,7 +30,7 @@ public class OAuthPrincipalService extends DefaultOAuth2UserService {
         String providerId = userRequest.getClientRegistration().getRegistrationId();
         //리소스 서버로부터 받아온 attributes로 userInfo 생성
         OAuth2UserInfo userInfo = OAuthAttributes.of(providerId, oAuth2User.getAttributes());
-        User user = userService.getOrCreateUser(userInfo);
+        User user = userCommandService.getOrCreateUser(userInfo);
 
         return new OAuthPrincipalDetails(user, oAuth2User.getAttributes());
     }

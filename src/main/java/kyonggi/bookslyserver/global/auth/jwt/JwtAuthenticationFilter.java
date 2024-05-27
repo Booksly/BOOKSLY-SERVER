@@ -8,7 +8,7 @@ import kyonggi.bookslyserver.domain.user.constant.Role;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.entity.User;
 import kyonggi.bookslyserver.domain.user.service.ShopOwnerService;
-import kyonggi.bookslyserver.domain.user.service.UserService;
+import kyonggi.bookslyserver.domain.user.service.UserQueryService;
 import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerPrincipalDetails;
 import kyonggi.bookslyserver.global.auth.principal.user.OAuthPrincipalDetails;
 import kyonggi.bookslyserver.global.error.ErrorCode;
@@ -31,7 +31,7 @@ import static kyonggi.bookslyserver.global.util.JwtUtil.PREFIX;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
     private final ShopOwnerService shopOwnerService;
 
     @Override
@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void setAuthentication(String loginId) {
         Authentication authentication;
 
-        User user = userService.findUserByLoginId(loginId);
+        User user = userQueryService.findUserByLoginId(loginId);
 
         if (user.getRole() == Role.ROLE_ADMIN) {
             ShopOwner shopOwner = shopOwnerService.findShopOwnerByUserId(user.getId());

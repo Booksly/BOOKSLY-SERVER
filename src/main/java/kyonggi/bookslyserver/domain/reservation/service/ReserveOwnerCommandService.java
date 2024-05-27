@@ -1,6 +1,9 @@
 package kyonggi.bookslyserver.domain.reservation.service;
 
 import jakarta.transaction.Transactional;
+import kyonggi.bookslyserver.domain.notice.constant.NoticeType;
+import kyonggi.bookslyserver.domain.notice.entity.UserNotice;
+import kyonggi.bookslyserver.domain.notice.repository.UserNoticeRepository;
 import kyonggi.bookslyserver.domain.reservation.converter.ReservationConverter;
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveRequestDTO;
 import kyonggi.bookslyserver.domain.reservation.dto.ReserveResponseDTO;
@@ -40,6 +43,7 @@ public class ReserveOwnerCommandService {
     private final EmployeeRepository employeeRepository;
     private final ReservationScheduleRepository reservationScheduleRepository;
     private final ReservationSettingRepository reservationSettingRepository;
+    private final UserNoticeRepository userNoticeRepository;
     /**
      *  시간대 수동 마감
      */
@@ -149,6 +153,14 @@ public class ReserveOwnerCommandService {
                 .orElseThrow(()->new EntityNotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
         reservation.setConfirmed(true);
         reservationRepository.save(reservation);
+
+        userNoticeRepository.save(
+                UserNotice.builder()
+                        .noticeType(NoticeType.CONFIRM)
+                        .reservation(reservation)
+                        .user(reservation.getUser())
+                        .build()
+        );
         return "예약이 확정되었습니다";
     }
     public String refuseReservationRequest(Long reservationId, ReserveRequestDTO.refuseReasonRequestDTO requestDTO){
@@ -160,6 +172,16 @@ public class ReserveOwnerCommandService {
         reservation.setRefused(true);
         reservation.setRefuseReason(requestDTO.getRefuseReason());
         reservationRepository.save(reservation);
+        /**
+         * 거절된 예약 알림 객체 생성
+         */
+        userNoticeRepository.save(
+          UserNotice.builder()
+                  .noticeType(NoticeType.REFUSE)
+                  .reservation(reservation)
+                  .user(reservation.getUser())
+                  .build()
+        );
         return "예약이 거절되었습니다";
     }
     /**

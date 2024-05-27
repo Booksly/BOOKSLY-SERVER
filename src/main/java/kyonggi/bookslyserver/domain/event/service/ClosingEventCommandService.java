@@ -11,18 +11,22 @@ import kyonggi.bookslyserver.domain.event.repository.ClosingEventRepository;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRepository;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
-import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
+import kyonggi.bookslyserver.domain.shop.repository.EmployeeMenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
+import kyonggi.bookslyserver.domain.shop.service.EmployeeService;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.global.error.exception.ConflictException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
+import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
@@ -32,45 +36,54 @@ import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 public class ClosingEventCommandService {
     private final ClosingEventRepository closingEventRepository;
     private final MenuRepository menuRepository;
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
     private final ShopService shopService;
     private final ReservationScheduleRepository reservationScheduleRepository;
+    private final EmployeeMenuRepository employeeMenuRepository;
 
-    public CreateClosingEventResponseDto createClosingEvent(CreateClosingEventRequestDto createClosingEventRequestDto) {
+    private Employee findEmployee(Long employeeId, Long shopId) {
+        Employee employee = employeeService.findEmployeeById(employeeId);
+        employeeService.validateBelongShop(employeeId,shopId);
 
-        Employee employee = findEmployee(createClosingEventRequestDto.employeeId());
+        return employee;
+    }
+
+    private List<Menu> getMenus(CreateClosingEventRequestDto createClosingEventRequestDto, Employee employee) {
+        List<Menu> menus = createClosingEventRequestDto.menuIds().stream()
+                .map(id -> menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(MENU_NOT_FOUND))).collect(Collectors.toList());
+
+        int employeeMenuNum = employeeMenuRepository.countByMenusAndEmployee(menus, employee);
+        if (employeeMenuNum != menus.size()) {
+            throw new InvalidValueException(MENU_IS_NOT_EMPLOYEEMENU);
+        }
+        return menus;
+    }
+
+    public CreateClosingEventResponseDto createClosingEvent(CreateClosingEventRequestDto createClosingEventRequestDto, Long ownerId) {
+        Shop shop = shopService.findShop(ownerId, createClosingEventRequestDto.shopId());
+        Employee employee = findEmployee(createClosingEventRequestDto.employeeId(), shop.getId());
+
+        if (closingEventRepository.existsByEmployeeId(employee.getId()))
+            throw new ConflictException(EVENT_SETTING_ALREADY_EXISTS);
 
         ClosingEvent closingEvent = ClosingEvent.builder()
                 .eventMessage(createClosingEventRequestDto.message())
                 .discountRate(createClosingEventRequestDto.discountRate())
                 .employee(employee).build();
 
+        List<Menu> menus = getMenus(createClosingEventRequestDto, employee);
 
-        createClosingEventRequestDto.menuIds().stream()
-                .map(id -> menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(MENU_NOT_FOUND)))
-                .forEach(menu -> {
-                    ClosingEventMenu closingEventMenu = ClosingEventMenu.builder()
-                            .menu(menu)
-                            .closingEvent(closingEvent).build();
-                    closingEventMenu.addClosingEvent(closingEvent);
-                });
+        menus.forEach(menu -> {
+            ClosingEventMenu closingEventMenu = ClosingEventMenu.builder()
+                    .menu(menu)
+                    .closingEvent(closingEvent).build();
+            closingEventMenu.addClosingEvent(closingEvent);
+        });
 
         ClosingEvent createdEvent = closingEventRepository.save(closingEvent);
         return CreateClosingEventResponseDto.of(createdEvent);
     }
 
-    private Employee findEmployee(Long id) {
-
-        if (closingEventRepository.existsByEmployeeId(id)) {
-            throw new ConflictException(EVENT_SETTING_ALREADY_EXISTS);
-        }
-
-        Employee employee = employeeRepository
-                .findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_FOUND));
-
-        return employee;
-    }
 
     public ApplyClosingEventsResponseDto applyClosingEvents(ApplyClosingEventsRequestDto applyClosingEventsRequestDto, boolean isApply, Long ownerId) {
         Shop shop = shopService.findShop(ownerId, applyClosingEventsRequestDto.shopId());
@@ -94,7 +107,7 @@ public class ClosingEventCommandService {
 
     private ClosingEvent getClosingEvent(ReservationSchedule reservationSchedule) {
         Employee employee = reservationSchedule.getEmployee();
-        ClosingEvent closingEvent = closingEventRepository.findByEmployee(employee).orElseThrow(() -> new EntityNotFoundException(CLOSING_EVENT_NOT_FOUND));
+        ClosingEvent closingEvent = closingEventRepository.findByEmployee(employee).orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_SETTING_CLOSING_EVENT));
         return closingEvent;
     }
 

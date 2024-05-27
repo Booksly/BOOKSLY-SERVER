@@ -62,4 +62,16 @@ public class ShopOwner extends BaseTimeEntity {
         this.shops.remove(shop);
     }
 
+    public void updatePassword(String encodedPasswd) {
+        this.password = encodedPasswd;
+    }
+
+    public void updatePhoneNum(String phoneNum) {
+        this.user.updatePhoneNumber(phoneNum);
+    }
+
+    public void updateEmail(String email) {
+        this.user.updateEmail(email);
+    }
+
 }

@@ -1,6 +1,11 @@
 package kyonggi.bookslyserver.domain.shop.service;
 
-import jakarta.transaction.Transactional;
+import kyonggi.bookslyserver.domain.event.entity.Event;
+import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
+import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEventSchedule;
+import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
+import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRepository;
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeWorkScheduleDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.*;
@@ -14,19 +19,17 @@ import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
+import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static kyonggi.bookslyserver.global.error.ErrorCode.EMPLOYEE_NOT_FOUND;
-import static kyonggi.bookslyserver.global.error.ErrorCode.SHOP_NOT_FOUND;
+import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
 @Service
 @Transactional
@@ -42,6 +45,8 @@ public class EmployeeService {
     private final ShopRepository shopRepository;
 
     private final MenuRepository menuRepository;
+
+    private final ReservationScheduleRepository reservationScheduleRepository;
 
     public List<EmployeeReadDto> readEmployee(Long id){
         Optional<Shop> shop = shopRepository.findById(id);
@@ -134,7 +139,7 @@ public class EmployeeService {
     }
 
     @Transactional
-    public Long update(Long id, EmployeeCreateRequestDto requestDto){
+    public EmployeeUpdateResponseDto update(Long id, EmployeeCreateRequestDto requestDto){
         Optional<Employee> employee = employeeRepository.findById(id);
         if(!employee.isPresent()){
             throw new EntityNotFoundException();
@@ -150,21 +155,25 @@ public class EmployeeService {
         for(WorkSchedule workSchedule : workScheduleList){
             workScheduleRepository.delete(workSchedule);
         }
+
         if(requestDto.menus() != null){
             for(String menuName : requestDto.menus()){
                 Menu menu = menuRepository.findByMenuName(menuName);
-                employee.get().addMenu(employee.get(), menu);
+                EmployeeMenu employeeMenu = employee.get().addMenu(employee.get(), menu);
+                employeeMenuRepository.save(employeeMenu);
             }
         }
+
 
         for(EmployeeWorkScheduleDto employeeWorkScheduleDto : requestDto.workSchedules()){
             WorkSchedule workSchedule = WorkSchedule.createEntity(employee.get(), employeeWorkScheduleDto);
             employee.get().getWorkSchedules().add(workSchedule);
+            workScheduleRepository.save(workSchedule);
         }
 
         employee.get().update(requestDto);
 
-        return employee.get().getId();
+        return new EmployeeUpdateResponseDto(requestDto);
     }
 
     @Transactional
@@ -205,7 +214,74 @@ public class EmployeeService {
             currentDate = currentDate.plusDays(1);
         }
 
-
         return GetCalendarDatesResponseDto.of(employee.getId(), workdays, holidays);
+    }
+
+    public Employee findEmployeeById(Long employeeId) {
+        return employeeRepository
+                .findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_FOUND));
+
+    }
+
+    public void validateBelongShop(Long employeeId, Long shopId) {
+        if (!employeeRepository.existsByIdAndShopId(employeeId, shopId))
+            throw new InvalidValueException(EMPLOYEE_NOT_BELONG_SHOP);
+    }
+
+
+    private void validateReservationScheduleBelongEmployee(Employee employee, ReservationSchedule reservationSchedule) {
+        if (reservationSchedule.getEmployee().getId() != employee.getId()) {
+            throw new InvalidValueException(EMPLOYEE_NOT_OWN_RESERVATION_SCHEDULE);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public CheckEventStatusResponseDto checkEventStatus(Long shopId, Long employeeId, Long reservationScheduleId) {
+        Employee employee = findEmployeeById(employeeId);
+        validateBelongShop(employeeId,shopId);
+
+        ReservationSchedule reservationSchedule = reservationScheduleRepository.findById(reservationScheduleId).orElseThrow(() -> new EntityNotFoundException(RESERVATION_SCHEDULE_NOT_FOUND));
+        validateReservationScheduleBelongEmployee(employee, reservationSchedule);
+        boolean hasEvent = !reservationSchedule.isClosed() &&
+                (reservationSchedule.isClosingEvent() || reservationSchedule.getTimeEventSchedule() != null);
+
+        return CheckEventStatusResponseDto.of(hasEvent);
+    }
+
+    public List<Menu> findEmployeeClosingEventMenus(Employee employee, ClosingEvent closingEvent) {
+        List<Menu> menus = closingEvent.getClosingEventMenus().stream()
+                .map(closingEventMenu -> closingEventMenu.getMenu()).collect(Collectors.toList());
+        return employeeMenuRepository.findByMenusAndEmployee(menus, employee);
+    }
+
+    public List<Menu> findEmployeeTimeEventMenus(Employee employee, TimeEvent timeEvent) {
+        List<Menu> menus = timeEvent.getTimeEventMenus().stream()
+                .map(timeEventMenu -> timeEventMenu.getMenu()).collect(Collectors.toList());
+
+        return employeeMenuRepository.findByMenusAndEmployee(menus, employee);
+    }
+
+    public GetEventMenusResponseDto getEventMenus(Long shopId, Long employeeId, Long reservationScheduleId) {
+        Employee employee = findEmployeeById(employeeId);
+        validateBelongShop(employeeId,shopId);
+
+        ReservationSchedule reservationSchedule = reservationScheduleRepository.findById(reservationScheduleId).orElseThrow(() -> new EntityNotFoundException(RESERVATION_SCHEDULE_NOT_FOUND));
+        validateReservationScheduleBelongEmployee(employee, reservationSchedule);
+
+        Map<Event, List<Menu>> eventMenus = new HashMap<>();
+        if (!reservationSchedule.isClosed() && reservationSchedule.isClosingEvent()) {
+            ClosingEvent closingEvent = reservationSchedule.getClosingEvent();
+            List<Menu> employeeClosingEventMenus = findEmployeeClosingEventMenus(employee, closingEvent);
+            eventMenus.put(closingEvent, employeeClosingEventMenus);
+        }
+
+        if (reservationSchedule.getTimeEventSchedule() != null) {
+            TimeEvent timeEvent = reservationSchedule.getTimeEventSchedule().getTimeEvent();
+            List<Menu> employeeTimeEventMenus = findEmployeeTimeEventMenus(employee, timeEvent);
+            eventMenus.put(timeEvent, employeeTimeEventMenus);
+        }
+
+        return GetEventMenusResponseDto.of(eventMenus);
     }
 }
