@@ -383,7 +383,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
         List<ReserveResponseDTO.myPageReservationsResultDTO> results=queryFactory.select(
                 Projections.fields(ReserveResponseDTO.myPageReservationsResultDTO.class,
                         reservation.id.as("reservationId"),
-                        reservation.eventTitle.as("eventTitle"),
+                        reservation.timeEventTitle.as("eventTitle"),
                         reservation.isRefused.as("isRefused"),
                         reservation.isCanceled.as("isCanceled"),
                         reservationSchedule.workDate.as("date"),

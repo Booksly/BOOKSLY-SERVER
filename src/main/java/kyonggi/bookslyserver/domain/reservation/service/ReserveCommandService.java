@@ -19,8 +19,6 @@ import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeMenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
-import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
-import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
@@ -85,9 +83,9 @@ public class ReserveCommandService {
         /**
          *  가격 계산
          */
-        int totalPrice= requestDTO.getReservationMenuRequestDTOS().stream()
-                .mapToInt(menuDto->{
-                    EmployeeMenu employeeMenu=employeeMenuRepository.findById(menuDto.getEmpMenuId()).orElseThrow(()->new EntityNotFoundException(ErrorCode.EMPLOYEE_MENU_NOT_FOUND));
+        int totalPrice= requestDTO.getReservationMenus().stream()
+                .mapToInt(menu->{
+                    EmployeeMenu employeeMenu=employeeMenuRepository.findById(menu.getEmpMenuId()).orElseThrow(()->new EntityNotFoundException(ErrorCode.EMPLOYEE_MENU_NOT_FOUND));
                     return employeeMenu.getMenu().getPrice();
                 }).sum();
         if (requestDTO.isEvent()){
@@ -106,7 +104,7 @@ public class ReserveCommandService {
                 .price(totalPrice)
                 .reservationSchedule(reservationSchedule)
                 .inquiry(requestDTO.getInquiry())
-                .eventTitle(requestDTO.getEventTitle())
+                .timeEventTitle(requestDTO.getEventTitle())
                 .user(userRepository.findById(userId).orElseThrow(()->new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND)))
                 .reservationMenus(new ArrayList<>())
                 .isConfirmed(reservationSchedule.isAutoConfirmed())
@@ -116,7 +114,7 @@ public class ReserveCommandService {
         /**
          *  Reservation Menu 생성
          */
-        requestDTO.getReservationMenuRequestDTOS().forEach(menuDto -> {
+        requestDTO.getReservationMenus().forEach(menuDto -> {
             EmployeeMenu employeeMenu = employeeMenuRepository.findById(menuDto.getEmpMenuId())
                     .orElseThrow(() -> new EntityNotFoundException(ErrorCode.EMPLOYEE_MENU_NOT_FOUND));
             newReservation.getReservationMenus().add(

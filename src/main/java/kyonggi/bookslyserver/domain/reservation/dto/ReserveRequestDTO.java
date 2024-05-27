@@ -42,9 +42,9 @@ public class ReserveRequestDTO {
         private Integer discount;
         private String inquiry;
         /**
-         * 직원메뉴 아이디 리스트로 받아오기
+         * 직원메뉴 아이디 리스트
          */
-        private List<reservationMenuRequestDTO> reservationMenuRequestDTOS;
+        private List<reservationMenuRequestDTO> reservationMenus;
     }
     @Builder
     @Getter
