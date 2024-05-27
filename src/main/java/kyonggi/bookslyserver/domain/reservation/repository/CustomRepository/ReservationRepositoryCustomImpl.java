@@ -2,10 +2,12 @@ package kyonggi.bookslyserver.domain.reservation.repository.CustomRepository;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.QClosingEvent;
@@ -20,6 +22,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Employee.QEmployee;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.QMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.QMenuCategory;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.QShop;
+import kyonggi.bookslyserver.domain.user.entity.QFavoriteShop;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -47,6 +50,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     QTimeEvent timeEvent=QTimeEvent.timeEvent;
     QClosingEvent closingEvent=QClosingEvent.closingEvent;
     QMenuCategory menuCategory=QMenuCategory.menuCategory;
+    QFavoriteShop favoriteShop=QFavoriteShop.favoriteShop;
     /**
      * 예약 요청 조회
      */
@@ -395,6 +399,13 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                                 shop.address.secondAddress,
                                 shop.address.thirdAddress
                         ).as("location"),
+                        ExpressionUtils.as(
+                                JPAExpressions.selectOne()
+                                        .from(favoriteShop)
+                                        .where(favoriteShop.user.id.eq(userId)
+                                                .and(favoriteShop.shop.id.eq(shop.id)))
+                                        .exists(),"isFavor"
+                        ),
                         employee.name.as("employeeName"))
                 )
                 .from(reservation)
