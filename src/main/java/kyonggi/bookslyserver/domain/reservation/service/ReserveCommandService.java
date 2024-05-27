@@ -16,9 +16,9 @@ import kyonggi.bookslyserver.domain.reservation.repository.ReservationRepository
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRepository;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationSettingRepository;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
-import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeMenuRepository;
 import kyonggi.bookslyserver.domain.shop.repository.EmployeeRepository;
+import kyonggi.bookslyserver.domain.shop.repository.MenuRepository;
 import kyonggi.bookslyserver.domain.user.repository.UserRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
@@ -32,7 +32,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -49,6 +51,7 @@ public class ReserveCommandService {
     private final ReservationRepository reservationRepository;
     private final ReservationMenuRepository reservationMenuRepository;
     private final ShopOwnerNoticeRepository shopOwnerNoticeRepository;
+    private final MenuRepository menuRepository;
     @AllArgsConstructor
     @Getter
     public static class TimeRange{
@@ -79,20 +82,24 @@ public class ReserveCommandService {
         if(reservationScheduleRepository.findById(requestDTO.getReservationScheduleId()).get().isClosed()){
             throw new InvalidValueException(ErrorCode.RESERVATION_CLOSED_BAD_REQUEST);
         }
+        validateReservationMenus(requestDTO.getReservationMenus());
 
         /**
          *  가격 계산
          */
-        int totalPrice= requestDTO.getReservationMenus().stream()
-                .mapToInt(menu->{
-                    EmployeeMenu employeeMenu=employeeMenuRepository.findById(menu.getEmpMenuId()).orElseThrow(()->new EntityNotFoundException(ErrorCode.EMPLOYEE_MENU_NOT_FOUND));
-                    return employeeMenu.getMenu().getPrice();
-                }).sum();
-        if (requestDTO.isEvent()){
-            if (requestDTO.getDiscount()==null) throw new InvalidValueException(ErrorCode.DISCOUNT_SETTING_BAD_REQUEST);
-            double dc=(100-requestDTO.getDiscount())/100.0;
-            totalPrice=(int)(totalPrice*dc);
+        int totalPrice= 0;
+        for (ReserveRequestDTO.reservationMenuRequestDTO menu: requestDTO.getReservationMenus()){
+            int menuPrice=menu.getPrice();
+            System.out.println(menu.isEvent());
+            if (menu.isEvent()){
+                int dc=menu.getDiscount();
+                double dcRatio=dc/100.0;
+                int dcPrice=(int) (menuPrice-(menuPrice*dcRatio));
+                totalPrice+=dcPrice;
+            }
+            else totalPrice+=menuPrice;
         }
+
         /**
          * Reservation 생성
          */
@@ -104,7 +111,7 @@ public class ReserveCommandService {
                 .price(totalPrice)
                 .reservationSchedule(reservationSchedule)
                 .inquiry(requestDTO.getInquiry())
-                .timeEventTitle(requestDTO.getEventTitle())
+                .timeEventTitle(requestDTO.getTimeEventTitle())
                 .user(userRepository.findById(userId).orElseThrow(()->new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND)))
                 .reservationMenus(new ArrayList<>())
                 .isConfirmed(reservationSchedule.isAutoConfirmed())
@@ -114,16 +121,16 @@ public class ReserveCommandService {
         /**
          *  Reservation Menu 생성
          */
-        requestDTO.getReservationMenus().forEach(menuDto -> {
-            EmployeeMenu employeeMenu = employeeMenuRepository.findById(menuDto.getEmpMenuId())
-                    .orElseThrow(() -> new EntityNotFoundException(ErrorCode.EMPLOYEE_MENU_NOT_FOUND));
+        requestDTO.getReservationMenus().forEach(menu->{
+
             newReservation.getReservationMenus().add(
                     reservationMenuRepository.save(
-                    ReservationMenu.builder()
-                            .reservation(newReservation)
-                            .menu(employeeMenu.getMenu())
-                            .build()
-            ));
+                            ReservationMenu.builder()
+                                    .reservation(newReservation)
+                                    .menu(menuRepository.findById(menu.getMenuId()).orElseThrow(()->new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND)))
+                                    .build()
+                    )
+            );
         });
 
         if(reservationSchedule.isAutoConfirmed()) autoReservationClose(reservationSchedule);
@@ -137,6 +144,22 @@ public class ReserveCommandService {
                 .shopOwner(reservationSchedule.getShop().getShopOwner())
                 .build());
         return ReservationConverter.toCreateReservationResultDTO(newReservation);
+    }
+    /**
+     * 메뉴 검증
+     */
+    public void validateReservationMenus(List<ReserveRequestDTO.reservationMenuRequestDTO> reservationMenus){
+        Set<Long> menuIds=new HashSet<>();
+        for (ReserveRequestDTO.reservationMenuRequestDTO menu:reservationMenus){
+            if (!menuIds.add(menu.getMenuId())){
+                throw new InvalidValueException(ErrorCode.MENUS_ARE_DUPLICATED);
+            }
+            if (menu.isEvent()){
+                if (menu.getDiscount()==null||menu.getDiscount()==0){
+                    throw new InvalidValueException(ErrorCode.DISCOUNT_SETTING_BAD_REQUEST);
+                }
+            }
+        }
     }
     /**
      * 마이페이지 전체 예약 조회, 카테고리별

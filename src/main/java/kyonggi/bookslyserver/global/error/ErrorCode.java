@@ -44,6 +44,7 @@ public enum ErrorCode implements BaseErrorCode{
     EMPLOYEE_NOT_SETTING_CLOSING_EVENT(HttpStatus.BAD_REQUEST,"마감 이벤트 설정을 먼저 완료해주세요"),
     CURRENT_PASSWORD_IS_NULL(HttpStatus.BAD_REQUEST,"현재 비밀번호를 입력해주세요."),
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    MENUS_ARE_DUPLICATED(HttpStatus.BAD_REQUEST,"메뉴는 중복 선택할 수 없습니다"),
 
 
     /**
