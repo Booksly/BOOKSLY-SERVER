@@ -18,6 +18,7 @@ import kyonggi.bookslyserver.domain.reservation.entity.QReservation;
 import kyonggi.bookslyserver.domain.reservation.entity.QReservationMenu;
 import kyonggi.bookslyserver.domain.reservation.entity.QReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.service.ReserveCommandService;
+import kyonggi.bookslyserver.domain.review.entity.QReview;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.QEmployee;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.QMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.QMenuCategory;
@@ -51,6 +52,7 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     QClosingEvent closingEvent=QClosingEvent.closingEvent;
     QMenuCategory menuCategory=QMenuCategory.menuCategory;
     QFavoriteShop favoriteShop=QFavoriteShop.favoriteShop;
+    QReview review=QReview.review;
     /**
      * 예약 요청 조회
      */
@@ -406,8 +408,12 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
                                                 .and(favoriteShop.shop.id.eq(shop.id)))
                                         .exists(),"isFavor"
                         ),
-                        employee.name.as("employeeName"))
-                )
+                        employee.name.as("employeeName"),
+                        ExpressionUtils.as(JPAExpressions.selectOne()
+                                .from(review)
+                                .where(review.reservation.id.eq(reservation.id))
+                                .exists(),"hasReview")
+                ))
                 .from(reservation)
                 .join(reservation.reservationSchedule,reservationSchedule)
                 .join(reservationSchedule.shop,shop)
