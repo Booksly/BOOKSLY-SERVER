@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Data
 public class ShopOwnerMainReadOneDto {
+    private Long id;
     private String name;
     private int reviewNum;
     private float reviewAvg;
@@ -29,6 +30,7 @@ public class ShopOwnerMainReadOneDto {
         this.menus = new ArrayList<>();
         this.employees = new ArrayList<>();
 
+        this.id = shop.getId();
         this.name = shop.getName();
         if (shop.getReviews() != null) {
             this.reviewNum = shop.getReviews().size();
