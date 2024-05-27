@@ -48,7 +48,7 @@ public class ShopApiController {
 
     //가게 메인 페이지 조회(가게 주인)
     @GetMapping("/api/shops/{shopId}/mainprofile/owner")
-    public ResponseEntity<SuccessResponse<?>> readShop(@PathVariable("shopId") Long id){
+    public ResponseEntity<SuccessResponse<?>> readMain(@PathVariable("shopId") Long id){
         ShopOwnerMainReadOneDto result = shopService.readMain(id);
         return SuccessResponse.ok(result);
     }
