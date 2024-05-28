@@ -41,7 +41,7 @@ public class Review extends BaseTimeEntity {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @OneToOne(mappedBy = "review",cascade = CascadeType.ALL, fetch = LAZY)
+    @OneToOne(mappedBy = "review", fetch = LAZY)
     private Reservation reservation;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
