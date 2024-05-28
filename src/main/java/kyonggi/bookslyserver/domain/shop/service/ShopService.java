@@ -227,7 +227,7 @@ public class ShopService {
     private void validateCategoriesExist(List<Long> categoryIds) {
         List<Long> existingCategoryIds = categoryRepository.findByCategoryIds(categoryIds);
         if (existingCategoryIds.size() != categoryIds.size()) {
-            throw new InvalidValueException(ErrorCode.CATEGORY_NOT_FOUNT);
+            throw new InvalidValueException(ErrorCode.CATEGORY_NOT_FOUND);
         }
     }
 
