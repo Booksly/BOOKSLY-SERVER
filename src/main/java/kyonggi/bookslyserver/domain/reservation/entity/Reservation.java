@@ -67,4 +67,11 @@ public class Reservation extends BaseTimeEntity {
         review.setReservation(this);
     }
 
+    public void deleteReview(Review review) {
+        if (this.review != null) {
+            this.review.setReservation(null);
+            this.review = null;
+        }
+    }
+
 }

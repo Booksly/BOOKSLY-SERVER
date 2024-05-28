@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
@@ -109,10 +110,22 @@ public class ReviewService {
 
     public GetUserReviewResponseDto getUserReview(Long userId, Long reviewId) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException(REVIEW_NOT_FOUND));
-        log.info("로그인 유저 아이디: "+userId);
         if (review.getUser().getId() != userId) {
             throw new ForbiddenException();
         }
         return GetUserReviewResponseDto.of(review);
+    }
+
+    public void deleteUserReview(Long userId, Long reviewId) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException(REVIEW_NOT_FOUND));
+        if (review.getUser().getId() != userId) throw new ForbiddenException();
+
+        if (review.getReviewImages() != null) {
+            review.getReviewImages().stream().
+                    forEach(reviewImage -> amazonS3Manager.deleteFile(amazonS3Manager.extractKeyNameFromUrl(reviewImage.getReviewImgUrl())));
+        }
+
+        review.getReservation().deleteReview(review);
+        reviewRepository.deleteById(reviewId);
     }
 }
