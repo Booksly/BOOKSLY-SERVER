@@ -69,6 +69,19 @@ public class ReviewService {
     }
 
 
+    private void uploadFileToS3(CreateReviewRequestDto createReviewRequestDto, Review savedReview, Uuid savedUuid) {
+        createReviewRequestDto.getReviewPictures().forEach(picture-> {
+            String pictureUrl = amazonS3Manager.uploadFile(
+                    amazonS3Manager.generateReviewKeyName(savedUuid, picture.getOriginalFilename()), picture);
+
+            ReviewImage reviewImage = ReviewImage.builder()
+                    .review(savedReview)
+                    .reviewImgUrl(pictureUrl)
+                    .build();
+            reviewImageRepository.save(reviewImage);
+        });
+    }
+
     private Uuid createUuid() {
         String uuid = UUID.randomUUID().toString();
         Uuid savedUuid = uuidRepository.save(Uuid.builder()
@@ -95,16 +108,9 @@ public class ReviewService {
 
         Uuid savedUuid = createUuid();
 
-        createReviewRequestDto.getReviewPictures().forEach(picture-> {
-            String pictureUrl = amazonS3Manager.uploadFile(
-                    amazonS3Manager.generateReviewKeyName(savedUuid, picture.getOriginalFilename()), picture);
+        if (createReviewRequestDto.getReviewPictures() != null && !createReviewRequestDto.getReviewPictures().isEmpty())
+            uploadFileToS3(createReviewRequestDto, savedReview, savedUuid);
 
-            ReviewImage reviewImage = ReviewImage.builder()
-                    .review(savedReview)
-                    .reviewImgUrl(pictureUrl)
-                    .build();
-            reviewImageRepository.save(reviewImage);
-        });
         return CreateReviewResponseDto.of(savedReview);
     }
 
