@@ -32,6 +32,6 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         String accessToken = jwtUtil.createAccessToken(principalLoginId);
         response.addHeader(Authorization, accessToken);
         log.info(accessToken);
-        getRedirectStrategy().sendRedirect(request, response, "http://localhost:8080/api/user/test");
+        getRedirectStrategy().sendRedirect(request, response, "http://localhost:8080/api/users/test");
     }
 }
