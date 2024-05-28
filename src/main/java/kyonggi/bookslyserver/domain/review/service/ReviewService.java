@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
@@ -68,6 +69,19 @@ public class ReviewService {
     }
 
 
+    private void uploadFileToS3(CreateReviewRequestDto createReviewRequestDto, Review savedReview, Uuid savedUuid) {
+        createReviewRequestDto.getReviewPictures().forEach(picture-> {
+            String pictureUrl = amazonS3Manager.uploadFile(
+                    amazonS3Manager.generateReviewKeyName(savedUuid, picture.getOriginalFilename()), picture);
+
+            ReviewImage reviewImage = ReviewImage.builder()
+                    .review(savedReview)
+                    .reviewImgUrl(pictureUrl)
+                    .build();
+            reviewImageRepository.save(reviewImage);
+        });
+    }
+
     private Uuid createUuid() {
         String uuid = UUID.randomUUID().toString();
         Uuid savedUuid = uuidRepository.save(Uuid.builder()
@@ -94,25 +108,30 @@ public class ReviewService {
 
         Uuid savedUuid = createUuid();
 
-        createReviewRequestDto.getReviewPictures().forEach(picture-> {
-            String pictureUrl = amazonS3Manager.uploadFile(
-                    amazonS3Manager.generateReviewKeyName(savedUuid, picture.getOriginalFilename()), picture);
+        if (createReviewRequestDto.getReviewPictures() != null && !createReviewRequestDto.getReviewPictures().isEmpty())
+            uploadFileToS3(createReviewRequestDto, savedReview, savedUuid);
 
-            ReviewImage reviewImage = ReviewImage.builder()
-                    .review(savedReview)
-                    .reviewImgUrl(pictureUrl)
-                    .build();
-            reviewImageRepository.save(reviewImage);
-        });
         return CreateReviewResponseDto.of(savedReview);
     }
 
     public GetUserReviewResponseDto getUserReview(Long userId, Long reviewId) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException(REVIEW_NOT_FOUND));
-        log.info("로그인 유저 아이디: "+userId);
         if (review.getUser().getId() != userId) {
             throw new ForbiddenException();
         }
         return GetUserReviewResponseDto.of(review);
+    }
+
+    public void deleteUserReview(Long userId, Long reviewId) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException(REVIEW_NOT_FOUND));
+        if (review.getUser().getId() != userId) throw new ForbiddenException();
+
+        if (review.getReviewImages() != null) {
+            review.getReviewImages().stream().
+                    forEach(reviewImage -> amazonS3Manager.deleteFile(amazonS3Manager.extractKeyNameFromUrl(reviewImage.getReviewImgUrl())));
+        }
+
+        review.getReservation().deleteReview(review);
+        reviewRepository.deleteById(reviewId);
     }
 }

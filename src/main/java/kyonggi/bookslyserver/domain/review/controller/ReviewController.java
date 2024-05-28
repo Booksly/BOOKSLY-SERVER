@@ -18,15 +18,21 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping(value = "/reviews",consumes = "multipart/form-data")
+    @PostMapping(value = "/reviews", consumes = "multipart/form-data")
     public ResponseEntity<SuccessResponse<?>> createReview(@UserId Long userId, @ModelAttribute @Valid CreateReviewRequestDto createReviewRequestDto) {
         CreateReviewResponseDto createReviewResponseDto = reviewService.createReview(userId, createReviewRequestDto);
         return SuccessResponse.created(createReviewResponseDto);
     }
 
     @GetMapping("/reviews/{reviewId}")
-    public ResponseEntity<SuccessResponse<?>> getUserReview(@UserId Long userId, @PathVariable("reviewId")Long reviewId) {
+    public ResponseEntity<SuccessResponse<?>> getUserReview(@UserId Long userId, @PathVariable("reviewId") Long reviewId) {
         GetUserReviewResponseDto getUserReviewResponseDto = reviewService.getUserReview(userId, reviewId);
-        return SuccessResponse.created(getUserReviewResponseDto);
+        return SuccessResponse.ok(getUserReviewResponseDto);
+    }
+
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<SuccessResponse<?>> deleteUserReview(@UserId Long userId, @PathVariable("reviewId") Long reviewId) {
+        reviewService.deleteUserReview(userId, reviewId);
+        return SuccessResponse.ok("리뷰 아이디 "+reviewId + " - 삭제 완료되었습니다.");
     }
 }
