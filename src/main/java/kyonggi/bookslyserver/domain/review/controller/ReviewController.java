@@ -1,11 +1,25 @@
 package kyonggi.bookslyserver.domain.review.controller;
 
+import jakarta.validation.Valid;
+import kyonggi.bookslyserver.domain.review.dto.request.CreateReviewRequestDto;
+import kyonggi.bookslyserver.domain.review.dto.response.CreateReviewResponseDto;
+import kyonggi.bookslyserver.domain.review.service.ReviewService;
+import kyonggi.bookslyserver.global.auth.principal.user.UserId;
+import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/review")
+@RequestMapping("/api/shops")
 @RestController
 public class ReviewController {
+
+    private final ReviewService reviewService;
+
+    @PostMapping(value = "/reviews",consumes = "multipart/form-data")
+    public ResponseEntity<SuccessResponse<?>> createReview(@UserId Long userId, @ModelAttribute @Valid CreateReviewRequestDto createReviewRequestDto) {
+        CreateReviewResponseDto createReviewResponseDto = reviewService.createReview(userId, createReviewRequestDto);
+        return SuccessResponse.created(createReviewResponseDto);
+    }
 }
