@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
+
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
@@ -21,6 +23,10 @@ public interface ShopRepository extends JpaRepository<Shop,Long> {
 
     @Query("select s from Shop s where s.shopOwner.id = :id")
     List<Shop> findByShopOwnerId(@Param("id") Long id);
+
+
+    @Query("select s from Shop s where s.createdAt <= :currentDate and s.createdAt >= :flagDate")
+    Page<Shop> findNewShops(Pageable pageable, @Param("currentDate") LocalDate currentDate, @Param("flagDate")LocalDate flagDate);
 
     @Query("select s from Shop s where s.address.firstAddress = :firstAddress and s.address.secondAddress = :secondAddress and s IN :shops")
     List<Shop> findShopsByOneAndTwoAddress(@Param("firstAddress") String firstAddress, @Param("secondAddress") String secondAddress, @Param("shops") List<Shop> shops);

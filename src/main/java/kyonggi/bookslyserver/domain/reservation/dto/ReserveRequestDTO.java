@@ -27,7 +27,13 @@ public class ReserveRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class reservationMenuRequestDTO{
-        private Long empMenuId;
+        @NotNull
+        private boolean event;
+        private Integer discount;
+        @NotNull
+        private Long menuId;
+        @NotNull
+        private int price;
     }
     @Builder
     @Getter
@@ -35,16 +41,15 @@ public class ReserveRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class reservationRequestDTO{
-
+        @NotNull
         private Long reservationScheduleId;
-        private boolean event;
-        private String eventTitle;
-        private Integer discount;
+        private String timeEventTitle;
         private String inquiry;
         /**
-         * 직원메뉴 아이디 리스트로 받아오기
+         * 요청 메뉴 리스트
          */
-        private List<reservationMenuRequestDTO> reservationMenuRequestDTOS;
+        @NotNull
+        private List<reservationMenuRequestDTO> reservationMenus;
     }
     @Builder
     @Getter

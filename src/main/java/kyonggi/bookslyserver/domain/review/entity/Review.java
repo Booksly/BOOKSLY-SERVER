@@ -46,4 +46,7 @@ public class Review extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewImage> reviewImages = new ArrayList<>();
+
+    @OneToOne(mappedBy = "review",cascade = CascadeType.ALL)
+    private Reservation reservation;
 }

@@ -47,6 +47,7 @@ public enum ErrorCode implements BaseErrorCode{
     MAX_PICTURE_SIZE_OVER(HttpStatus.BAD_REQUEST,"사진은 최대 4장까지 등록 가능합니다"),
     MAX_FILE_SIZE_OVER(HttpStatus.BAD_REQUEST,"사진 크기는 최대 2MB 입니다."),
     FILE_NAME_DUPLICATE(HttpStatus.BAD_REQUEST,"파일 이름이 중복됩니다."),
+    MENUS_ARE_DUPLICATED(HttpStatus.BAD_REQUEST,"메뉴는 중복 선택할 수 없습니다"),
 
 
     /**
