@@ -1,5 +1,6 @@
 package kyonggi.bookslyserver.global.aws.s3;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -45,6 +48,31 @@ public class AmazonS3Manager{
     //keyName: 버킷에 올라갈 객체의 이름
     public String generateReviewKeyName(Uuid uuid, String originalFilename) {
         return amazonConfig.getReviewPath() + '/' + uuid.getUuid() + '/' + originalFilename;
+    }
+
+    public void deleteFile(String keyName) {
+        try {
+            // deleteObject(버킷명, 키값)으로 객체 삭제
+            amazonS3.deleteObject(amazonConfig.getBucket(), keyName);
+        } catch (AmazonServiceException e) {
+            log.error(e.toString());
+        }
+    }
+
+    public String extractKeyNameFromUrl(String url) {
+        try {
+            // URL에서 keyName 부분만 추출하기 위한 정규 표현식
+            Pattern pattern = Pattern.compile("https://[^/]+/(.+)");
+            Matcher matcher = pattern.matcher(url);
+            if (matcher.find()) {
+                return matcher.group(1);
+            } else {
+                throw new IllegalArgumentException("Invalid S3 URL");
+            }
+        } catch (Exception e) {
+            log.error("Error extracting keyName from URL: {}", e.getMessage());
+            throw new IllegalArgumentException("Invalid S3 URL", e);
+        }
     }
 
 }
