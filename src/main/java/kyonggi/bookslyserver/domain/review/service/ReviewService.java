@@ -5,6 +5,7 @@ import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationRepository;
 import kyonggi.bookslyserver.domain.review.dto.request.CreateReviewRequestDto;
 import kyonggi.bookslyserver.domain.review.dto.response.CreateReviewResponseDto;
+import kyonggi.bookslyserver.domain.review.dto.response.GetUserReviewResponseDto;
 import kyonggi.bookslyserver.domain.review.entity.Review;
 import kyonggi.bookslyserver.domain.review.entity.ReviewImage;
 import kyonggi.bookslyserver.domain.review.repository.ReviewImageRepository;
@@ -16,8 +17,10 @@ import kyonggi.bookslyserver.global.common.UuidRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.ConflictException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
 import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +33,7 @@ import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
 
     private static final long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
@@ -101,5 +105,14 @@ public class ReviewService {
             reviewImageRepository.save(reviewImage);
         });
         return CreateReviewResponseDto.of(savedReview);
+    }
+
+    public GetUserReviewResponseDto getUserReview(Long userId, Long reviewId) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException(REVIEW_NOT_FOUND));
+        log.info("로그인 유저 아이디: "+userId);
+        if (review.getUser().getId() != userId) {
+            throw new ForbiddenException();
+        }
+        return GetUserReviewResponseDto.of(review);
     }
 }
