@@ -92,6 +92,7 @@ public enum ErrorCode implements BaseErrorCode{
     CLOSING_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 마감 이벤트입니다."),
     TIME_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 타임 이벤트입니다."),
     CATEGORY_NOT_FOUNT(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리입니다."),
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 리뷰입니다."),
 
     /**
      * 405 Method Not Allowed
