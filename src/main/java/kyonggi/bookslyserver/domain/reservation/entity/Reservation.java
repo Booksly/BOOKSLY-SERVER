@@ -9,6 +9,8 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Getter
 @Setter
@@ -49,15 +51,20 @@ public class Reservation extends BaseTimeEntity {
     @JoinColumn(name = "reservationSchedule_id")
     private ReservationSchedule reservationSchedule;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "reservation",cascade = CascadeType.ALL)
     private List<ReservationMenu> reservationMenus=new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name="review_id")
     private Review review;
+
+    public void addReview(Review review) {
+        this.review = review;
+        review.setReservation(this);
+    }
 
 }

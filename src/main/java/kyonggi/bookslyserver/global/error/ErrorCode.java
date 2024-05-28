@@ -44,6 +44,9 @@ public enum ErrorCode implements BaseErrorCode{
     EMPLOYEE_NOT_SETTING_CLOSING_EVENT(HttpStatus.BAD_REQUEST,"마감 이벤트 설정을 먼저 완료해주세요"),
     CURRENT_PASSWORD_IS_NULL(HttpStatus.BAD_REQUEST,"현재 비밀번호를 입력해주세요."),
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    MAX_PICTURE_SIZE_OVER(HttpStatus.BAD_REQUEST,"사진은 최대 4장까지 등록 가능합니다"),
+    MAX_FILE_SIZE_OVER(HttpStatus.BAD_REQUEST,"사진 크기는 최대 2MB 입니다."),
+    FILE_NAME_DUPLICATE(HttpStatus.BAD_REQUEST,"파일 이름이 중복됩니다."),
     MENUS_ARE_DUPLICATED(HttpStatus.BAD_REQUEST,"메뉴는 중복 선택할 수 없습니다"),
 
 
@@ -103,6 +106,7 @@ public enum ErrorCode implements BaseErrorCode{
     SHOP_NAME_ALREADY_EXIST(HttpStatus.CONFLICT, "동일한 이름의 가게가 이미 존재합니다."),
     EXIST_EVENTS_CONFLICT(HttpStatus.CONFLICT, "새로운 이벤트의 시간이 기존 이벤트와 겹칩니다."),
     EVENT_SETTING_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 이벤트 설정이 존재합니다."),
+    REVIEW_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 리뷰가 있습니다."),
 
     /**
      * 500 Internal Server Error
