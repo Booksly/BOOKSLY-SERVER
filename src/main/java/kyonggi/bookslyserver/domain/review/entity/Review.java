@@ -1,6 +1,7 @@
 package kyonggi.bookslyserver.domain.review.entity;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.reservation.entity.Reservation;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.user.entity.User;
@@ -39,6 +40,9 @@ public class Review extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
+
+    @OneToOne(mappedBy = "review",cascade = CascadeType.ALL, fetch = LAZY)
+    private Reservation reservation;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewImage> reviewImages = new ArrayList<>();
