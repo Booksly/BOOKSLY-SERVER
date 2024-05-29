@@ -45,4 +45,8 @@ public class MenuCategory extends BaseTimeEntity {
         this.menus.add(menu);
         menu.setMenuCategory(this);
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }

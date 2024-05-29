@@ -24,8 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static kyonggi.bookslyserver.global.error.ErrorCode.MENUCATEGORY_ALREADY_EXIST;
-import static kyonggi.bookslyserver.global.error.ErrorCode.SHOP_NOT_FOUND;
+import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
 @Service
 @Transactional
@@ -89,7 +88,7 @@ public class MenuService {
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
         if(!menuCategoryRepository.existsByNameAndShopOwner(requestDto.menuCategory())){
-            throw new BusinessException(ErrorCode.MENUCATEGORY_NOT_FOUND);
+            throw new BusinessException(MENUCATEGORY_NOT_FOUND);
         }
         else{
             MenuCategory menuCategory = menuCategoryRepository.findByName(requestDto.menuCategory());
@@ -174,19 +173,20 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuCategoryCreateDto updateCategory(Long id, MenuCategoryCreateDto requestDto){
-        MenuCategory menuCategory = menuCategoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENUCATEGORY_NOT_FOUND));
+    public MenuCategoryCreateDto updateCategory(Long ownerId, Long shopId, MenuCategoryCreateDto requestDto){
+        MenuCategory menuCategory = menuCategoryRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
 
-        if(menuCategoryRepository.existsByNameAndShopOwner(requestDto.categoryName())){
-            throw new BusinessException(MENUCATEGORY_ALREADY_EXIST);
+        if(menuCategoryRepository.existsByNameAndShopOwner(requestDto.categoryName(), ownerId)){
+            throw new ConflictException(MENUCATEGORY_ALREADY_EXIST);
         }
-        menuCategory.setName(requestDto.categoryName());
+
+        menuCategory.updateName(requestDto.categoryName());
         return MenuCategoryCreateDto.builder().categoryName(menuCategory.getName()).build();
     }
 
     @Transactional
     public MenuCategoryDeleteResponseDto deleteCategory(Long id){
-        MenuCategory menuCategory = menuCategoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENUCATEGORY_NOT_FOUND));
+        MenuCategory menuCategory = menuCategoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
 
         if(!menuCategory.getMenus().isEmpty()){
             throw new BusinessException(ErrorCode.MENU_ALREADY_EXIST);
