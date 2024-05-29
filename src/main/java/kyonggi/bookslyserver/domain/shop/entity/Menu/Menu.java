@@ -41,8 +41,8 @@ public class Menu extends BaseTimeEntity {
     @JoinColumn(name="menuCategory_id")
     private MenuCategory menuCategory;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.REMOVE)
-    private List<MenuImage> menuImages = new ArrayList<>();
+    @OneToOne(mappedBy = "menu", cascade = CascadeType.REMOVE)
+    private MenuImage menuImage;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.REMOVE)
     @Builder.Default
@@ -58,18 +58,15 @@ public class Menu extends BaseTimeEntity {
     private List<ReservationMenu> reservationMenus = new ArrayList<>();
 
     //==생성메서드==//
-    public static Menu createEntity(MenuCreateRequestDto requestDto, List<MenuImage> menuImages){
+    public static Menu createEntity(MenuCreateRequestDto requestDto, MenuImage menuImage){
         Menu menu = Menu
                 .builder()
                 .menuName(requestDto.menuName())
                 .price(requestDto.price())
                 .description(requestDto.description())
                 .menuCategory(MenuCategory.builder().name(requestDto.menuCategory()).build())
-                .menuImages(menuImages).build();
+                .menuImage(menuImage).build();
 
-        for(MenuImage image : menuImages){
-            image.setMenu(menu);
-        }
         return menu;
     }
 
@@ -80,21 +77,12 @@ public class Menu extends BaseTimeEntity {
 
 
 
-    public List<String> update(MenuCreateRequestDto requestDto){
+    public void update(MenuCreateRequestDto requestDto, String pictureUrl){
         this.menuName = requestDto.menuName();
         this.price = requestDto.price();
         this.description = requestDto.description();
         changeCategory(requestDto.menuCategory());
-
-        for(int i = requestDto.menuImgUri().size() - 1; i >= 0; i--){
-            this.menuImages.add(MenuImage.builder().menuImgUri(requestDto.menuImgUri().get(i)).build());
-        }
-
-        for(int j = 0; j < this.menuImages.size(); j++){
-            this.menuImages.get(j).setMenu(this);
-        }
-
-        return requestDto.menuImgUri();
+        this.menuImage.updateImgUri(pictureUrl);
     }
 
 
