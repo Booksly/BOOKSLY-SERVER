@@ -12,8 +12,9 @@ import kyonggi.bookslyserver.domain.review.repository.ReviewImageRepository;
 import kyonggi.bookslyserver.domain.review.repository.ReviewRepository;
 import kyonggi.bookslyserver.domain.user.service.UserQueryService;
 import kyonggi.bookslyserver.global.aws.s3.AmazonS3Manager;
-import kyonggi.bookslyserver.global.common.Uuid;
-import kyonggi.bookslyserver.global.common.UuidRepository;
+import kyonggi.bookslyserver.global.common.uuid.Uuid;
+import kyonggi.bookslyserver.global.common.uuid.UuidRepository;
+import kyonggi.bookslyserver.global.common.uuid.UuidService;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.ConflictException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
@@ -28,7 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
@@ -44,7 +44,7 @@ public class ReviewService {
     private final ReservationRepository reservationRepository;
     private final ReviewRepository reviewRepository;
     private final AmazonS3Manager amazonS3Manager;
-    private final UuidRepository uuidRepository;
+    private final UuidService uuidService;
     private final ReviewImageRepository reviewImageRepository;
 
     private void validateReviewPictures(List<MultipartFile> reviewPictures) {
@@ -82,12 +82,6 @@ public class ReviewService {
         });
     }
 
-    private Uuid createUuid() {
-        String uuid = UUID.randomUUID().toString();
-        Uuid savedUuid = uuidRepository.save(Uuid.builder()
-                .uuid(uuid).build());
-        return savedUuid;
-    }
 
     public CreateReviewResponseDto createReview(Long userId, CreateReviewRequestDto createReviewRequestDto) {
         validateReviewPictures(createReviewRequestDto.getReviewPictures());
@@ -106,7 +100,7 @@ public class ReviewService {
         Review savedReview = reviewRepository.save(review);
         reservation.addReview(savedReview);
 
-        Uuid savedUuid = createUuid();
+        Uuid savedUuid = uuidService.createUuid();
 
         if (createReviewRequestDto.getReviewPictures() != null && !createReviewRequestDto.getReviewPictures().isEmpty())
             uploadFileToS3(createReviewRequestDto, savedReview, savedUuid);
