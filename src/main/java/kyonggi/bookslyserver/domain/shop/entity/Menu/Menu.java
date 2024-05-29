@@ -75,19 +75,13 @@ public class Menu extends BaseTimeEntity {
 
 
 
-    public void update(MenuCreateRequestDto requestDto, String pictureUrl){
-        this.menuName = requestDto.menuName();
-        this.price = requestDto.price();
-        this.description = requestDto.description();
-        changeCategory(requestDto.menuCategory());
-        this.menuImage.updateImgUri(pictureUrl);
+    public void update(String menuName, int price, String description, String categoryName){
+        this.menuName = menuName;
+        this.price = price;
+        this.description = description;
+        this.menuCategory.updateName(categoryName);
     }
 
-
-    public void changeCategory(String menuCategory){
-        this.menuCategory.setName(menuCategory);
-
-    }
 
 
     public void addImg(MenuImage image){

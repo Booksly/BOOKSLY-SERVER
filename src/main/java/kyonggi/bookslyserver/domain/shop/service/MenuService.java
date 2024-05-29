@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.menu.UpdateMenuRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.*;
 
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
@@ -23,6 +24,7 @@ import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -99,7 +101,7 @@ public class MenuService {
         Menu menu = Menu.createEntity(requestDto, shop);
 
         if (requestDto.menuImg() != null) {
-            String menuPictureUrl = uploadMenuImgToS3(requestDto);
+            String menuPictureUrl = uploadMenuImgToS3(requestDto.menuImg());
             MenuImage image = MenuImage.builder().menuImgUri(menuPictureUrl).menu(menu).build();
             menuImageRepository.save(image);
             menu.addImg(image);
@@ -113,26 +115,39 @@ public class MenuService {
 
     }
 
-    private String uploadMenuImgToS3(MenuCreateRequestDto requestDto) {
+    private String uploadMenuImgToS3(MultipartFile image) {
         Uuid uuid = uuidService.createUuid();
         String pictureUrl = amazonS3Manager.uploadFile(
-                amazonS3Manager.generateMenuKeyName(uuid, requestDto.menuImg().getOriginalFilename()), requestDto.menuImg());
+                amazonS3Manager.generateMenuKeyName(uuid, image.getOriginalFilename()), image);
         return pictureUrl;
     }
 
-    public MenuUpdateResponseDto update(Long id, MenuCreateRequestDto requestDto){ //DTO 따로 생성
+    public MenuUpdateResponseDto update(Long id, UpdateMenuRequestDto requestDto){
         Menu menu = menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND));
-        if (menu.getMenuImage() != null) amazonS3Manager.deleteFileFromUrl(menu.getMenuImage().getMenuImgUri());
 
-        String menuPictureUrl = uploadMenuImgToS3(requestDto);
-        menu.update(requestDto, menuPictureUrl);
+        // 이미지 업데이트 로직
+        if (requestDto.menuImg() != null && !requestDto.menuImg().isEmpty()) {
+            // 기존 이미지 삭제
+            if (menu.getMenuImage() != null) {
+                amazonS3Manager.deleteFileFromUrl(menu.getMenuImage().getMenuImgUri());
+            }
+            // 새 이미지 업로드
+            String menuPictureUrl = uploadMenuImgToS3(requestDto.menuImg());
+            MenuImage image = MenuImage.builder().menuImgUri(menuPictureUrl).menu(menu).build();
+            menuImageRepository.save(image);
+            menu.setMenuImage(image);  // 메뉴에 이미지 설정
+        }
+
+        // 메뉴 업데이트
+        menu.update(requestDto.menuName(), requestDto.price(), requestDto.description(), requestDto.menuCategory());
 
         return MenuUpdateResponseDto.builder()
                 .menuName(menu.getMenuName())
                 .price(menu.getPrice())
                 .description(menu.getDescription())
                 .menuCategory(menu.getMenuCategory().getName())
-                .imgUrl(menuPictureUrl).build();
+                .imgUrl(menu.getMenuImage() != null ? menu.getMenuImage().getMenuImgUri() : null)
+                .build();
     }
 
     @Transactional
