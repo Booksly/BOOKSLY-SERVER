@@ -6,6 +6,7 @@ import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.*;
 import kyonggi.bookslyserver.domain.shop.service.MenuService;
+import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -68,9 +69,9 @@ public class MenuApiController {
     }
 
     @PostMapping("/api/shops/{shopId}/menuCategories")
-    public ResponseEntity<SuccessResponse<?>> createMenuCategory(@PathVariable("shopId") Long id, @RequestBody @Validated MenuCategoryCreateDto requestDto){
-        MenuCategoryCreateResponseDto result = menuService.createCategory(id, requestDto);
-        return SuccessResponse.ok(result);
+    public ResponseEntity<SuccessResponse<?>> createMenuCategory(@OwnerId Long ownerId, @PathVariable("shopId") Long shopId, @RequestBody @Validated MenuCategoryCreateDto requestDto){
+        MenuCategoryCreateResponseDto result = menuService.createCategory(ownerId, shopId, requestDto);
+        return SuccessResponse.created(result);
     }
 
     @PutMapping("/api/shops/menuCategories/{categoryId}")
