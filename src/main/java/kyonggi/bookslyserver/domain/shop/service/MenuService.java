@@ -10,6 +10,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuImage;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.*;
 import kyonggi.bookslyserver.global.aws.s3.AmazonS3Manager;
@@ -35,6 +36,8 @@ public class MenuService {
     private final MenuRepository menuRepository;
 
     private final MenuImageRepository menuImageRepository;
+
+    private final ShopService shopService;
 
     private final MenuCategoryRepository menuCategoryRepository;
 
@@ -84,25 +87,29 @@ public class MenuService {
         return result;
     }
 
-    @Transactional
-    public MenuCreateResponseDto create(Long id, MenuCreateRequestDto requestDto){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+    public MenuCreateResponseDto create(Long ownerId, Long shopId, MenuCreateRequestDto requestDto){
+        Shop shop = shopService.findShop(ownerId, shopId);
 
-        if(!menuCategoryRepository.existsByNameAndShopOwner(requestDto.menuCategory())){
-            throw new BusinessException(MENUCATEGORY_NOT_FOUND);
+        String categoryName = requestDto.menuCategory();
+        MenuCategory menuCategory = menuCategoryRepository.findByNameAndShopOwner(categoryName, ownerId).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
+
+        if (menuRepository.existsNameInCategory(requestDto.menuName(), categoryName))
+            throw new ConflictException(MENU_NAME_ALREADY_EXIST);
+
+        Menu menu = Menu.createEntity(requestDto, shop);
+
+        if (requestDto.menuImg() != null) {
+            String menuPictureUrl = uploadMenuImgToS3(requestDto);
+            MenuImage image = MenuImage.builder().menuImgUri(menuPictureUrl).menu(menu).build();
+            menuImageRepository.save(image);
+            menu.addImg(image);
         }
-        else{
-            MenuCategory menuCategory = menuCategoryRepository.findByName(requestDto.menuCategory());
-            shop.getMenus().add(menu);
-            menuCategory.addMenu(menu);
-            menu.addImg(menu.getMenuImages());
 
-            menuRepository.save(menu);
-        }
-        Menu menu = Menu.createEntity(shop, requestDto);
+        menuCategory.addMenu(menu);
+        shop.getMenus().add(menu);
 
-
-        return MenuCreateResponseDto.builder().id(menu.getId()).build();
+        menuRepository.save(menu);
+        return MenuCreateResponseDto.of(menu);
 
     }
 
@@ -113,7 +120,7 @@ public class MenuService {
         return pictureUrl;
     }
 
-    public MenuUpdateResponseDto update(Long id, MenuCreateRequestDto requestDto){
+    public MenuUpdateResponseDto update(Long id, MenuCreateRequestDto requestDto){ //DTO 따로 생성
         Menu menu = menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND));
         if (menu.getMenuImage() != null) amazonS3Manager.deleteFileFromUrl(menu.getMenuImage().getMenuImgUri());
 
