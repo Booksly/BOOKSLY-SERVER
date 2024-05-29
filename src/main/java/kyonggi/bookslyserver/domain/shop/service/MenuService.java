@@ -2,7 +2,6 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 import jakarta.transaction.Transactional;
 
-import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEventMenu;
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.*;
@@ -13,15 +12,16 @@ import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.*;
+import kyonggi.bookslyserver.global.aws.s3.AmazonS3Manager;
+import kyonggi.bookslyserver.global.common.uuid.Uuid;
+import kyonggi.bookslyserver.global.common.uuid.UuidService;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,39 +38,20 @@ public class MenuService {
 
     private final EmployeeRepository employeeRepository;
 
+    private final AmazonS3Manager amazonS3Manager;
+
+    private final UuidService uuidService;
+
 
     public MenuReadOneDto readOneMenu(Long id){
         Menu menu = menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND));
-
-
         return new MenuReadOneDto(menu);
     }
   
-    public List<MenuReadDto> readMenu(Long id){
+    public ReadMenusByCategoryWrapperResponseDto readMenu(Long id){
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
-
-        List<Menu> menus = new ArrayList<>();
-        Set<MenuReadDto> menuReadDtos = new HashSet<>();
-
-        for(Menu menu : shop.getMenus()){
-            menus.add(menu);
-        }
-
-        for(Menu menu : menus){
-            menuReadDtos.add(new MenuReadDto(menu));
-        }
-
-        List<MenuReadDto> result = new ArrayList<>(menuReadDtos);
-
-        for(Menu menu : menus){
-            for(MenuReadDto e : result){
-                if(menu.getMenuCategory().getName().equals(e.getMenuCategoryName())){
-                    e.getMenu().add(new MenuReadDto.MenuDto(menu));
-                }
-            }
-        }
-
-        return result;
+        List<MenuCategory> menuCategories = shop.getMenuCategories();
+        return ReadMenusByCategoryWrapperResponseDto.of(menuCategories);
     }
 
 
@@ -121,26 +102,26 @@ public class MenuService {
 
     }
 
-    @Transactional
+    private String uploadMenuImgToS3(MenuCreateRequestDto requestDto) {
+        Uuid uuid = uuidService.createUuid();
+        String pictureUrl = amazonS3Manager.uploadFile(
+                amazonS3Manager.generateMenuKeyName(uuid, requestDto.menuImg().getOriginalFilename()), requestDto.menuImg());
+        return pictureUrl;
+    }
+
     public MenuUpdateResponseDto update(Long id, MenuCreateRequestDto requestDto){
         Menu menu = menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND));
+        if (menu.getMenuImage() != null) amazonS3Manager.deleteFileFromUrl(menu.getMenuImage().getMenuImgUri());
 
+        String menuPictureUrl = uploadMenuImgToS3(requestDto);
+        menu.update(requestDto, menuPictureUrl);
 
-        for(int i = menu.getMenuImages().size() - 1; i >= 0; i--){
-            menuImageRepository.delete(menu.getMenuImages().get(i).getMenuImgUri());
-            menu.getMenuImages().remove(i);
-        }
-
-
-        List<String> images = menu.update(requestDto);
-
-        return MenuUpdateResponseDto
-                .builder()
+        return MenuUpdateResponseDto.builder()
                 .menuName(menu.getMenuName())
                 .price(menu.getPrice())
                 .description(menu.getDescription())
                 .menuCategory(menu.getMenuCategory().getName())
-                .images(images).build();
+                .imgUrl(menuPictureUrl).build();
     }
 
     @Transactional
