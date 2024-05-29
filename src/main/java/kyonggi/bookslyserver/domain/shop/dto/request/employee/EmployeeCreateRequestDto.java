@@ -10,7 +10,7 @@ public record EmployeeCreateRequestDto(
         @NotNull String employeeName,
         @NotNull String description,
         @NotNull String imgUri,
-        List<String> menus,
+        List<Long> menus,
 
         @NotNull List<EmployeeWorkScheduleDto> workSchedules
 ) {

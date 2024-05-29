@@ -124,12 +124,9 @@ public class EmployeeService {
         shop.get().getEmployees().add(employee);
 
         if(requestDto.menus() != null){
-            for(String menuName : requestDto.menus()){
-                Menu menu = menuRepository.findByMenuName(menuName);
-                if(menu == null){
-                    throw new BusinessException(ErrorCode.MENU_NOT_FOUND);
-                }
-                EmployeeMenu employeeMenu = employee.addMenu(employee, menu);
+            for(Long menuId : requestDto.menus()){
+                Optional<Menu> menu = menuRepository.findById(menuId);
+                EmployeeMenu employeeMenu = employee.addMenu(employee, menu.get());
             }
         }
 
@@ -143,9 +140,11 @@ public class EmployeeService {
         return new EmployeeCreateResponseDto(employee);
     }
 
+
     @Transactional
     public EmployeeUpdateResponseDto update(Long id, EmployeeCreateRequestDto requestDto){
         Optional<Employee> employee = employeeRepository.findById(id);
+        List<String> menus = new ArrayList<>();
         if(!employee.isPresent()){
             throw new EntityNotFoundException();
         }
@@ -162,10 +161,11 @@ public class EmployeeService {
         }
 
         if(requestDto.menus() != null){
-            for(String menuName : requestDto.menus()){
-                Menu menu = menuRepository.findByMenuName(menuName);
-                EmployeeMenu employeeMenu = employee.get().addMenu(employee.get(), menu);
+            for(Long menuId : requestDto.menus()){
+                Optional<Menu> menu = menuRepository.findById(menuId);
+                EmployeeMenu employeeMenu = employee.get().addMenu(employee.get(), menu.get());
                 employeeMenuRepository.save(employeeMenu);
+                menus.add(menu.get().getMenuName());
             }
         }
 
@@ -178,8 +178,9 @@ public class EmployeeService {
 
         employee.get().update(requestDto);
 
-        return new EmployeeUpdateResponseDto(requestDto);
+        return new EmployeeUpdateResponseDto(requestDto, menus);
     }
+
 
     @Transactional
     public EmployeeDeleteResponseDto delete(Long id){

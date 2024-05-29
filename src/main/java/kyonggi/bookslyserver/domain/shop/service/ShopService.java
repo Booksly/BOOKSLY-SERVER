@@ -139,7 +139,6 @@ public class ShopService {
 
         ShopOwner owner = shop.get().getShopOwner();
         owner.deleteShop(shop.get());
-        //shopRepository.delete(shop.get());
         shopRepository.deleteById(id);
         return new ShopDeleteResponseDto(id);
     }
