@@ -64,7 +64,7 @@ public class ShopOwnerDetailReadOneDto {
         this.businessSchedules = businessSchedules;
         this.instagramUrl = shop.getInstagramUrl();
         this.kakaoUrl = shop.getKakaoUrl();
-        if(shop.getShopImages() != null) {
+        if(shop.getShopImages() != null) { //가게별 이미지는 하나로 기획 변경되어 수정 부탁드립니다.
             this.profileImg = shop.getShopImages().get(0).getImgUri();
         }
 
