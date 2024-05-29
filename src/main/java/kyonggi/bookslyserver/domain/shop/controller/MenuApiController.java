@@ -43,9 +43,9 @@ public class MenuApiController {
     }
 
     @PostMapping("/api/shops/{shopId}/menus")
-    public ResponseEntity<SuccessResponse<?>> createMenu(@PathVariable("shopId") Long id, @RequestBody @Validated MenuCreateRequestDto requestDto){
-        MenuCreateResponseDto result = menuService.create(id, requestDto);
-        return SuccessResponse.ok(result);
+    public ResponseEntity<SuccessResponse<?>> createMenu(@OwnerId Long ownerId, @PathVariable("shopId") Long shopId, @RequestBody @Validated MenuCreateRequestDto requestDto){
+        MenuCreateResponseDto result = menuService.create(ownerId, shopId, requestDto);
+        return SuccessResponse.created(result);
     }
 
 
