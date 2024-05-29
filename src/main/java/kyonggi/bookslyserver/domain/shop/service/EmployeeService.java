@@ -126,6 +126,9 @@ public class EmployeeService {
         if(requestDto.menus() != null){
             for(Long menuId : requestDto.menus()){
                 Optional<Menu> menu = menuRepository.findById(menuId);
+                if(!menu.isPresent()){
+                    throw new EntityNotFoundException(MENU_NOT_FOUND);
+                }
                 EmployeeMenu employeeMenu = employee.addMenu(employee, menu.get());
             }
         }
@@ -163,6 +166,9 @@ public class EmployeeService {
         if(requestDto.menus() != null){
             for(Long menuId : requestDto.menus()){
                 Optional<Menu> menu = menuRepository.findById(menuId);
+                if(!menu.isPresent()){
+                    throw new EntityNotFoundException(MENU_NOT_FOUND);
+                }
                 EmployeeMenu employeeMenu = employee.get().addMenu(employee.get(), menu.get());
                 employeeMenuRepository.save(employeeMenu);
                 menus.add(menu.get().getMenuName());
