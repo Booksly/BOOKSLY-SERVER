@@ -19,6 +19,7 @@ import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.ConflictException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -189,12 +190,12 @@ public class MenuService {
         MenuCategory menuCategory = menuCategoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
 
         if(!menuCategory.getMenus().isEmpty()){
-            throw new BusinessException(ErrorCode.MENU_ALREADY_EXIST);
+            throw new InvalidValueException(ErrorCode.CATEGORY_HAS_EXISTING_MENU);
         }
-        else{
-            menuCategory.getShop().getMenuCategories().remove(menuCategory);
-            menuCategoryRepository.delete(menuCategory.getId());
-        }
+
+        menuCategory.getShop().getMenuCategories().remove(menuCategory);
+        menuCategoryRepository.delete(menuCategory.getId());
+
         return new MenuCategoryDeleteResponseDto(menuCategory);
     }
 
