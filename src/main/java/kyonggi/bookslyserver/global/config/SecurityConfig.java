@@ -79,18 +79,14 @@ public class SecurityConfig {
          */
         http
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/api/events/closing-events/today","/api/events/time-events/today","/api/users/test","/api/shops/{shopId}/reviews").permitAll()
+                        .requestMatchers("/api/events/closing-events/today","/api/events/time-events/today","/api/users/test","/api/shops/reviews/**").permitAll()
 
                         //인증이 필요한 uri - 일반 회원만 접근 가능
-                        .requestMatchers("/api/users/**","/api/auth/verify/user/**","/api/reservations","/api/reservations/all",
-                                "/api/shops/reviews/**")
-                        .hasRole("USER")
-
+                        .requestMatchers("/api/users/**","/api/auth/verify/user/**","api/reservations","api/reservations/all").hasRole("USER")
                         //인증이 필요한 uri - 기업 회원만 접근 가능
                         .requestMatchers("/api/owners/**","/api/events/**","/api/shops/**","/api/employees/{employeeId}/reservations/**","api/reservations/owner/**"
-                                ,"api/notices/shops/**")
-                        .hasRole("ADMIN")
-
+                            ,"api/notices/shops/**"
+                        ).hasRole("ADMIN")
                         // 그 외 요청, 인증이 필요없음 - 비회원도 접근 가능
                         .anyRequest().permitAll());
 
