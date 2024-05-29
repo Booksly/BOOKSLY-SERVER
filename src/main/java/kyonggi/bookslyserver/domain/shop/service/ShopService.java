@@ -53,27 +53,25 @@ public class ShopService {
 
 
     public ShopUserReadOneDto findOne(Long id){
-        Optional<Shop> shop = shopRepository.findById(id);
-        if(!shop.isPresent()){
-            throw new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND);
-        }
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
-        String name = shop.get().getName();
-        String description = shop.get().getIntroduction();
-        String detailAddress = shop.get().getDetailAddress();
-        String phoneNumber = shop.get().getPhoneNumber();
 
-        List<BusinessSchedule> businessSchedules = shop.get().getBusinessSchedules();
+        String name = shop.getName();
+        String description = shop.getIntroduction();
+        String detailAddress = shop.getDetailAddress();
+        String phoneNumber = shop.getPhoneNumber();
+
+        List<BusinessSchedule> businessSchedules = shop.getBusinessSchedules();
         List<BusinessScheduleDto> businessScheduleDtos = businessSchedules.stream().map(businessSchedule -> new BusinessScheduleDto(businessSchedule)).collect(Collectors.toList());
 
-        List<Menu> menus = shop.get().getMenus();
+        List<Menu> menus = shop.getMenus();
         List<MenuReadDto> menuReadDtos = menus.stream().map(menu -> new MenuReadDto(menu)).collect(Collectors.toList());
 
-        List<Employee> employeeList = shop.get().getEmployees();
+        List<Employee> employeeList = shop.getEmployees();
         List<EmployeeUserResponseDto> employees = employeeList.stream().map(employee -> new EmployeeUserResponseDto(employee)).collect(Collectors.toList());
 
-        int visit = shop.get().getTotalVisitors() + 1;
-        shop.get().setTotalVisitors(visit);
+        int visit = shop.getTotalVisitors() + 1;
+        shop.setTotalVisitors(visit);
 
         return ShopUserReadOneDto
                 .builder()
@@ -84,7 +82,7 @@ public class ShopService {
                 .businessSchedules(businessScheduleDtos)
                 .menus(menuReadDtos)
                 .employees(employees)
-                .address(new AddressDto(shop.get().getAddress()))
+                .address(new AddressDto(shop.getAddress()))
                 .build();
     }
 
@@ -120,25 +118,20 @@ public class ShopService {
 
     @Transactional
     public ShopCreateResponseDto update(Long id, ShopCreateRequestDto requestDto){
-        Optional<Shop> shop = shopRepository.findById(id);
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
-        if(!shop.isPresent()){
-            throw new EntityNotFoundException();
-        }
-        shop.get().update(shop.get(), requestDto);
-        return new ShopCreateResponseDto(shop.get());
+
+        shop.update(shop, requestDto);
+        return new ShopCreateResponseDto(shop);
     }
 
     @Transactional
     public ShopDeleteResponseDto delete(Long id){
-        Optional<Shop> shop = shopRepository.findById(id);
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
-        if(!shop.isPresent()){
-            throw new EntityNotFoundException();
-        }
 
-        ShopOwner owner = shop.get().getShopOwner();
-        owner.deleteShop(shop.get());
+        ShopOwner owner = shop.getShopOwner();
+        owner.deleteShop(shop);
         shopRepository.deleteById(id);
         return new ShopDeleteResponseDto(id);
     }
@@ -157,26 +150,22 @@ public class ShopService {
     }
 
     public ShopOwnerMainReadOneDto readMain(Long id){
-        Optional<Shop> shop = shopRepository.findById(id);
-        if(!shop.isPresent()){
-            throw new EntityNotFoundException(SHOP_NOT_FOUND);
-        }
-        return new ShopOwnerMainReadOneDto(shop.get());
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+
+        return new ShopOwnerMainReadOneDto(shop);
     }
 
     public ShopOwnerDetailReadOneDto readOne(Long id){
-        Optional<Shop> shop = shopRepository.findById(id);
-        if(!shop.isPresent()){
-            throw new EntityNotFoundException(SHOP_NOT_FOUND);
-        }
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+
         List<BusinessScheduleDto> businessScheduleDtos = new ArrayList<>();
 
-        for(BusinessSchedule businessSchedule : shop.get().getBusinessSchedules()){
+        for(BusinessSchedule businessSchedule : shop.getBusinessSchedules()){
             businessScheduleDtos.add(new BusinessScheduleDto(businessSchedule));
         }
 
 
-        return new ShopOwnerDetailReadOneDto(shop.get(), businessScheduleDtos);
+        return new ShopOwnerDetailReadOneDto(shop, businessScheduleDtos);
     }
 
 
