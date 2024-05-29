@@ -75,8 +75,8 @@ public class MenuApiController {
     }
 
     @PutMapping("/api/shops/menuCategories/{categoryId}")
-    public ResponseEntity<SuccessResponse<?>> updateMenuCategory(@OwnerId Long ownerId, @PathVariable("categoryId") Long shopId, @RequestBody @Validated MenuCategoryCreateDto requestDto){
-        MenuCategoryCreateDto result = menuService.updateCategory(ownerId, shopId, requestDto);
+    public ResponseEntity<SuccessResponse<?>> updateMenuCategory(@OwnerId Long ownerId, @PathVariable("categoryId") Long categoryId, @RequestBody @Validated MenuCategoryCreateDto requestDto){
+        MenuCategoryCreateDto result = menuService.updateCategory(ownerId, categoryId, requestDto);
         return SuccessResponse.ok(result);
     }
 

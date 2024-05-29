@@ -174,8 +174,8 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuCategoryCreateDto updateCategory(Long ownerId, Long shopId, MenuCategoryCreateDto requestDto){
-        MenuCategory menuCategory = menuCategoryRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
+    public MenuCategoryCreateDto updateCategory(Long ownerId, Long categoryId, MenuCategoryCreateDto requestDto){
+        MenuCategory menuCategory = menuCategoryRepository.findById(categoryId).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
 
         if(menuCategoryRepository.existsByNameAndShopOwner(requestDto.categoryName(), ownerId)){
             throw new ConflictException(MENUCATEGORY_ALREADY_EXIST);
@@ -186,8 +186,8 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuCategoryDeleteResponseDto deleteCategory(Long id){
-        MenuCategory menuCategory = menuCategoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
+    public MenuCategoryDeleteResponseDto deleteCategory(Long categoryId){
+        MenuCategory menuCategory = menuCategoryRepository.findById(categoryId).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
 
         if(!menuCategory.getMenus().isEmpty()){
             throw new InvalidValueException(ErrorCode.CATEGORY_HAS_EXISTING_MENU);
