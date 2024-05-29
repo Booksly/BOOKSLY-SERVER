@@ -16,9 +16,7 @@ public class MenuReadOneDto {
     private String menuCategory;
 
     public MenuReadOneDto(Menu menu){
-        if(menu.getMenuImages() != null){
-            this.imgUri = menu.getMenuImages().get(0).getMenuImgUri();
-        }
+        if(menu.getMenuImage() != null) this.imgUri = menu.getMenuImage().getMenuImgUri();
         this.price = menu.getPrice();
         this.menuName = menu.getMenuName();
         this.description = menu.getDescription();
