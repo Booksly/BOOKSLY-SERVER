@@ -94,27 +94,28 @@ public class ShopService {
         return result;
     }
 
-    @Transactional
+    @Transactional //ShopService 클래스에 이미 @Transcational을 걸었으므로 중복 작성입니다.
     public ShopRegisterDto join(Long ownerId, ShopCreateRequestDto requestDto) {
 
         if(shopRepository.existsByName(requestDto.getName())){
+            //DB에 등록된 '모든가게'의 이름이 중복이 되지 않아야하는게 아니라, 해당 가게 주인이 가지고 있는 가게들과 이름이 중복되지 않아야합니다.
             throw new BusinessException(SHOP_NAME_ALREADY_EXIST);
         }
         Shop shop = Shop.createShop(requestDto);
         shopRepository.save(shop);
         List<BusinessSchedule> businessScheduleList = requestDto.getBusinessScheduleList();
         for(BusinessSchedule businessSchedule : businessScheduleList){
-            shop.getBusinessSchedule(businessSchedule);
+            shop.getBusinessSchedule(businessSchedule); //이름이 부적절합니다.메소드의 역할에 맞는 이름이 아닙니다. get-이 아닌 add-가 적절할 것 같아요.
         }
 
-        List<ShopImage> shopImages = requestDto.getShopImageList();
+        List<ShopImage> shopImages = requestDto.getShopImageList();//이미지 s3 업로드 코드 추가, 이미지는 하나만
         for(ShopImage shopImage : shopImages){
-            shop.getShopImage(shopImage);
+            shop.getShopImage(shopImage); //이름이 부적절합니다. 메소드의 역할에 맞는 이름이 아닙니다.
         }
 
-        Optional<ShopOwner> owner = shopOwnerRepository.findById(ownerId);
+        Optional<ShopOwner> owner = shopOwnerRepository.findById(ownerId); //해당 기업회원이 가게의 주인이 맞는지 검증하는 코드를 추가해주세요. 또한 이러한 검증은 가게 엔티티 생성 후가 아닌 가게 엔티티 생성 전에 이루어지는 것이 좋습니다.
         shop.getShopOwner(owner);
-        shop.setCreatedAt(LocalDate.now());
+        shop.setCreatedAt(LocalDate.now()); //해당 코드 작성하지 않아도 해당 필드의 값은 자동으로 채워집니다.
         return new ShopRegisterDto(shop);
     }
 
