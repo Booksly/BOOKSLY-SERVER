@@ -43,13 +43,15 @@ public class ShopOwnerDetailReadOneDto {
         int reviewNum = 0;
         this.name = shop.getName();
 
-        if(shop.getReviews() != null) {
-
-            for (Review review : shop.getReviews()) {
+        List<Review> reviews = shop.getReviews();
+        if (reviews != null && !reviews.isEmpty()) {
+            for (Review review : reviews) {
                 avg += review.getRating();
                 reviewNum++;
             }
-            this.reviewAvg = Float.parseFloat(String.format("%.1f", avg / reviewNum));
+            this.reviewAvg = Math.round((avg / reviewNum) * 10) / 10.0f; // 소수점 첫째 자리까지 반올림
+        } else {
+            this.reviewAvg = 0f; // 리뷰가 없을 경우 기본값 설정
         }
         this.totalVisitors = shop.getTotalVisitors();
         this.todayVisitors = shop.getTodayVisitors();
