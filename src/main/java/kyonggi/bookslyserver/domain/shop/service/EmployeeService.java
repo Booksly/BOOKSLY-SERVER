@@ -48,7 +48,7 @@ public class EmployeeService {
 
     private final ReservationScheduleRepository reservationScheduleRepository;
 
-    public List<EmployeeReadDto> readEmployee(Long id){
+    public List<EmployeeReadDto> readEmployee(Long id, Boolean withReviews){
         Optional<Shop> shop = shopRepository.findById(id);
 
         if(!shop.isPresent()){
@@ -57,12 +57,17 @@ public class EmployeeService {
 
         List<EmployeeReadDto> employeeReadDtos = new ArrayList<>();
 
-        if(shop.get().getEmployees() != null) {
-            for (Employee employee : shop.get().getEmployees()) {
-                EmployeeReadDto employeeReadDto = new EmployeeReadDto(employee);
-                employeeReadDtos.add(employeeReadDto);
+
+            if (shop.get().getEmployees().size() != 0) {
+                for (Employee employee : shop.get().getEmployees()) {
+                    EmployeeReadDto employeeReadDto = new EmployeeReadDto(employee, withReviews);
+                    employeeReadDtos.add(employeeReadDto);
+                }
             }
-        }
+            else{
+                throw new BusinessException(ErrorCode.EMPLOYEES_NOT_FOUND);
+            }
+
 
         return employeeReadDtos;
     }
