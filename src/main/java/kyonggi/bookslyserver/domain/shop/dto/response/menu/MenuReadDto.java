@@ -3,28 +3,35 @@ package kyonggi.bookslyserver.domain.shop.dto.response.menu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 public class MenuReadDto {
-    private Long id;
+    private String menuCategoryName;
 
-    private String imgUrl;
-
-    private String menuCategory;
-
-    private String menuName;
-
-    private int price;
-
-    private String description;
+    private List<MenuDto> menu;
 
     public MenuReadDto(Menu menu){
-        this.id = menu.getId();
-        if(menu.getMenuImages() != null){
-            this.imgUrl = menu.getMenuImages().get(0).getMenuImgUri();
+        this.menuCategoryName = menu.getMenuCategory().getName();
+        this.menu = new ArrayList<>();
+    }
+
+
+    @Data
+    public static class MenuDto{
+        private Long id;
+        private String menuName;
+        private String imgUri;
+        private int price;
+        private String description;
+
+        public MenuDto(Menu menu){
+            this.id = menu.getId();
+            this.menuName = menu.getMenuName();
+            this.imgUri = menu.getMenuImages().get(0).getMenuImgUri();
+            this.price = menu.getPrice();
+            this.description = menu.getDescription();
         }
-        this.menuCategory = menu.getMenuCategory().getName();
-        this.menuName = menu.getMenuName();
-        this.price = menu.getPrice();
-        this.description = menu.getDescription();
     }
 }

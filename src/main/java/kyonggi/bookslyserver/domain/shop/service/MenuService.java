@@ -53,13 +53,29 @@ public class MenuService {
         if(!shop.isPresent()){
             throw new EntityNotFoundException();
         }
-        List<MenuReadDto> menuReadDtos = new ArrayList<>();
+
+        List<Menu> menus = new ArrayList<>();
+        Set<MenuReadDto> menuReadDtos = new HashSet<>();
 
         for(Menu menu : shop.get().getMenus()){
-            MenuReadDto menuDto = new MenuReadDto(menu);
-            menuReadDtos.add(menuDto);
+            menus.add(menu);
         }
-        return menuReadDtos;
+
+        for(Menu menu : menus){
+            menuReadDtos.add(new MenuReadDto(menu));
+        }
+
+        List<MenuReadDto> result = new ArrayList<>(menuReadDtos);
+
+        for(Menu menu : menus){
+            for(MenuReadDto e : result){
+                if(menu.getMenuCategory().getName().equals(e.getMenuCategoryName())){
+                    e.getMenu().add(new MenuReadDto.MenuDto(menu));
+                }
+            }
+        }
+
+        return result;
     }
 
 
@@ -78,7 +94,6 @@ public class MenuService {
         for(Menu menu : menus){
             eventRegisterEmployeeMenuDtos.add(new EventRegisterEmployeeMenuDto(menu));
         }
-        //System.out.println("====================================================" + eventRegisterEmployeeMenuDtos.size() + "======================================================");
 
         List<EventRegisterEmployeeMenuDto> result = new ArrayList<>(eventRegisterEmployeeMenuDtos);
 
@@ -90,7 +105,6 @@ public class MenuService {
                 }
         }
 
-        //List<EventRegisterMenuNamesDto> result = menus.stream().map(menu -> new EventRegisterMenuNamesDto(menu)).collect(Collectors.toList());
         return result;
     }
 
