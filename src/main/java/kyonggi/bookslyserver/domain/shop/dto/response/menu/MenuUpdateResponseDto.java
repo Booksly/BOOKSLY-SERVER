@@ -11,6 +11,6 @@ public record MenuUpdateResponseDto(
     @NotNull int price,
     @NotNull String description,
     @NotNull String menuCategory,
-    @NotNull List<String> images
+    @NotNull String imgUrl
 ) {
 }

@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.shop.dto.request.menu;
 
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -10,8 +11,7 @@ public record MenuCreateRequestDto(
         @NotNull int price,
         @NotNull @Lob String description,
         @NotNull String menuCategory,
-
-        @NotNull List<String> menuImgUri
-        ) {
+        @NotNull MultipartFile menuImg
+) {
 
 }
