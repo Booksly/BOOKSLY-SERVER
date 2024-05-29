@@ -17,11 +17,15 @@ import kyonggi.bookslyserver.global.common.uuid.Uuid;
 import kyonggi.bookslyserver.global.common.uuid.UuidService;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
+import kyonggi.bookslyserver.global.error.exception.ConflictException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static kyonggi.bookslyserver.global.error.ErrorCode.MENUCATEGORY_ALREADY_EXIST;
+import static kyonggi.bookslyserver.global.error.ErrorCode.SHOP_NOT_FOUND;
 
 @Service
 @Transactional
@@ -49,7 +53,7 @@ public class MenuService {
     }
   
     public ReadMenusByCategoryWrapperResponseDto readMenu(Long id){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
         List<MenuCategory> menuCategories = shop.getMenuCategories();
         return ReadMenusByCategoryWrapperResponseDto.of(menuCategories);
     }
@@ -82,11 +86,9 @@ public class MenuService {
 
     @Transactional
     public MenuCreateResponseDto create(Long id, MenuCreateRequestDto requestDto){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
-        Menu menu = Menu.createEntity(shop, requestDto);
-
-        if(!menuCategoryRepository.existsByName(requestDto.menuCategory())){
+        if(!menuCategoryRepository.existsByNameAndShopOwner(requestDto.menuCategory())){
             throw new BusinessException(ErrorCode.MENUCATEGORY_NOT_FOUND);
         }
         else{
@@ -97,6 +99,8 @@ public class MenuService {
 
             menuRepository.save(menu);
         }
+        Menu menu = Menu.createEntity(shop, requestDto);
+
 
         return MenuCreateResponseDto.builder().id(menu.getId()).build();
 
@@ -140,7 +144,7 @@ public class MenuService {
     }
 
     public List<MenuCategoryReadDto> readMenuCategory(Long id){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
 
         List<MenuCategoryReadDto> dtos = new ArrayList<>();
@@ -154,26 +158,27 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuCategoryCreateResponseDto createCategory(Long id, MenuCategoryCreateDto requestDto){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+    public MenuCategoryCreateResponseDto createCategory(Long ownerId, Long shopId, MenuCategoryCreateDto requestDto){
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
-        if(!menuCategoryRepository.existsByName(requestDto.categoryName())) {
-            MenuCategory menuCategory = MenuCategory.createEntity(requestDto, shop);
-            shop.getMenuCategory(menuCategory);
-            menuCategoryRepository.save(menuCategory);
-            return new MenuCategoryCreateResponseDto(menuCategory);
+        //가게 주인은 동일한 이름의 메뉴 카테고리 생성 불가
+        if (menuCategoryRepository.existsByNameAndShopOwner(requestDto.categoryName(), ownerId)) {
+            throw new ConflictException(MENUCATEGORY_ALREADY_EXIST);
         }
-        else{
-            throw new BusinessException(ErrorCode.MENUCATEGORY_ALREADY_EXIST);
-        }
+
+        MenuCategory menuCategory = MenuCategory.createEntity(requestDto, shop);
+        shop.addMenuCategory(menuCategory);
+        menuCategoryRepository.save(menuCategory);
+        return new MenuCategoryCreateResponseDto(menuCategory);
+
     }
 
     @Transactional
     public MenuCategoryCreateDto updateCategory(Long id, MenuCategoryCreateDto requestDto){
         MenuCategory menuCategory = menuCategoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENUCATEGORY_NOT_FOUND));
 
-        if(menuCategoryRepository.existsByName(requestDto.categoryName())){
-            throw new BusinessException(ErrorCode.MENUCATEGORY_ALREADY_EXIST);
+        if(menuCategoryRepository.existsByNameAndShopOwner(requestDto.categoryName())){
+            throw new BusinessException(MENUCATEGORY_ALREADY_EXIST);
         }
         menuCategory.setName(requestDto.categoryName());
         return MenuCategoryCreateDto.builder().categoryName(menuCategory.getName()).build();
