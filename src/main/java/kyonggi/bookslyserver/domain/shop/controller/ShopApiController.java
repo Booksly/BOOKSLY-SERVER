@@ -84,7 +84,7 @@ public class ShopApiController {
     @PostMapping("/api/shops")
     public ResponseEntity<SuccessResponse<?>> createShop(@OwnerId Long id, @RequestBody @Validated ShopCreateRequestDto requestDto){
         ShopRegisterDto result = shopService.join(id, requestDto);
-        return SuccessResponse.ok(result);
+        return SuccessResponse.ok(result); //created메소드(상태코드 201)를 사용하시는게 REST API에 더 적합한 방식입니다.
     }
 
     //가게 수정
