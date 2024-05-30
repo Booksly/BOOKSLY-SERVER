@@ -48,51 +48,46 @@ public class EmployeeService {
 
     private final ReservationScheduleRepository reservationScheduleRepository;
 
-    public List<EmployeeReadDto> readEmployee(Long id){
-        Optional<Shop> shop = shopRepository.findById(id);
+    public List<EmployeeReadDto> readEmployee(Long id, Boolean withReviews){
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
-        if(!shop.isPresent()){
-            throw new EntityNotFoundException();
-        }
 
         List<EmployeeReadDto> employeeReadDtos = new ArrayList<>();
 
-        if(shop.get().getEmployees() != null) {
-            for (Employee employee : shop.get().getEmployees()) {
-                EmployeeReadDto employeeReadDto = new EmployeeReadDto(employee);
-                employeeReadDtos.add(employeeReadDto);
+            if (shop.getEmployees().size() != 0) {
+                for (Employee employee : shop.getEmployees()) {
+                    EmployeeReadDto employeeReadDto = new EmployeeReadDto(employee, withReviews);
+                    employeeReadDtos.add(employeeReadDto);
+                }
             }
-        }
+            else{
+                throw new BusinessException(ErrorCode.EMPLOYEES_NOT_FOUND);
+            }
+
 
         return employeeReadDtos;
     }
 
 
     public EmployeeReadOneDto readOneEmployee(Long id){
-        Optional<Employee> employee = employeeRepository.findById(id);
-        if(!employee.isPresent()){
-            throw new EntityNotFoundException(EMPLOYEE_NOT_FOUND);
-        }
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(EMPLOYEES_NOT_FOUND));
+
         List<EmployeeMenu> employeeMenus = employeeMenuRepository.findByEmployeeId(id);
 
 
-        return new EmployeeReadOneDto(employee.get(), employeeMenus);
+        return new EmployeeReadOneDto(employee, employeeMenus);
     }
 
     public List<ReserveEmployeesDto> readReserveEmployees(Long id){
-        Optional<Shop> shop = shopRepository.findById(id);
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
-        if(!shop.isPresent()){
-            throw new BusinessException(ErrorCode.SHOP_NOT_FOUND);
-        }
-
-        if(shop.get().getEmployees() == null){
+        if(shop.getEmployees() == null){
             throw new BusinessException(ErrorCode.RESERVE_EMPLOYEES_NOT_FOUND);
         }
 
         List<ReserveEmployeesDto> result = new ArrayList<>();
 
-        for(Employee employee : shop.get().getEmployees()){
+        for(Employee employee : shop.getEmployees()){
             result.add(new ReserveEmployeesDto(employee));
         }
 
@@ -107,24 +102,22 @@ public class EmployeeService {
 
     @Transactional
     public EmployeeCreateResponseDto join(Long id, EmployeeCreateRequestDto requestDto){
-        Optional<Shop> shop = shopRepository.findById(id);
-        if(!shop.isPresent()){
-            throw new EntityNotFoundException();
-        }
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
-        Employee employee = Employee.createEntity(shop.get(), requestDto);
+
+        Employee employee = Employee.createEntity(shop, requestDto);
 
         employeeRepository.save(employee);
 
-        shop.get().getEmployees().add(employee);
+        shop.getEmployees().add(employee);
 
         if(requestDto.menus() != null){
-            for(String menuName : requestDto.menus()){
-                Menu menu = menuRepository.findByMenuName(menuName);
-                if(menu == null){
-                    throw new BusinessException(ErrorCode.MENU_NOT_FOUND);
+            for(Long menuId : requestDto.menus()){
+                Optional<Menu> menu = menuRepository.findById(menuId);
+                if(!menu.isPresent()){
+                    throw new EntityNotFoundException(MENU_NOT_FOUND);
                 }
-                EmployeeMenu employeeMenu = employee.addMenu(employee, menu);
+                EmployeeMenu employeeMenu = employee.addMenu(employee, menu.get());
             }
         }
 
@@ -138,12 +131,12 @@ public class EmployeeService {
         return new EmployeeCreateResponseDto(employee);
     }
 
+
     @Transactional
     public EmployeeUpdateResponseDto update(Long id, EmployeeCreateRequestDto requestDto){
-        Optional<Employee> employee = employeeRepository.findById(id);
-        if(!employee.isPresent()){
-            throw new EntityNotFoundException();
-        }
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_FOUND));
+        List<String> menus = new ArrayList<>();
+
 
         List<EmployeeMenu> employeeMenuList = employeeMenuRepository.findByEmployeeId(id);
         List<WorkSchedule> workScheduleList = workScheduleRepository.findByEmployeeId(id);
@@ -157,35 +150,37 @@ public class EmployeeService {
         }
 
         if(requestDto.menus() != null){
-            for(String menuName : requestDto.menus()){
-                Menu menu = menuRepository.findByMenuName(menuName);
-                EmployeeMenu employeeMenu = employee.get().addMenu(employee.get(), menu);
+            for(Long menuId : requestDto.menus()){
+                Optional<Menu> menu = menuRepository.findById(menuId);
+                if(!menu.isPresent()){
+                    throw new EntityNotFoundException(MENU_NOT_FOUND);
+                }
+                EmployeeMenu employeeMenu = employee.addMenu(employee, menu.get());
                 employeeMenuRepository.save(employeeMenu);
+                menus.add(menu.get().getMenuName());
             }
         }
 
 
         for(EmployeeWorkScheduleDto employeeWorkScheduleDto : requestDto.workSchedules()){
-            WorkSchedule workSchedule = WorkSchedule.createEntity(employee.get(), employeeWorkScheduleDto);
-            employee.get().getWorkSchedules().add(workSchedule);
+            WorkSchedule workSchedule = WorkSchedule.createEntity(employee, employeeWorkScheduleDto);
+            employee.getWorkSchedules().add(workSchedule);
             workScheduleRepository.save(workSchedule);
         }
 
-        employee.get().update(requestDto);
+        employee.update(requestDto);
 
-        return new EmployeeUpdateResponseDto(requestDto);
+        return new EmployeeUpdateResponseDto(requestDto, menus);
     }
+
 
     @Transactional
     public EmployeeDeleteResponseDto delete(Long id){
-        Optional<Employee> employee = employeeRepository.findById(id);
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_FOUND));
 
-        if(!employee.isPresent()){
-            throw new EntityNotFoundException();
-        }
 
-        Shop shop = employee.get().getShop();
-        shop.getEmployees().remove(employee.get());
+        Shop shop = employee.getShop();
+        shop.getEmployees().remove(employee);
         employeeRepository.deleteById(id);
         return new EmployeeDeleteResponseDto(id);
     }

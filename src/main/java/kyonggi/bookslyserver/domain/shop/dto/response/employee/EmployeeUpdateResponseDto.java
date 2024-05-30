@@ -21,7 +21,7 @@ public class EmployeeUpdateResponseDto {
 
     @NotNull List<EmployeeWorkScheduleDto> workSchedules;
 
-    public EmployeeUpdateResponseDto(EmployeeCreateRequestDto requestDto){
+    public EmployeeUpdateResponseDto(EmployeeCreateRequestDto requestDto, List<String> menuNames){
         this.employeeName = requestDto.employeeName();
         this.description = requestDto.description();
         this.imgUri = requestDto.imgUri();
@@ -29,7 +29,7 @@ public class EmployeeUpdateResponseDto {
 
         if(requestDto.menus() != null){
             this.menus = new ArrayList<>();
-            for(String menu : requestDto.menus()){
+            for(String menu : menuNames){
                 this.menus.add(menu);
             }
         }

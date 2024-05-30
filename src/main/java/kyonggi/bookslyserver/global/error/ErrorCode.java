@@ -25,7 +25,7 @@ public enum ErrorCode implements BaseErrorCode{
     TIME_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST,"시간 또는 분 설정을 해주세요"),
     AUTO_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST,"마감 예약 인원을 설정해주세요"),
     DISCOUNT_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST,"할인율 설정이 되어있지 않습니다"),
-    MENU_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "카테고리에 메뉴가 존재합니다. 해당 카테고리를 삭제할 수 없습니다."),
+    CATEGORY_HAS_EXISTING_MENU(HttpStatus.BAD_REQUEST, "카테고리에 메뉴가 존재합니다. 해당 카테고리를 삭제할 수 없습니다."),
     RESERVATION_CLOSED_BAD_REQUEST(HttpStatus.BAD_REQUEST,"예약 인원이 마감된 시간대 입니다."),
     DUPLICATED_REPEAT_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST, "요일 반복과 기간 반복의 중복 설정이 불가능합니다."),
     INCOMPLETE_REPEAT_SETTING_BAD_REQUEST(HttpStatus.BAD_REQUEST, "반복 설정을 완료해주세요."),
@@ -94,6 +94,8 @@ public enum ErrorCode implements BaseErrorCode{
     TIME_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 타임 이벤트입니다."),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리입니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 리뷰입니다."),
+    EMPLOYEE_MENU_NOT_EXIST(HttpStatus.NOT_FOUND, "등록된 직원 메뉴가 없습니다."),
+
 
     /**
      * 405 Method Not Allowed
@@ -105,6 +107,7 @@ public enum ErrorCode implements BaseErrorCode{
      */
     CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 리소스입니다."),
     MENUCATEGORY_ALREADY_EXIST(HttpStatus.CONFLICT, "해당 카테고리가 이미 존재합니다."),
+    MENU_NAME_ALREADY_EXIST(HttpStatus.CONFLICT, "메뉴 이름이 중복됩니다."),
     SHOP_NAME_ALREADY_EXIST(HttpStatus.CONFLICT, "동일한 이름의 가게가 이미 존재합니다."),
     EXIST_EVENTS_CONFLICT(HttpStatus.CONFLICT, "새로운 이벤트의 시간이 기존 이벤트와 겹칩니다."),
     EVENT_SETTING_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 이벤트 설정이 존재합니다."),

@@ -8,7 +8,6 @@ import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -20,7 +19,11 @@ public class MenuImage extends BaseTimeEntity {
 
     private String menuImgUri;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="menu_id")
     private Menu menu;
+
+    public void updateImgUri(String imgUri) {
+        this.menuImgUri = imgUri;
+    }
 }

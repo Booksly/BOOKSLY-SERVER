@@ -33,6 +33,9 @@ public class AmazonConfig {
     @Value("${cloud.aws.s3.path.review}")
     private String reviewPath;
 
+    @Value(value = "${cloud.aws.s3.path.menu}")
+    private String menuPath;
+
     @PostConstruct
     public void init() {
         this.awsCredentials = new BasicAWSCredentials(accessKey, secretKey);

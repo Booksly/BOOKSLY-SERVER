@@ -15,7 +15,6 @@ import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -122,7 +121,7 @@ public class Shop extends BaseTimeEntity {
         this.shopOwner.getShops().add(this);
     }
 
-    public void getMenuCategory(MenuCategory menuCategory){
+    public void addMenuCategory(MenuCategory menuCategory){
         this.menuCategories.add(menuCategory);
     }
 

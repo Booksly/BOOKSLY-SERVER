@@ -2,26 +2,33 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 import jakarta.transaction.Transactional;
 
-import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEventMenu;
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCategoryCreateDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.menu.MenuCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.menu.UpdateMenuRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.*;
 
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuCategory;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuImage;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.*;
+import kyonggi.bookslyserver.global.aws.s3.AmazonS3Manager;
+import kyonggi.bookslyserver.global.common.uuid.Uuid;
+import kyonggi.bookslyserver.global.common.uuid.UuidService;
 import kyonggi.bookslyserver.global.error.ErrorCode;
-import kyonggi.bookslyserver.global.error.exception.BusinessException;
+import kyonggi.bookslyserver.global.error.exception.ConflictException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
+import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
 @Service
 @Transactional
@@ -32,143 +39,140 @@ public class MenuService {
 
     private final MenuImageRepository menuImageRepository;
 
+    private final ShopService shopService;
+
     private final MenuCategoryRepository menuCategoryRepository;
 
     private final ShopRepository shopRepository;
 
     private final EmployeeRepository employeeRepository;
 
+    private final AmazonS3Manager amazonS3Manager;
 
-    public MenuReadOneDto readOneMenu(Long id){
-        Optional<Menu> menu = menuRepository.findById(id);
-        if(!menu.isPresent()){
-            throw new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND);
-        }
+    private final UuidService uuidService;
 
-        return new MenuReadOneDto(menu.get());
+
+    public MenuReadOneDto readMenu(Long id){
+        Menu menu = menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND));
+        return new MenuReadOneDto(menu);
     }
   
-    public List<MenuReadDto> readMenu(Long id){
-        Optional<Shop> shop = shopRepository.findById(id);
-        if(!shop.isPresent()){
-            throw new EntityNotFoundException();
-        }
-        List<MenuReadDto> menuReadDtos = new ArrayList<>();
-
-        for(Menu menu : shop.get().getMenus()){
-            MenuReadDto menuDto = new MenuReadDto(menu);
-            menuReadDtos.add(menuDto);
-        }
-        return menuReadDtos;
+    public ReadMenusByCategoryWrapperResponseDto readShopMenus(Long id){
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        List<MenuCategory> menuCategories = shop.getMenuCategories();
+        return ReadMenusByCategoryWrapperResponseDto.of(menuCategories);
     }
 
 
-    public List<EventRegisterEmployeeMenuDto> readMenuNamesEventRegister(Long id){
-        Optional<Employee> employee = employeeRepository.findById(id);
-        List<Menu> menus = new ArrayList<>();
-        Set<EventRegisterEmployeeMenuDto> eventRegisterEmployeeMenuDtos = new HashSet<>();
+    public ReadEmployeesMenusWrapperResponseDto readEmployeesMenus(List<Long> employeeIds){
 
-        if(!employee.isPresent()){
+        List<Employee> employees = employeeRepository.findAllById(employeeIds);
+        if (employees.size() != employeeIds.size()) {
             throw new EntityNotFoundException(ErrorCode.EMPLOYEE_NOT_FOUND);
         }
-        for(EmployeeMenu employeeMenu : employee.get().getEmployeeMenus()){
-            menus.add(employeeMenu.getMenu());
-        }
 
-        for(Menu menu : menus){
-            eventRegisterEmployeeMenuDtos.add(new EventRegisterEmployeeMenuDto(menu));
-        }
-        //System.out.println("====================================================" + eventRegisterEmployeeMenuDtos.size() + "======================================================");
+        // 각 직원의 메뉴를 uniqueMenus에 추가하여 메뉴 중복 제거
+        Set<Menu> uniqueMenus = employees.stream()
+                .flatMap(employee ->  employee.getEmployeeMenus().stream())
+                .map(EmployeeMenu::getMenu)
+                .collect(Collectors.toSet());
 
-        List<EventRegisterEmployeeMenuDto> result = new ArrayList<>(eventRegisterEmployeeMenuDtos);
 
-        for(Menu menu : menus){
-                for(EventRegisterEmployeeMenuDto e : result){
-                    if(menu.getMenuCategory().getName().equals(e.getMenuCategoryName())){
-                        e.getMenu().add(new EventRegisterEmployeeMenuDto.MenuDto(menu));
-                    }
-                }
-        }
+        // 카테고리별로 메뉴를 분류하고 DTO 변환
+        List<ReadEmployeesMenusResponseDto> readEmployeesMenusResponseDtos = uniqueMenus.stream()
+                .collect(Collectors.groupingBy(menu -> menu.getMenuCategory().getName()))
+                .entrySet().stream()
+                .map(entry -> ReadEmployeesMenusResponseDto.of(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
 
-        //List<EventRegisterMenuNamesDto> result = menus.stream().map(menu -> new EventRegisterMenuNamesDto(menu)).collect(Collectors.toList());
-        return result;
+        return ReadEmployeesMenusWrapperResponseDto.of(readEmployeesMenusResponseDtos);
     }
 
-    @Transactional
-    public MenuCreateResponseDto create(Long id, MenuCreateRequestDto requestDto){
-        Optional<Shop> shop = shopRepository.findById(id);
-        if(!shop.isPresent()){
-            throw new EntityNotFoundException();
-        }
-        Menu menu = Menu.createEntity(shop.get(), requestDto);
+    public MenuCreateResponseDto create(Long ownerId, Long shopId, MenuCreateRequestDto requestDto){
+        Shop shop = shopService.findShop(ownerId, shopId);
 
-        if(!menuCategoryRepository.existsByName(requestDto.menuCategory())){
-            throw new BusinessException(ErrorCode.MENUCATEGORY_NOT_FOUND);
-        }
-        else{
-            MenuCategory menuCategory = menuCategoryRepository.findByName(requestDto.menuCategory());
-            shop.get().getMenus().add(menu);
-            menuCategory.addMenu(menu);
-            menu.addImg(menu.getMenuImages());
+        MenuCategory menuCategory = menuCategoryRepository.findById(requestDto.menuCategoryId()).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
 
-            menuRepository.save(menu);
+        if (menuRepository.existsNameInCategory(requestDto.menuName(), menuCategory.getId()))
+            throw new ConflictException(MENU_NAME_ALREADY_EXIST);
+
+        Menu menu = Menu.createEntity(requestDto, shop);
+
+        if (requestDto.menuImg() != null) {
+            String menuPictureUrl = uploadMenuImgToS3(requestDto.menuImg());
+            MenuImage image = MenuImage.builder().menuImgUri(menuPictureUrl).menu(menu).build();
+            menuImageRepository.save(image);
+            menu.addImg(image);
         }
 
-        return MenuCreateResponseDto.builder().id(menu.getId()).build();
+        menuCategory.addMenu(menu);
+        shop.getMenus().add(menu);
+
+        menuRepository.save(menu);
+        return MenuCreateResponseDto.of(menu);
 
     }
 
-    @Transactional
-    public MenuUpdateResponseDto update(Long id, MenuCreateRequestDto requestDto){
-        Optional<Menu> menu = menuRepository.findById(id);
-        if(!menu.isPresent()){
-            throw new EntityNotFoundException();
+    private String uploadMenuImgToS3(MultipartFile image) {
+        Uuid uuid = uuidService.createUuid();
+        String pictureUrl = amazonS3Manager.uploadFile(
+                amazonS3Manager.generateMenuKeyName(uuid, image.getOriginalFilename()), image);
+        return pictureUrl;
+    }
+
+    public MenuUpdateResponseDto update(Long id, UpdateMenuRequestDto requestDto){
+        Menu menu = menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND));
+
+        if (requestDto.categoryId() != null) {
+            MenuCategory menuCategory = menuCategoryRepository.findById(requestDto.categoryId()).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
+            menu.updateMenuCategory(menuCategory);
         }
 
-        for(int i = menu.get().getMenuImages().size() - 1; i >= 0; i--){
-            menuImageRepository.delete(menu.get().getMenuImages().get(i).getMenuImgUri());
-            menu.get().getMenuImages().remove(i);
+        if (requestDto.menuImg() != null && !requestDto.menuImg().isEmpty()) {
+            if (menu.getMenuImage() != null) amazonS3Manager.deleteFileFromUrl(menu.getMenuImage().getMenuImgUri());
+            String menuPictureUrl = uploadMenuImgToS3(requestDto.menuImg());
+            menu.updateMenuImage(menuPictureUrl);
         }
 
+        if (requestDto.menuName() != null) {
+            menu.updateMenuName(requestDto.menuName());
+        }
 
-        List<String> images = menu.get().update(requestDto);
+        if (requestDto.description() != null) {
+            menu.updateDescription(requestDto.description());
+        }
 
-        return MenuUpdateResponseDto
-                .builder()
-                .menuName(menu.get().getMenuName())
-                .price(menu.get().getPrice())
-                .description(menu.get().getDescription())
-                .menuCategory(menu.get().getMenuCategory().getName())
-                .images(images).build();
+        if (requestDto.price() != null) {
+            menu.updatePrice(requestDto.price());
+        }
+
+        menuRepository.save(menu);
+        return MenuUpdateResponseDto.of(menu);
     }
 
     @Transactional
     public MenuDeleteResponseDto delete(Long id){
-        Optional<Menu> menu = menuRepository.findById(id);
-        if(!menu.isPresent()){
-            throw new EntityNotFoundException();
-        }
+        Menu menu = menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND));
 
-        if(menu.get().getMenuCategory().getMenus().size() == 1){
-            menuCategoryRepository.delete(menu.get().getMenuCategory());
+
+        if(menu.getMenuCategory().getMenus().size() == 1){
+            menuCategoryRepository.delete(menu.getMenuCategory());
         }
         else{
-            menu.get().getShop().getMenus().remove(menu.get());
-            menuRepository.delete(menu.get().getId());
+            menu.getShop().getMenus().remove(menu);
+            menuRepository.delete(menu.getId());
         }
-        return new MenuDeleteResponseDto(menu.get());
+        return new MenuDeleteResponseDto(menu);
     }
 
     public List<MenuCategoryReadDto> readMenuCategory(Long id){
-        Optional<Shop> shop = shopRepository.findById(id);
-        if(!shop.isPresent()){
-            throw new EntityNotFoundException();
-        }
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+
 
         List<MenuCategoryReadDto> dtos = new ArrayList<>();
 
-        if(shop.get().getMenuCategories() != null){
-            for(MenuCategory menuCategory : shop.get().getMenuCategories()){
+        if(shop.getMenuCategories() != null){
+            for(MenuCategory menuCategory : shop.getMenuCategories()){
                 dtos.add(new MenuCategoryReadDto(menuCategory));
             }
         }
@@ -176,49 +180,45 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuCategoryCreateResponseDto createCategory(Long id, MenuCategoryCreateDto requestDto){
-        Optional<Shop> shop = shopRepository.findById(id);
-        if(!shop.isPresent()){
-            throw new EntityNotFoundException();
+    public MenuCategoryCreateResponseDto createCategory(Long ownerId, Long shopId, MenuCategoryCreateDto requestDto){
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+
+        //가게 주인은 동일한 이름의 메뉴 카테고리 생성 불가
+        if (menuCategoryRepository.existsByNameAndShopOwner(requestDto.categoryName(), ownerId)) {
+            throw new ConflictException(MENUCATEGORY_ALREADY_EXIST);
         }
-        if(!menuCategoryRepository.existsByName(requestDto.categoryName())) {
-            MenuCategory menuCategory = MenuCategory.createEntity(requestDto, shop.get());
-            shop.get().getMenuCategory(menuCategory);
-            menuCategoryRepository.save(menuCategory);
-            return new MenuCategoryCreateResponseDto(menuCategory);
-        }
-        else{
-            throw new BusinessException(ErrorCode.MENUCATEGORY_ALREADY_EXIST);
-        }
+
+        MenuCategory menuCategory = MenuCategory.createEntity(requestDto, shop);
+        shop.addMenuCategory(menuCategory);
+        menuCategoryRepository.save(menuCategory);
+        return new MenuCategoryCreateResponseDto(menuCategory);
+
     }
 
     @Transactional
-    public MenuCategoryCreateDto updateCategory(Long id, MenuCategoryCreateDto requestDto){
-        Optional<MenuCategory> menuCategory = menuCategoryRepository.findById(id);
-        if(!menuCategory.isPresent()){
-            throw new EntityNotFoundException();
+    public MenuCategoryCreateDto updateCategory(Long ownerId, Long categoryId, MenuCategoryCreateDto requestDto){
+        MenuCategory menuCategory = menuCategoryRepository.findById(categoryId).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
+
+        if(menuCategoryRepository.existsByNameAndShopOwner(requestDto.categoryName(), ownerId)){
+            throw new ConflictException(MENUCATEGORY_ALREADY_EXIST);
         }
-        if(menuCategoryRepository.existsByName(requestDto.categoryName())){
-            throw new BusinessException(ErrorCode.MENUCATEGORY_ALREADY_EXIST);
-        }
-        menuCategory.get().setName(requestDto.categoryName());
-        return MenuCategoryCreateDto.builder().categoryName(menuCategory.get().getName()).build();
+
+        menuCategory.updateName(requestDto.categoryName());
+        return MenuCategoryCreateDto.builder().categoryName(menuCategory.getName()).build();
     }
 
     @Transactional
-    public MenuCategoryDeleteResponseDto deleteCategory(Long id){
-        Optional<MenuCategory> menuCategory = menuCategoryRepository.findById(id);
-        if(!menuCategory.isPresent()){
-            throw new EntityNotFoundException();
+    public MenuCategoryDeleteResponseDto deleteCategory(Long categoryId){
+        MenuCategory menuCategory = menuCategoryRepository.findById(categoryId).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
+
+        if(!menuCategory.getMenus().isEmpty()){
+            throw new InvalidValueException(ErrorCode.CATEGORY_HAS_EXISTING_MENU);
         }
-        if(!menuCategory.get().getMenus().isEmpty()){
-            throw new BusinessException(ErrorCode.MENU_ALREADY_EXIST);
-        }
-        else{
-            menuCategory.get().getShop().getMenuCategories().remove(menuCategory.get());
-            menuCategoryRepository.delete(menuCategory.get().getId());
-        }
-        return new MenuCategoryDeleteResponseDto(menuCategory.get());
+
+        menuCategory.getShop().getMenuCategories().remove(menuCategory);
+        menuCategoryRepository.delete(menuCategory.getId());
+
+        return new MenuCategoryDeleteResponseDto(menuCategory);
     }
 
 }

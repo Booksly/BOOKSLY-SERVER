@@ -1,6 +1,7 @@
-package kyonggi.bookslyserver.global.common;
+package kyonggi.bookslyserver.global.common.uuid;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 @Entity

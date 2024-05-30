@@ -20,8 +20,8 @@ public class EmployeeApiController {
 
 
     @GetMapping("/api/shops/{shopId}/employees")
-    public ResponseEntity<SuccessResponse<?>> readEmployee(@PathVariable("shopId") Long id) {
-        List<EmployeeReadDto> result = employeeService.readEmployee(id);
+    public ResponseEntity<SuccessResponse<?>> readEmployee(@PathVariable("shopId") Long id, @RequestParam("withReviews") Boolean withReviews) {
+        List<EmployeeReadDto> result = employeeService.readEmployee(id, withReviews);
         return SuccessResponse.ok(result);
     }
 

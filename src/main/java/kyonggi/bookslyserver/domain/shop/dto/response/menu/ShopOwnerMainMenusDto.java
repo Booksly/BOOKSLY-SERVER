@@ -12,7 +12,7 @@ public class ShopOwnerMainMenusDto {
     private int price;
 
     public ShopOwnerMainMenusDto(Menu menu){
-        this.imgUri = menu.getMenuImages().get(0).getMenuImgUri();
+        this.imgUri = menu.getMenuImage().getMenuImgUri();
         this.menuName = menu.getMenuName();
         this.price = menu.getPrice();
 

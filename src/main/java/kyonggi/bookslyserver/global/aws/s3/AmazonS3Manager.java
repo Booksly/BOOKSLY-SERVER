@@ -4,15 +4,12 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import kyonggi.bookslyserver.global.common.Uuid;
-import kyonggi.bookslyserver.global.common.UuidRepository;
+import kyonggi.bookslyserver.global.common.uuid.Uuid;
 import kyonggi.bookslyserver.global.config.AmazonConfig;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.InternalServerException;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,6 +47,10 @@ public class AmazonS3Manager{
         return amazonConfig.getReviewPath() + '/' + uuid.getUuid() + '/' + originalFilename;
     }
 
+    public String generateMenuKeyName(Uuid uuid, String originalFilename) {
+        return amazonConfig.getMenuPath() + '/' + uuid.getUuid() + '/' + originalFilename;
+    }
+
     public void deleteFile(String keyName) {
         try {
             // deleteObject(버킷명, 키값)으로 객체 삭제
@@ -73,6 +74,11 @@ public class AmazonS3Manager{
             log.error("Error extracting keyName from URL: {}", e.getMessage());
             throw new IllegalArgumentException("Invalid S3 URL", e);
         }
+    }
+
+    public void deleteFileFromUrl(String url) {
+        String keyNameFromUrl = extractKeyNameFromUrl(url);
+        deleteFile(keyNameFromUrl);
     }
 
 }
