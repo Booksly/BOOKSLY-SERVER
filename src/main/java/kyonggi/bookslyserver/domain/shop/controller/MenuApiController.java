@@ -30,10 +30,10 @@ public class MenuApiController {
         return SuccessResponse.ok(responseDto);
     }
 
-    @GetMapping("/api/shops/employees/{employeeId}/menus")
-    public ResponseEntity<SuccessResponse<?>> readEmployeeMenus(@PathVariable("employeeId") Long id){
-        List<EventRegisterEmployeeMenuDto> result = menuService.readEmployeeMenus(id);
-        return SuccessResponse.ok(result);
+    @GetMapping("/api/shops/employees/menus")
+    public ResponseEntity<SuccessResponse<?>> readEmployeesMenus(@RequestParam("employeeIds") List<Long> employeeIds){
+        ReadEmployeesMenusWrapperResponseDto responseDto = menuService.readEmployeesMenus(employeeIds);
+        return SuccessResponse.ok(responseDto);
     }
 
     @PostMapping("/api/shops/{shopId}/menus")
