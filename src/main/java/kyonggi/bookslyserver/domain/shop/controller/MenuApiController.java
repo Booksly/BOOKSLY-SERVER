@@ -24,22 +24,15 @@ public class MenuApiController {
 
 
 
-    @GetMapping("/api/shops/menus/{menuId}")
-    public ResponseEntity<SuccessResponse<?>> readOneMenu(@PathVariable("menuId") Long id){
-        MenuReadOneDto result = menuService.readOneMenu(id);
-        return SuccessResponse.ok(result);
-    }
-
-
     @GetMapping("/api/shops/{shopId}/menus")
-    public ResponseEntity<SuccessResponse<?>> readMenu(@PathVariable("shopId") Long id){
-        ReadMenusByCategoryWrapperResponseDto responseDto = menuService.readMenu(id);
+    public ResponseEntity<SuccessResponse<?>> readShopMenus(@PathVariable("shopId") Long id){
+        ReadMenusByCategoryWrapperResponseDto responseDto = menuService.readShopMenus(id);
         return SuccessResponse.ok(responseDto);
     }
 
-    @GetMapping("api/shops/employees/{employeeId}/menus/EventRegistration")
-    public ResponseEntity<SuccessResponse<?>> readMenuNamesTimeEventRegister(@PathVariable("employeeId") Long id){
-        List<EventRegisterEmployeeMenuDto> result = menuService.readMenuNamesEventRegister(id);
+    @GetMapping("/api/shops/employees/{employeeId}/menus")
+    public ResponseEntity<SuccessResponse<?>> readEmployeeMenus(@PathVariable("employeeId") Long id){
+        List<EventRegisterEmployeeMenuDto> result = menuService.readEmployeeMenus(id);
         return SuccessResponse.ok(result);
     }
 
@@ -47,6 +40,12 @@ public class MenuApiController {
     public ResponseEntity<SuccessResponse<?>> createMenu(@OwnerId Long ownerId, @PathVariable("shopId") Long shopId, @RequestBody @Validated MenuCreateRequestDto requestDto){
         MenuCreateResponseDto result = menuService.create(ownerId, shopId, requestDto);
         return SuccessResponse.created(result);
+    }
+
+    @GetMapping("/api/shops/menus/{menuId}")
+    public ResponseEntity<SuccessResponse<?>> readMenu(@PathVariable("menuId") Long id){
+        MenuReadOneDto result = menuService.readMenu(id);
+        return SuccessResponse.ok(result);
     }
 
 
@@ -57,31 +56,30 @@ public class MenuApiController {
     }
 
     @DeleteMapping("/api/shops/menus/{menuId}")
-    public ResponseEntity<SuccessResponse<?>> delete(@PathVariable("menuId") Long id){
-
+    public ResponseEntity<SuccessResponse<?>> deleteMenu(@PathVariable("menuId") Long id){
         MenuDeleteResponseDto result = menuService.delete(id);
         return SuccessResponse.ok(result);
     }
 
-    @GetMapping("/api/shops/{shopId}/categories")
-    public ResponseEntity<SuccessResponse<?>> readCategory(@PathVariable("shopId") Long id){
-        List<MenuCategoryReadDto> result = menuService.readMenuCategory(id);
-        return SuccessResponse.ok(result);
-    }
-
-    @PostMapping("/api/shops/{shopId}/menuCategories")
+    @PostMapping("/api/shops/{shopId}/categories")
     public ResponseEntity<SuccessResponse<?>> createMenuCategory(@OwnerId Long ownerId, @PathVariable("shopId") Long shopId, @RequestBody @Validated MenuCategoryCreateDto requestDto){
         MenuCategoryCreateResponseDto result = menuService.createCategory(ownerId, shopId, requestDto);
         return SuccessResponse.created(result);
     }
 
-    @PutMapping("/api/shops/menuCategories/{categoryId}")
+    @GetMapping("/api/shops/{shopId}/categories")
+    public ResponseEntity<SuccessResponse<?>> readMenuCategory(@PathVariable("shopId") Long id){
+        List<MenuCategoryReadDto> result = menuService.readMenuCategory(id);
+        return SuccessResponse.ok(result);
+    }
+
+    @PutMapping("/api/shops/categories/{categoryId}")
     public ResponseEntity<SuccessResponse<?>> updateMenuCategory(@OwnerId Long ownerId, @PathVariable("categoryId") Long categoryId, @RequestBody @Validated MenuCategoryCreateDto requestDto){
         MenuCategoryCreateDto result = menuService.updateCategory(ownerId, categoryId, requestDto);
         return SuccessResponse.ok(result);
     }
 
-    @DeleteMapping("/api/shops/menuCategories/{categoryId}")
+    @DeleteMapping("/api/shops/categories/{categoryId}")
     public ResponseEntity<SuccessResponse<?>> deleteMenuCategory(@PathVariable("categoryId") Long id){
         MenuCategoryDeleteResponseDto result = menuService.deleteCategory(id);
         return SuccessResponse.ok(result);

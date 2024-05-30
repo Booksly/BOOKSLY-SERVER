@@ -18,7 +18,6 @@ import kyonggi.bookslyserver.global.aws.s3.AmazonS3Manager;
 import kyonggi.bookslyserver.global.common.uuid.Uuid;
 import kyonggi.bookslyserver.global.common.uuid.UuidService;
 import kyonggi.bookslyserver.global.error.ErrorCode;
-import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.ConflictException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
 import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
@@ -52,19 +51,19 @@ public class MenuService {
     private final UuidService uuidService;
 
 
-    public MenuReadOneDto readOneMenu(Long id){
+    public MenuReadOneDto readMenu(Long id){
         Menu menu = menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND));
         return new MenuReadOneDto(menu);
     }
   
-    public ReadMenusByCategoryWrapperResponseDto readMenu(Long id){
+    public ReadMenusByCategoryWrapperResponseDto readShopMenus(Long id){
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
         List<MenuCategory> menuCategories = shop.getMenuCategories();
         return ReadMenusByCategoryWrapperResponseDto.of(menuCategories);
     }
 
 
-    public List<EventRegisterEmployeeMenuDto> readMenuNamesEventRegister(Long id){
+    public List<EventRegisterEmployeeMenuDto> readEmployeeMenus(Long id){
         Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.EMPLOYEE_NOT_FOUND));
         List<Menu> menus = new ArrayList<>();
         Set<EventRegisterEmployeeMenuDto> eventRegisterEmployeeMenuDtos = new HashSet<>();
