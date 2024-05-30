@@ -29,7 +29,7 @@ public class MenuReadDto {
         public MenuDto(Menu menu){
             this.id = menu.getId();
             this.menuName = menu.getMenuName();
-            this.imgUri = menu.getMenuImages().get(0).getMenuImgUri();
+            this.imgUri = menu.getMenuImage().getMenuImgUri();
             this.price = menu.getPrice();
             this.description = menu.getDescription();
         }
