@@ -3,7 +3,9 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 
 import com.sun.net.httpserver.Authenticator;
+import jakarta.validation.Valid;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopFilteredShopsRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopUserReadOneDto;
@@ -77,6 +79,13 @@ public class ShopApiController {
             throw new InvalidValueException(ErrorCode.PAGE_NUMBER_OVER);
         }
         List<ShopFilterDto> result = shopService.readTopShops(pageable);
+        return SuccessResponse.ok(result);
+    }
+
+    //가게 필터링 조회
+    @GetMapping("/api/shops/filteredShops")
+    public ResponseEntity<SuccessResponse<?>> readFilteredShops(@RequestBody @Validated ShopFilteredShopsRequestDto requestDto){
+        List<ShopFilteredShopsResponseDto> result = shopService.readFilteredShops(requestDto);
         return SuccessResponse.ok(result);
     }
 

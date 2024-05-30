@@ -127,11 +127,12 @@ public class Shop extends BaseTimeEntity {
     }
 
     public static Shop createShop(ShopCreateRequestDto requestDto){
+
         return Shop.builder()
                 .name(requestDto.getName())
                 .phoneNumber(requestDto.getPhoneNumber())
                 .businessNumber(requestDto.getBusinessNumber())
-                .category(Category.builder().categoryName(requestDto.getCategory()).build())
+                //.category(Category.builder().categoryName(requestDto.getCategory()).build())
                 .address(Address.builder().firstAddress(requestDto.getFirstAddress()).secondAddress(requestDto.getSecondAddress()).thirdAddress(requestDto.getThirdAddress()).build())
                 .detailAddress(requestDto.getDetailAddress())
                 .kakaoUrl(requestDto.getKakaoUrl())

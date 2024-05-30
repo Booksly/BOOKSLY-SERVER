@@ -2,12 +2,15 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 
 import jakarta.transaction.Transactional;
+import kyonggi.bookslyserver.domain.shop.constant.CategoryName;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopFilteredShopsRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Category;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
 import kyonggi.bookslyserver.domain.shop.repository.BusinessScheduleRepository;
@@ -94,6 +97,37 @@ public class ShopService {
         return result;
     }
 
+    public List<ShopFilteredShopsResponseDto> readFilteredShops(ShopFilteredShopsRequestDto requestDto){
+        String[] address = requestDto.getRegion().split(" ");
+        List<Shop> shops = new ArrayList<>();
+        List<ShopFilteredShopsResponseDto> result = new ArrayList<>();
+
+        if(address.length == 3) {
+            if (address[2].equals(ALL_REGION)) {
+                shops = shopRepository.findAllShopsByOneAndTwoAddress(address[0], address[1]);
+            } else if (address[1].equals(ALL_REGION)) {
+                shops = shopRepository.findAllShopsByOneAddress(address[0]);
+            } else {
+                shops = shopRepository.findAllShopsByAllAddress(address[0], address[1], address[2]);
+            }
+        }
+        else if(address.length == 2){
+            if(address[1].equals(ALL_REGION)){
+                shops = shopRepository.findAllShopsByOneAddress(address[0]);
+            }
+            else{
+                shops = shopRepository.findAllShopsByOneAndTwoAddress(address[0], address[1]);
+            }
+        }
+
+        shops = shopRepository.findAllFilteredShopsByCategoryIds(requestDto.getCategories(), shops);
+
+
+        result = shops.stream().map(shop -> new ShopFilteredShopsResponseDto(shop)).collect(Collectors.toList());
+
+        return result;
+    }
+
     @Transactional
     public ShopRegisterDto join(Long ownerId, ShopCreateRequestDto requestDto) {
 
@@ -101,6 +135,15 @@ public class ShopService {
             throw new BusinessException(SHOP_NAME_ALREADY_EXIST);
         }
         Shop shop = Shop.createShop(requestDto);
+        CategoryName categoryName = CategoryName.valueOf(requestDto.getCategory());
+        Category category = categoryRepository.findByCategoryName(categoryName);
+        if(category != null){
+            shop.setCategory(category);
+        }
+        else{
+            shop.setCategory(Category.builder().categoryName(categoryName).build());
+        }
+
         shopRepository.save(shop);
         List<BusinessSchedule> businessScheduleList = requestDto.getBusinessScheduleList();
         for(BusinessSchedule businessSchedule : businessScheduleList){

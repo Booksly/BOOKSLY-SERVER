@@ -14,7 +14,7 @@ public class ShopCreateRequestDto {
 
     @NotNull private String Name;
 
-    @NotNull private CategoryName category;
+    @NotNull private String category;
 
     @NotNull private String phoneNumber;
 
