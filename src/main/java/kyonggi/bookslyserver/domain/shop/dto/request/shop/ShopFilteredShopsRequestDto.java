@@ -9,7 +9,7 @@ import java.util.List;
 public class ShopFilteredShopsRequestDto {
     private String region;
 
-    private List<CategoryName> categories;
+    private List<Long> categories;
 
     private List<String> times;
 }

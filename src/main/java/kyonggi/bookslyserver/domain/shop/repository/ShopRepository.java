@@ -47,7 +47,7 @@ public interface ShopRepository extends JpaRepository<Shop,Long> {
     @Query("select s from Shop s where s.category.id in :categoryIds and s in :shops")
     List<Shop> findByCategoryIds(@Param("categoryIds") List<Long> categoryIds, @Param("shops") List<Shop> shops);
 
-    @Query("select s from Shop s where s.category.categoryName in :categoryNames and s IN :shops")
-    List<Shop> findAllFilteredShopsByCategoryIds(@Param("categoryNames") List<CategoryName> categoryNames, @Param("shops") List<Shop> shops);
+    @Query("select s from Shop s where s.category.id in :categoryIds and s IN :shops")
+    List<Shop> findAllFilteredShopsByCategoryIds(@Param("categoryIds") List<Long> categoryIds, @Param("shops") List<Shop> shops);
 
 }
