@@ -91,10 +91,9 @@ public class MenuService {
     public MenuCreateResponseDto create(Long ownerId, Long shopId, MenuCreateRequestDto requestDto){
         Shop shop = shopService.findShop(ownerId, shopId);
 
-        String categoryName = requestDto.menuCategory();
-        MenuCategory menuCategory = menuCategoryRepository.findByNameAndShopOwner(categoryName, ownerId).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
+        MenuCategory menuCategory = menuCategoryRepository.findById(requestDto.menuCategoryId()).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
 
-        if (menuRepository.existsNameInCategory(requestDto.menuName(), categoryName))
+        if (menuRepository.existsNameInCategory(requestDto.menuName(), menuCategory.getId()))
             throw new ConflictException(MENU_NAME_ALREADY_EXIST);
 
         Menu menu = Menu.createEntity(requestDto, shop);

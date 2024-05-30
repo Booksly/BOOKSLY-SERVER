@@ -9,7 +9,7 @@ public record MenuCreateRequestDto(
         @NotNull String menuName,
         @NotNull int price,
         @NotNull @Lob String description,
-        @NotNull String menuCategory,
+        @NotNull Long menuCategoryId,
         MultipartFile menuImg
 ) {
 

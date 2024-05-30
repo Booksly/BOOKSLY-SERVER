@@ -18,8 +18,8 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     @Query("delete from Menu m where m.id = :menu_id")
     void delete(@Param("menu_id") Long id);
 
-    @Query("select count(m) > 0 from Menu m where m.menuName = :name and m.menuCategory.name = :category")
-    boolean existsNameInCategory(@Param("name") String menuName, @Param("category") String menuCategory);
+    @Query("select count(m) > 0 from Menu m where m.menuName = :name and m.menuCategory.id = :menuCategoryId")
+    boolean existsNameInCategory(@Param("name") String menuName, @Param("menuCategoryId") Long menuCategoryId);
 
 
 }
