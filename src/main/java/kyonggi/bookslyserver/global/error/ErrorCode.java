@@ -93,6 +93,8 @@ public enum ErrorCode implements BaseErrorCode{
     TIME_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 타임 이벤트입니다."),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리입니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 리뷰입니다."),
+    EMPLOYEE_MENU_NOT_EXIST(HttpStatus.NOT_FOUND, "등록된 직원 메뉴가 없습니다."),
+
 
     /**
      * 405 Method Not Allowed

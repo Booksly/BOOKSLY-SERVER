@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 
@@ -63,29 +64,28 @@ public class MenuService {
     }
 
 
-    public List<EventRegisterEmployeeMenuDto> readEmployeeMenus(Long id){
-        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.EMPLOYEE_NOT_FOUND));
-        List<Menu> menus = new ArrayList<>();
-        Set<EventRegisterEmployeeMenuDto> eventRegisterEmployeeMenuDtos = new HashSet<>();
+    public ReadEmployeesMenusWrapperResponseDto readEmployeesMenus(List<Long> employeeIds){
 
-        for(EmployeeMenu employeeMenu : employee.getEmployeeMenus()){
-            menus.add(employeeMenu.getMenu());
+        List<Employee> employees = employeeRepository.findAllById(employeeIds);
+        if (employees.size() != employeeIds.size()) {
+            throw new EntityNotFoundException(ErrorCode.EMPLOYEE_NOT_FOUND);
         }
 
-        for(Menu menu : menus){
-            eventRegisterEmployeeMenuDtos.add(new EventRegisterEmployeeMenuDto(menu));
-        }
+        // 각 직원의 메뉴를 uniqueMenus에 추가하여 메뉴 중복 제거
+        Set<Menu> uniqueMenus = employees.stream()
+                .flatMap(employee ->  employee.getEmployeeMenus().stream())
+                .map(EmployeeMenu::getMenu)
+                .collect(Collectors.toSet());
 
-        List<EventRegisterEmployeeMenuDto> result = new ArrayList<>(eventRegisterEmployeeMenuDtos);
 
-        for(Menu menu : menus){
-                for(EventRegisterEmployeeMenuDto e : result){
-                    if(menu.getMenuCategory().getName().equals(e.getMenuCategoryName())){
-                        e.getMenu().add(new EventRegisterEmployeeMenuDto.MenuDto(menu));
-                    }
-                }
-        }
-        return result;
+        // 카테고리별로 메뉴를 분류하고 DTO 변환
+        List<ReadEmployeesMenusResponseDto> readEmployeesMenusResponseDtos = uniqueMenus.stream()
+                .collect(Collectors.groupingBy(menu -> menu.getMenuCategory().getName()))
+                .entrySet().stream()
+                .map(entry -> ReadEmployeesMenusResponseDto.of(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+
+        return ReadEmployeesMenusWrapperResponseDto.of(readEmployeesMenusResponseDtos);
     }
 
     public MenuCreateResponseDto create(Long ownerId, Long shopId, MenuCreateRequestDto requestDto){
