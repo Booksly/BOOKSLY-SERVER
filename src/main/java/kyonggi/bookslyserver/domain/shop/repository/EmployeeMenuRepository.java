@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EmployeeMenuRepository extends JpaRepository<EmployeeMenu,Long> {
@@ -31,4 +32,5 @@ public interface EmployeeMenuRepository extends JpaRepository<EmployeeMenu,Long>
     @Query("select em.menu from EmployeeMenu em where em.menu.id in :menuIds and em.employee in :employees")
     List<Menu> findMenusByMenuIdsAndEmployees(@Param("menuIds") List<Long> menus, @Param("employees")List<Employee> employees);
 
+    Optional<EmployeeMenu> findByEmployeeAndMenu(Employee employee,Menu menu);
 }
