@@ -48,9 +48,8 @@ public class MenuApiController {
         return SuccessResponse.ok(result);
     }
 
-
-    @PutMapping("/api/shops/menus/{menuId}")
-    public ResponseEntity<SuccessResponse<?>> updateMenu(@PathVariable("menuId") Long id, @RequestBody @Validated UpdateMenuRequestDto requestDto){
+    @PutMapping(value = "/api/shops/menus/{menuId}", consumes = "multipart/form-data")
+    public ResponseEntity<SuccessResponse<?>> updateMenu(@PathVariable("menuId") Long id, @ModelAttribute @Validated UpdateMenuRequestDto requestDto){
         MenuUpdateResponseDto result = menuService.update(id, requestDto);
         return SuccessResponse.ok(result);
     }
