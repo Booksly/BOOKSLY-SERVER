@@ -124,29 +124,31 @@ public class MenuService {
     public MenuUpdateResponseDto update(Long id, UpdateMenuRequestDto requestDto){
         Menu menu = menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND));
 
-        // 이미지 업데이트 로직
-        if (requestDto.menuImg() != null && !requestDto.menuImg().isEmpty()) {
-            // 기존 이미지 삭제
-            if (menu.getMenuImage() != null) {
-                amazonS3Manager.deleteFileFromUrl(menu.getMenuImage().getMenuImgUri());
-            }
-            // 새 이미지 업로드
-            String menuPictureUrl = uploadMenuImgToS3(requestDto.menuImg());
-            MenuImage image = MenuImage.builder().menuImgUri(menuPictureUrl).menu(menu).build();
-            menuImageRepository.save(image);
-            menu.setMenuImage(image);  // 메뉴에 이미지 설정
+        if (requestDto.categoryId() != null) {
+            MenuCategory menuCategory = menuCategoryRepository.findById(requestDto.categoryId()).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
+            menu.updateMenuCategory(menuCategory);
         }
 
-        // 메뉴 업데이트
-        menu.update(requestDto.menuName(), requestDto.price(), requestDto.description(), requestDto.menuCategory());
+        if (requestDto.menuImg() != null && !requestDto.menuImg().isEmpty()) {
+            if (menu.getMenuImage() != null) amazonS3Manager.deleteFileFromUrl(menu.getMenuImage().getMenuImgUri());
+            String menuPictureUrl = uploadMenuImgToS3(requestDto.menuImg());
+            menu.updateMenuImage(menuPictureUrl);
+        }
 
-        return MenuUpdateResponseDto.builder()
-                .menuName(menu.getMenuName())
-                .price(menu.getPrice())
-                .description(menu.getDescription())
-                .menuCategory(menu.getMenuCategory().getName())
-                .imgUrl(menu.getMenuImage() != null ? menu.getMenuImage().getMenuImgUri() : null)
-                .build();
+        if (requestDto.menuName() != null) {
+            menu.updateMenuName(requestDto.menuName());
+        }
+
+        if (requestDto.description() != null) {
+            menu.updateDescription(requestDto.description());
+        }
+
+        if (requestDto.price() != null) {
+            menu.updatePrice(requestDto.price());
+        }
+
+        menuRepository.save(menu);
+        return MenuUpdateResponseDto.of(menu);
     }
 
     @Transactional
