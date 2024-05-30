@@ -16,7 +16,7 @@ public class ShopReservationController {
     private final ReserveOwnerCommandService reserveOwnerCommandService;
     @PostMapping("/reservation-settings")
     public ResponseEntity<SuccessResponse<?>> setReservationSetting
-            (@PathVariable("shopId")Long shopId, @ModelAttribute ReserveRequestDTO.reservationSettingRequestDTO request){
+            (@PathVariable("shopId")Long shopId, @RequestBody ReserveRequestDTO.reservationSettingRequestDTO request){
         return SuccessResponse.created(reserveOwnerCommandService.setReservationSetting(request,shopId));
     }
 
