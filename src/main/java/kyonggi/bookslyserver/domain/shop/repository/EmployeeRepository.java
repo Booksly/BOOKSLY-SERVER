@@ -25,4 +25,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
 
     @Query("select count(e) from Employee e where e in :employees and e.shop.id = :shop")
     int countByEmployeesAndShop(@Param("employees") List<Employee> employees, @Param("shop") Long shopId);
+
+    @Query("select e from Employee e join fetch e.employeeMenus em join fetch em.menu where e.id in :employeeIds")
+    List<Employee> findAllById(@Param("employeeIds") List<Long> employeeIds);
 }
