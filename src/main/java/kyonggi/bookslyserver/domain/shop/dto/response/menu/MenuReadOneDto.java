@@ -13,13 +13,16 @@ public class MenuReadOneDto {
 
     private String description;
 
-    private String menuCategory;
+    private String categoryName;
+
+    private Long categoryId;
 
     public MenuReadOneDto(Menu menu){
         if(menu.getMenuImage() != null) this.imgUri = menu.getMenuImage().getMenuImgUri();
         this.price = menu.getPrice();
         this.menuName = menu.getMenuName();
         this.description = menu.getDescription();
-        this.menuCategory = menu.getMenuCategory().getName();
+        this.categoryName = menu.getMenuCategory().getName();
+        this.categoryId = menu.getMenuCategory().getId();
     }
 }

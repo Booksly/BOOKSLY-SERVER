@@ -7,9 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public record UpdateMenuRequestDto(
         String menuName,
-        @Min(value = 0) int price,
+        Long categoryId,
+        @Min(value = 0) Integer price,
         String description,
-        String menuCategory,
         MultipartFile menuImg
 ) {
 }
