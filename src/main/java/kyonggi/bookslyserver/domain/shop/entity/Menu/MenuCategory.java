@@ -33,10 +33,6 @@ public class MenuCategory extends BaseTimeEntity {
     private List<Menu> menus = new ArrayList<>();
 
 
-    public static MenuCategory createEntity(Shop shop, MenuCreateRequestDto requestDto){
-        return MenuCategory.builder().name(requestDto.menuCategory()).menus(new ArrayList<>()).shop(shop).build();
-    }
-
     public static MenuCategory createEntity(MenuCategoryCreateDto requestDto, Shop shop){
         return MenuCategory.builder().name(requestDto.categoryName()).shop(shop).build();
     }
