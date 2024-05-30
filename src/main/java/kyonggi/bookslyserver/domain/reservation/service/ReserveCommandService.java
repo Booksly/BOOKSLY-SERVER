@@ -82,7 +82,12 @@ public class ReserveCommandService {
         if(reservationScheduleRepository.findById(requestDTO.getReservationScheduleId()).get().isClosed()){
             throw new InvalidValueException(ErrorCode.RESERVATION_CLOSED_BAD_REQUEST);
         }
-        validateReservationMenus(requestDTO.getReservationMenus());
+
+        ReservationSchedule reservationSchedule=reservationScheduleRepository.findById(requestDTO.getReservationScheduleId())
+                .orElseThrow(()->new EntityNotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
+        Employee employee=employeeRepository.findById(reservationSchedule.getEmployee().getId()).orElseThrow(()->new EntityNotFoundException(ErrorCode.EMPLOYEE_NOT_FOUND));
+
+        validateReservationMenus(employee,requestDTO.getReservationMenus());
 
         /**
          *  가격 계산
@@ -103,9 +108,6 @@ public class ReserveCommandService {
         /**
          * Reservation 생성
          */
-
-        ReservationSchedule reservationSchedule=reservationScheduleRepository.findById(requestDTO.getReservationScheduleId())
-                .orElseThrow(()->new EntityNotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
 
         Reservation newReservation=Reservation.builder()
                 .price(totalPrice)
@@ -148,7 +150,7 @@ public class ReserveCommandService {
     /**
      * 메뉴 검증
      */
-    public void validateReservationMenus(List<ReserveRequestDTO.reservationMenuRequestDTO> reservationMenus){
+    public void validateReservationMenus(Employee employee,List<ReserveRequestDTO.reservationMenuRequestDTO> reservationMenus){
         Set<Long> menuIds=new HashSet<>();
         for (ReserveRequestDTO.reservationMenuRequestDTO menu:reservationMenus){
             if (!menuIds.add(menu.getMenuId())){
@@ -158,6 +160,11 @@ public class ReserveCommandService {
                 if (menu.getDiscount()==null||menu.getDiscount()==0){
                     throw new InvalidValueException(ErrorCode.DISCOUNT_SETTING_BAD_REQUEST);
                 }
+            }
+            System.out.println(employee.getId()+" "+menu.getMenuId());
+            if (!employeeMenuRepository.findByEmployeeAndMenu(employee,
+                    menuRepository.findById(menu.getMenuId()).orElseThrow(()->new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND))).isPresent()){
+                throw new InvalidValueException(ErrorCode.EMPLOYEES_MENUS_NOT_MATCHING);
             }
         }
     }
