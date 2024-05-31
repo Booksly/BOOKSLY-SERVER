@@ -51,6 +51,10 @@ public class AmazonS3Manager{
         return amazonConfig.getMenuPath() + '/' + uuid.getUuid() + '/' + originalFilename;
     }
 
+    public String generateEmployeeKeyName(Uuid uuid) {
+        return amazonConfig.getEmployeePath() + '/' + uuid.getUuid();
+    }
+
     public void deleteFile(String keyName) {
         try {
             // deleteObject(버킷명, 키값)으로 객체 삭제
