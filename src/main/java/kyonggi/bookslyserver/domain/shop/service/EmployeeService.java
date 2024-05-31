@@ -15,14 +15,15 @@ import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.repository.*;
+import kyonggi.bookslyserver.global.aws.s3.AmazonS3Manager;
+import kyonggi.bookslyserver.global.common.uuid.Uuid;
+import kyonggi.bookslyserver.global.common.uuid.UuidService;
 import kyonggi.bookslyserver.global.error.ErrorCode;
-import kyonggi.bookslyserver.global.error.exception.BusinessException;
-import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
-import kyonggi.bookslyserver.global.error.exception.ForbiddenException;
-import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
+import kyonggi.bookslyserver.global.error.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -47,6 +48,10 @@ public class EmployeeService {
     private final MenuRepository menuRepository;
 
     private final ReservationScheduleRepository reservationScheduleRepository;
+
+    private final UuidService uuidService;
+
+    private final AmazonS3Manager amazonS3Manager;
 
     public List<EmployeeReadDto> readEmployee(Long id, Boolean withReviews){
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
@@ -100,34 +105,65 @@ public class EmployeeService {
         return result;
     }
 
-    @Transactional
-    public EmployeeCreateResponseDto join(Long id, EmployeeCreateRequestDto requestDto){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+    private void validateDuplicatedEmployeeName(EmployeeCreateRequestDto requestDto) {
+        if (employeeRepository.existsByName(requestDto.name()))
+            throw new ConflictException(ErrorCode.EMPLOYEE_NAME_DUPLICATE);
+    }
 
+    private void validateWorkSchedules(EmployeeCreateRequestDto requestDto) {
+        if (requestDto.workSchedules().size() != 7) throw new InvalidValueException(WORK_SCHEDULE_MUST_SEVEN_DAYS);
+    }
 
-        Employee employee = Employee.createEntity(shop, requestDto);
+    private String uploadEmployeeImageToS3(MultipartFile imageFile) {
+        Uuid uuid = uuidService.createUuid();
+        return amazonS3Manager.uploadFile(amazonS3Manager.generateEmployeeKeyName(uuid), imageFile);
+    }
+
+    private void createEmployeeMenu(Employee employee, List<Menu> menus) {
+        menus.forEach(menu -> {
+            EmployeeMenu employeeMenu = EmployeeMenu.builder()
+                    .menu(menu)
+                    .employee(employee).build();
+            employeeMenuRepository.save(employeeMenu);
+        });
+    }
+
+    private void assignAllMenusToEmployee(Shop shop, Employee employee) {
+        List<Menu> menusByShop = menuRepository.findMenusByShop(shop);
+        createEmployeeMenu(employee, menusByShop);
+    }
+
+    private void assignSpecificMenusToEmployee(EmployeeCreateRequestDto requestDto, Employee employee) {
+        List<Menu> menus = requestDto.menus().stream()
+                .map(menuId -> menuRepository.findById(menuId).orElseThrow(() -> new EntityNotFoundException(MENU_NOT_FOUND)))
+                .collect(Collectors.toList());
+        createEmployeeMenu(employee, menus);
+    }
+
+    public EmployeeCreateResponseDto join(Long shopId, Boolean assignAllMenus,EmployeeCreateRequestDto requestDto){
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        validateDuplicatedEmployeeName(requestDto);
+        validateWorkSchedules(requestDto);
+
+        Employee employee = Employee.builder()
+                .name(requestDto.name())
+                .selfIntro(requestDto.description())
+                .profileImgUri(requestDto.image() != null ? uploadEmployeeImageToS3(requestDto.image()) : null)
+                .build();
+
+        if (assignAllMenus) {
+            assignAllMenusToEmployee(shop, employee);
+        } else {
+            assignSpecificMenusToEmployee(requestDto, employee);
+        }
+
+        //근무 스케쥴 생성
+        requestDto.workSchedules().stream().forEach(workScheduleDto -> {
+            WorkSchedule workSchedule = WorkSchedule.createEntity(workScheduleDto.dayOfWeek(), workScheduleDto.startTime(), workScheduleDto.endTime(), workScheduleDto.isDayOff(), employee);
+            workScheduleRepository.save(workSchedule);
+        });
 
         employeeRepository.save(employee);
-
-        shop.getEmployees().add(employee);
-
-        if(requestDto.menus() != null){
-            for(Long menuId : requestDto.menus()){
-                Optional<Menu> menu = menuRepository.findById(menuId);
-                if(!menu.isPresent()){
-                    throw new EntityNotFoundException(MENU_NOT_FOUND);
-                }
-                EmployeeMenu employeeMenu = employee.addMenu(employee, menu.get());
-            }
-        }
-
-        if(requestDto.workSchedules() != null) {
-            for (EmployeeWorkScheduleDto employeeWorkScheduleDto : requestDto.workSchedules()) {
-                WorkSchedule workSchedule = WorkSchedule.createEntity(employee, employeeWorkScheduleDto);
-                employee.getWorkSchedules().add(workSchedule);
-            }
-        }
-
         return new EmployeeCreateResponseDto(employee);
     }
 

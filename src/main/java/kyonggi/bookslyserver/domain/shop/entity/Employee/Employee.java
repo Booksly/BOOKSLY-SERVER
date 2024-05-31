@@ -16,7 +16,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -55,16 +54,6 @@ public class Employee extends BaseTimeEntity {
     @Builder.Default
     private List<TimeEventSchedule> timeEventSchedules = new ArrayList<>();
 
-    public static Employee createEntity(Shop shop, EmployeeCreateRequestDto requestDto){
-        return Employee.builder()
-                .name(requestDto.employeeName())
-                .selfIntro(requestDto.description())
-                .profileImgUri(requestDto.imgUri())
-                .shop(shop)
-                .employeeMenus(new ArrayList<>())
-                .workSchedules(new ArrayList<>())
-                .build();
-    }
 
     public EmployeeMenu addMenu(Employee employee, Menu menu){
         EmployeeMenu employeeMenu = EmployeeMenu.createEntity(employee, menu);
@@ -80,5 +69,7 @@ public class Employee extends BaseTimeEntity {
         this.employeeMenus.clear();
         this.workSchedules.clear();
     }
+
+    public void
 
 }

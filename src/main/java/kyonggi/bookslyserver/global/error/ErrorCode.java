@@ -49,6 +49,7 @@ public enum ErrorCode implements BaseErrorCode{
     FILE_NAME_DUPLICATE(HttpStatus.BAD_REQUEST,"파일 이름이 중복됩니다."),
     MENUS_ARE_DUPLICATED(HttpStatus.BAD_REQUEST,"메뉴는 중복 선택할 수 없습니다"),
     EMPLOYEES_MENUS_NOT_MATCHING(HttpStatus.BAD_REQUEST,"선택한 직원에게 해당하는 메뉴가 없습니다"),
+    WORK_SCHEDULE_MUST_SEVEN_DAYS(HttpStatus.BAD_REQUEST,"직원 일정 입력을 완료해주세요."),
 
 
     /**
@@ -112,6 +113,7 @@ public enum ErrorCode implements BaseErrorCode{
     EXIST_EVENTS_CONFLICT(HttpStatus.CONFLICT, "새로운 이벤트의 시간이 기존 이벤트와 겹칩니다."),
     EVENT_SETTING_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 이벤트 설정이 존재합니다."),
     REVIEW_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 리뷰가 있습니다."),
+    EMPLOYEE_NAME_DUPLICATE(HttpStatus.CONFLICT,"직원 이름이 중복됩니다."),
 
     /**
      * 500 Internal Server Error
