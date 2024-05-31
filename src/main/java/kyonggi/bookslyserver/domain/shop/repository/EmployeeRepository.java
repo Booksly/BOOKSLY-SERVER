@@ -28,4 +28,6 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
 
     @Query("select e from Employee e join fetch e.employeeMenus em join fetch em.menu where e.id in :employeeIds")
     List<Employee> findAllById(@Param("employeeIds") List<Long> employeeIds);
+
+    boolean existsByName(String name);
 }

@@ -3,11 +3,14 @@ package kyonggi.bookslyserver.domain.shop.repository;
 
 import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long> {
@@ -22,4 +25,5 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     boolean existsNameInCategory(@Param("name") String menuName, @Param("menuCategoryId") Long menuCategoryId);
 
 
+    List<Menu> findMenusByShop(Shop shop);
 }
