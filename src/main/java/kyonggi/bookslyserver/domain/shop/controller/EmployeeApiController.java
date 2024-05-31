@@ -16,15 +16,22 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class EmployeeApiController {
-    final private EmployeeService employeeService;
 
+    private final EmployeeService employeeService;
+
+    @PostMapping("/api/shops/{shopId}/employees")
+    public ResponseEntity<SuccessResponse<?>> createEmployee(@PathVariable("shopId") Long shopId,
+                                                             @PathVariable("assignAllMenus") Boolean assignAllMenus,
+                                                             @RequestBody @Validated EmployeeCreateRequestDto requestDto) {
+        EmployeeCreateResponseDto result = employeeService.join(shopId, assignAllMenus, requestDto);
+        return SuccessResponse.ok(result);
+    }
 
     @GetMapping("/api/shops/{shopId}/employees")
     public ResponseEntity<SuccessResponse<?>> readEmployee(@PathVariable("shopId") Long id, @RequestParam("withReviews") Boolean withReviews) {
         List<EmployeeReadDto> result = employeeService.readEmployee(id, withReviews);
         return SuccessResponse.ok(result);
     }
-
 
     @GetMapping("/api/shops/employees/{employeeId}")
     public ResponseEntity<SuccessResponse<?>> readOneEmployee(@PathVariable("employeeId") Long id) {
@@ -41,12 +48,6 @@ public class EmployeeApiController {
     @GetMapping("/api/shops/{shopId}/employees/eventRegistration")
     public ResponseEntity<SuccessResponse<?>> readEmployeeNames(@PathVariable("shopId") Long id) {
         List<EventRegisterEmployeeNamesDto> result = employeeService.readEmployeeNames(id);
-        return SuccessResponse.ok(result);
-    }
-
-    @PostMapping("/api/shops/{shopId}/employees")
-    public ResponseEntity<SuccessResponse<?>> createEmployee(@PathVariable("shopId") Long id, @RequestBody @Validated EmployeeCreateRequestDto requestDto) {
-        EmployeeCreateResponseDto result = employeeService.join(id, requestDto);
         return SuccessResponse.ok(result);
     }
 
