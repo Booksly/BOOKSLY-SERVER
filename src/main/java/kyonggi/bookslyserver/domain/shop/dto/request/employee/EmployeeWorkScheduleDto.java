@@ -13,7 +13,6 @@ public record EmployeeWorkScheduleDto(
         DayOfWeek dayOfWeek,
         LocalTime startTime,
         LocalTime endTime,
-
         Boolean isDayOff
 ) {
 }
