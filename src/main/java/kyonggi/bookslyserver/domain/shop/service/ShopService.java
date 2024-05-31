@@ -3,11 +3,8 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
-import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
-import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
 import kyonggi.bookslyserver.domain.shop.repository.BusinessScheduleRepository;
@@ -52,36 +49,22 @@ public class ShopService {
 
 
 
-    public ShopUserReadOneDto findOne(Long id){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+    public ShopUserReadOneDto getShopProfileDetails(Long shopId){
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
+        shop.setTotalVisitors(shop.getTotalVisitors() + 1);
 
-        String name = shop.getName();
-        String description = shop.getIntroduction();
-        String detailAddress = shop.getDetailAddress();
-        String phoneNumber = shop.getPhoneNumber();
-
-        List<BusinessSchedule> businessSchedules = shop.getBusinessSchedules();
-        List<BusinessScheduleDto> businessScheduleDtos = businessSchedules.stream().map(businessSchedule -> new BusinessScheduleDto(businessSchedule)).collect(Collectors.toList());
-
-        List<Menu> menus = shop.getMenus();
-        List<MenuReadDto> menuReadDtos = menus.stream().map(menu -> new MenuReadDto(menu)).collect(Collectors.toList());
-
-        List<Employee> employeeList = shop.getEmployees();
-        List<EmployeeUserResponseDto> employees = employeeList.stream().map(employee -> new EmployeeUserResponseDto(employee)).collect(Collectors.toList());
-
-        int visit = shop.getTotalVisitors() + 1;
-        shop.setTotalVisitors(visit);
-
-        return ShopUserReadOneDto
-                .builder()
-                .Name(name)
-                .description(description)
-                .detailAddress(detailAddress)
-                .phoneNumber(phoneNumber)
-                .businessSchedules(businessScheduleDtos)
-                .menus(menuReadDtos)
-                .employees(employees)
+        return ShopUserReadOneDto.builder()
+                .Name(shop.getName())
+                .rating(shop.getRatingByReview())
+                .description(shop.getIntroduction())
+                .detailAddress(shop.getDetailAddress())
+                .phoneNumber(shop.getPhoneNumber())
+                .businessSchedules(
+                        shop.getBusinessSchedules().stream()
+                                .map(BusinessScheduleDto::new)
+                                .toList()
+                )
                 .address(new AddressDto(shop.getAddress()))
                 .build();
     }

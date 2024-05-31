@@ -2,7 +2,6 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 
 
-import com.sun.net.httpserver.Authenticator;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
@@ -10,14 +9,10 @@ import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopUserReadOneDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerId;
-import kyonggi.bookslyserver.global.auth.principal.user.UserId;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
 import kyonggi.bookslyserver.global.error.ErrorCode;
-import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -41,8 +36,8 @@ public class ShopApiController {
 
     //가게 상세 프로필 조회(유저)
     @GetMapping("/api/shops/{shopId}/profile/user")
-    public ResponseEntity<SuccessResponse<?>> findShop(@PathVariable("shopId") Long id){
-        ShopUserReadOneDto result = shopService.findOne(id);
+    public ResponseEntity<SuccessResponse<?>> findShop(@PathVariable("shopId") Long shopId){
+        ShopUserReadOneDto result = shopService.getShopProfileDetails(shopId);
         return SuccessResponse.ok(result);
     }
 
