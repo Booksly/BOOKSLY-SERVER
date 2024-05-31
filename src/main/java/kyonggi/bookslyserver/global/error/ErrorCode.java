@@ -96,6 +96,7 @@ public enum ErrorCode implements BaseErrorCode{
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리입니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 리뷰입니다."),
     EMPLOYEE_MENU_NOT_EXIST(HttpStatus.NOT_FOUND, "등록된 직원 메뉴가 없습니다."),
+    SHOP_OWNER_NOT_EXIST(HttpStatus.NOT_FOUND,"존재하지 않는 가게 주인입니다."),
 
 
     /**

@@ -137,16 +137,12 @@ public class ShopService {
     }
 
     //가게 이름 조회(가게 주인)
-    public List<ReadShopNamesDto> readShopNames(Long id){
-        ShopOwner owner = shopOwnerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        List<Shop> shopList = shopRepository.findByShopOwnerId(id);
+    public List<ReadShopNamesDto> readShopNames(Long ownerId){
+        if (!shopImageRepository.existsById(ownerId)) throw new EntityNotFoundException(SHOP_OWNER_NOT_EXIST);
 
-        List<ReadShopNamesDto> result = new ArrayList<>();
-
-        for(Shop shop : shopList){
-            result.add(new ReadShopNamesDto(shop));
-        }
-        return result;
+        return  shopRepository.findByShopOwnerId(ownerId).stream()
+                .map(ReadShopNamesDto::new)
+                .collect(Collectors.toList());
     }
 
     public ShopOwnerMainReadOneDto readMain(Long id){
