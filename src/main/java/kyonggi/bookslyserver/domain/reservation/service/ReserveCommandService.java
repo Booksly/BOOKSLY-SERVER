@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -216,6 +217,11 @@ public class ReserveCommandService {
     }
     public String deleteReservation(Long reservationId){
         Reservation reservation=reservationRepository.findById(reservationId).orElseThrow(()-> new EntityNotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        if (reservation.isCanceled()||reservation.isRefused()||
+                (reservation.isConfirmed()&&(LocalDateTime.of(reservation.getReservationSchedule().getWorkDate(),reservation.getReservationSchedule().getEndTime()).isBefore(LocalDateTime.now()))))
+            throw new InvalidValueException(ErrorCode.RESERVATION_DELETE_BAD_REQUEST);
+
         reservation.setDeleted(true);
         reservationRepository.save(reservation);
         return reservation.getUser().getNickname()+"님의 "+"예약 ID"+reservation.getId()+"이(가) 삭제되었습니다.";
