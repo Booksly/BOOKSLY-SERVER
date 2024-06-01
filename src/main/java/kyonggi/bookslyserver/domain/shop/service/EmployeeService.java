@@ -62,9 +62,12 @@ public class EmployeeService {
 
     private final ReviewRepository reviewRepository;
 
-    public ReadEmployeeWithReviewsWrapperResponseDto readShopEmployee(Long shopId, Boolean withReviews){
+    public ReadEmployeeWithReviewsWrapperResponseDto readEmployeesWithReviews(Long shopId, Boolean withReviews){
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-        List<Employee> employees = employeeRepository.findByShop(shop).orElseThrow(()-> new EntityNotFoundException(EMPLOYEE_NOT_CONFIG));
+        List<Employee> employees = employeeRepository.findByShop(shop);
+        if (employees.isEmpty()) {
+            throw new EntityNotFoundException(EMPLOYEE_NOT_CONFIG);
+        }
         List<ReadEmployeeWithReviewsResponseDto> employeeDtos = employees.stream().map(employee -> {
             Integer reviewCount = withReviews ? reviewRepository.countReviewsByEmployeeId(employee.getId()) : null;
             return ReadEmployeeWithReviewsResponseDto.of(employee, withReviews, reviewCount);
@@ -81,27 +84,6 @@ public class EmployeeService {
         return new EmployeeReadOneDto(employee, employeeMenus);
     }
 
-    public List<ReserveEmployeesDto> readReserveEmployees(Long id){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-        if(shop.getEmployees() == null){
-            throw new BusinessException(ErrorCode.RESERVE_EMPLOYEES_NOT_FOUND);
-        }
-
-        List<ReserveEmployeesDto> result = new ArrayList<>();
-
-        for(Employee employee : shop.getEmployees()){
-            result.add(new ReserveEmployeesDto(employee));
-        }
-
-        return result;
-    }
-
-    public List<EventRegisterEmployeeNamesDto> readEmployeeNames(Long id){
-        List<Employee> employees = employeeRepository.findEmployeesByShopId(id);
-        List<EventRegisterEmployeeNamesDto> result = employees.stream().map(employee -> new EventRegisterEmployeeNamesDto(employee)).collect(Collectors.toList());
-        return result;
-    }
 
     private void validateDuplicatedEmployeeName(String name) {
         if (employeeRepository.existsByName(name))
@@ -381,5 +363,14 @@ public class EmployeeService {
         }
 
         return GetEventMenusResponseDto.of(eventMenus);
+    }
+
+    public ReadEmployeeNamesWithImageWrapperResponseDto readEmployeeNamesWithImages(Long shopId, Boolean withImages) {
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        List<Employee> employees = employeeRepository.findByShop(shop);
+        if (employees.isEmpty()) {
+            throw new EntityNotFoundException(EMPLOYEE_NOT_CONFIG);
+        }
+        return ReadEmployeeNamesWithImageWrapperResponseDto.of(employees, withImages);
     }
 }
