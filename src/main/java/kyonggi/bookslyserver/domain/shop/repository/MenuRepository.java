@@ -14,7 +14,6 @@ import java.util.List;
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long> {
-    Menu findByMenuName(String menuName);
 
     @Modifying
     @Transactional
@@ -25,5 +24,12 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     boolean existsNameInCategory(@Param("name") String menuName, @Param("menuCategoryId") Long menuCategoryId);
 
 
-    List<Menu> findMenusByShop(Shop shop);
+    @Query("select m from Menu m where m.shop = :shop")
+    List<Menu> findMenusByShop(@Param("shop") Shop shop);
+
+    @Query("SELECT m FROM Menu m JOIN FETCH m.menuCategory WHERE m.shop = :shop")
+    List<Menu> findMenusByShopWithCategories(@Param("shop") Shop shop);
+
+    @Query("select m from Menu m join fetch m.menuImage where m.id in :menuIds")
+    List<Menu> findMenusByIdsWithImage(@Param("menuIds") List<Long> menuIds);
 }

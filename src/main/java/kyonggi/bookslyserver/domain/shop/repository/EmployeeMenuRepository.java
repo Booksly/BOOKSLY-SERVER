@@ -16,9 +16,7 @@ import java.util.Optional;
 @Repository
 public interface EmployeeMenuRepository extends JpaRepository<EmployeeMenu,Long> {
 
-    @Modifying
-    @Transactional
-    @Query("select em from EmployeeMenu em where em.employee.id = :employee_id")
+    @Query("select em from EmployeeMenu em join fetch em.menu where em.employee.id = :employee_id")
     List<EmployeeMenu> findByEmployeeId(@Param("employee_id") Long id);
 
     @Query("SELECT COUNT(em) "+
