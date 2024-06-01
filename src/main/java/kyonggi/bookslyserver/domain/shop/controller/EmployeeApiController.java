@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.*;
 import kyonggi.bookslyserver.domain.shop.service.EmployeeService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,9 +23,10 @@ public class EmployeeApiController {
 
     @PostMapping("/api/shops/{shopId}/employees")
     public ResponseEntity<SuccessResponse<?>> createEmployee(@PathVariable("shopId") Long shopId,
-                                                             @PathVariable("assignAllMenus") Boolean assignAllMenus,
-                                                             @RequestBody @Validated EmployeeCreateRequestDto requestDto) {
-        EmployeeCreateResponseDto result = employeeService.join(shopId, assignAllMenus, requestDto);
+                                                             @RequestParam("assignAllMenus") Boolean assignAllMenus,
+                                                             @RequestPart @Validated EmployeeCreateRequestDto requestDto,
+                                                             @RequestPart(required = false) MultipartFile profileImage) {
+        EmployeeCreateResponseDto result = employeeService.join(shopId, assignAllMenus, requestDto, profileImage);
         return SuccessResponse.ok(result);
     }
 
@@ -51,9 +54,13 @@ public class EmployeeApiController {
         return SuccessResponse.ok(result);
     }
 
-    @PutMapping("/api/shops/employees/{employeeId}")
-    public ResponseEntity<SuccessResponse<?>> updateEmployee(@PathVariable("employeeId") Long id, @RequestBody @Validated EmployeeCreateRequestDto requestDto) {
-        EmployeeUpdateResponseDto result = employeeService.update(id, requestDto);
+    @PutMapping("/api/shops/{shopId}/employees/{employeeId}")
+    public ResponseEntity<SuccessResponse<?>> updateEmployee(@PathVariable("shopId") Long shopId,
+                                                             @PathVariable("employeeId") Long employeeId,
+                                                             @RequestPart @Validated EmployeeUpdateRequestDto requestDto,
+                                                             @RequestParam("assignAllMenus") Boolean assignAllMenus,
+                                                             @RequestPart(required = false) MultipartFile profileImage) {
+        UpdateEmployeeResponseDto result = employeeService.update(shopId, employeeId, assignAllMenus, requestDto, profileImage);
         return SuccessResponse.ok(result);
     }
 
