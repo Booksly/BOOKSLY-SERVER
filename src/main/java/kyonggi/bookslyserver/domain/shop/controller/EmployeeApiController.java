@@ -12,8 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -31,26 +29,20 @@ public class EmployeeApiController {
     }
 
     @GetMapping("/api/shops/{shopId}/employees")
-    public ResponseEntity<SuccessResponse<?>> readShopEmployee(@PathVariable("shopId") Long shopId, @RequestParam("withReviews") Boolean withReviews) {
-        ReadEmployeeWithReviewsWrapperResponseDto responseDto = employeeService.readShopEmployee(shopId, withReviews);
+    public ResponseEntity<SuccessResponse<?>> readEmployeesWithReviews(@PathVariable("shopId") Long shopId, @RequestParam("withReviews") Boolean withReviews) {
+        ReadEmployeeWithReviewsWrapperResponseDto responseDto = employeeService.readEmployeesWithReviews(shopId, withReviews);
+        return SuccessResponse.ok(responseDto);
+    }
+
+    @GetMapping("/api/shops/{shopId}/employees/names")
+    public ResponseEntity<SuccessResponse<?>> readEmployeeNameWithImages(@PathVariable("shopId") Long shopId, @RequestParam("withImage") Boolean withImage) {
+        ReadEmployeeNamesWithImageWrapperResponseDto responseDto = employeeService.readEmployeeNamesWithImages(shopId, withImage);
         return SuccessResponse.ok(responseDto);
     }
 
     @GetMapping("/api/shops/employees/{employeeId}")
     public ResponseEntity<SuccessResponse<?>> readOneEmployee(@PathVariable("employeeId") Long id) {
         EmployeeReadOneDto result = employeeService.readOneEmployee(id);
-        return SuccessResponse.ok(result);
-    }
-
-    @GetMapping("/api/shops/{shopId}/employees/reservation")
-    public ResponseEntity<SuccessResponse<?>> readReserveEmployees(@PathVariable("shopId") Long id) {
-        List<ReserveEmployeesDto> result = employeeService.readReserveEmployees(id);
-        return SuccessResponse.ok(result);
-    }
-
-    @GetMapping("/api/shops/{shopId}/employees/eventRegistration")
-    public ResponseEntity<SuccessResponse<?>> readEmployeeNames(@PathVariable("shopId") Long id) {
-        List<EventRegisterEmployeeNamesDto> result = employeeService.readEmployeeNames(id);
         return SuccessResponse.ok(result);
     }
 
