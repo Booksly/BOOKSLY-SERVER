@@ -5,7 +5,6 @@ package kyonggi.bookslyserver.domain.shop.controller;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerId;
@@ -82,16 +81,14 @@ public class ShopApiController {
 
     //가게 수정
     @PutMapping("/api/shops/{shopId}")
-    public ResponseEntity<SuccessResponse<?>> updateShop(@PathVariable("shopId") Long id, @RequestBody @Validated ShopUpdateRequestDto requestDto){
-        ShopCreateResponseDto result = shopService.update(id, requestDto);
-        return SuccessResponse.ok(result);
+    public ResponseEntity<SuccessResponse<?>> updateShop(@PathVariable("shopId") Long shopId, @RequestBody @Validated ShopUpdateRequestDto requestDto){
+        return SuccessResponse.ok(shopService.update(shopId, requestDto));
     }
 
     //가게 삭제
     @DeleteMapping("/api/shops/{shopId}")
-    public ResponseEntity<SuccessResponse<?>> deleteShop(@PathVariable("shopId") Long id){
-        ShopDeleteResponseDto result = shopService.delete(id);
-        return SuccessResponse.ok(result);
+    public ResponseEntity<SuccessResponse<?>> deleteShop(@PathVariable("shopId") Long shopId){
+        return SuccessResponse.ok(shopService.delete(shopId));
     }
 
 

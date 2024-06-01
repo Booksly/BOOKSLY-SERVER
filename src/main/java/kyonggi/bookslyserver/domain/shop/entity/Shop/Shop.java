@@ -16,6 +16,7 @@ import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -64,6 +65,10 @@ public class Shop extends BaseTimeEntity {
 
     private String businessNumber;
 
+    @Column(columnDefinition = "tinyint(0) default 0")
+    private Boolean isDeleted;
+
+    private LocalDateTime deletedAt;
     @Embedded
     private TimeUnit timeUnit;
 

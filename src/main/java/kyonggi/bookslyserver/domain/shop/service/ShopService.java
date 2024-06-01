@@ -12,7 +12,6 @@ import kyonggi.bookslyserver.domain.shop.repository.BusinessScheduleRepository;
 import kyonggi.bookslyserver.domain.shop.repository.CategoryRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
-import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
@@ -24,9 +23,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
@@ -124,14 +123,11 @@ public class ShopService {
     }
 
     @Transactional
-    public ShopDeleteResponseDto delete(Long id){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-
-        ShopOwner owner = shop.getShopOwner();
-        owner.deleteShop(shop);
-        shopRepository.deleteById(id);
-        return new ShopDeleteResponseDto(id);
+    public ShopDeleteResponseDto delete(Long shopId){
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        shop.setIsDeleted(true);
+        shop.setDeletedAt(LocalDateTime.now());
+        return new ShopDeleteResponseDto(shopId);
     }
 
     //가게 이름 조회(가게 주인)
