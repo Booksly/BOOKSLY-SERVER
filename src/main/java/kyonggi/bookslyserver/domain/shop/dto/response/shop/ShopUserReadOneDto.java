@@ -12,14 +12,8 @@ public record ShopUserReadOneDto(
     String description,
     String detailAddress,
     String phoneNumber,
-    List<BusinessScheduleDto> businessSchedules,
 
-    List<MenuReadDto> menus,
-
-    List<EmployeeUserResponseDto> employees
-
-
-
-
+    Float rating,
+    List<BusinessScheduleDto> businessSchedules
 ) {
 }

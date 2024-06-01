@@ -3,18 +3,15 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
-import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
-import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
 import kyonggi.bookslyserver.domain.shop.repository.BusinessScheduleRepository;
 import kyonggi.bookslyserver.domain.shop.repository.CategoryRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
-import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
@@ -26,9 +23,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
@@ -52,110 +49,26 @@ public class ShopService {
 
 
 
-    public ShopUserReadOneDto findOne(Long id){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+    public ShopUserReadOneDto getShopProfileDetails(Long shopId){
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
+        shop.setTotalVisitors(shop.getTotalVisitors() + 1);
 
-        String name = shop.getName();
-        String description = shop.getIntroduction();
-        String detailAddress = shop.getDetailAddress();
-        String phoneNumber = shop.getPhoneNumber();
-
-        List<BusinessSchedule> businessSchedules = shop.getBusinessSchedules();
-        List<BusinessScheduleDto> businessScheduleDtos = businessSchedules.stream().map(businessSchedule -> new BusinessScheduleDto(businessSchedule)).collect(Collectors.toList());
-
-        List<Menu> menus = shop.getMenus();
-        List<MenuReadDto> menuReadDtos = menus.stream().map(menu -> new MenuReadDto(menu)).collect(Collectors.toList());
-
-        List<Employee> employeeList = shop.getEmployees();
-        List<EmployeeUserResponseDto> employees = employeeList.stream().map(employee -> new EmployeeUserResponseDto(employee)).collect(Collectors.toList());
-
-        int visit = shop.getTotalVisitors() + 1;
-        shop.setTotalVisitors(visit);
-
-        return ShopUserReadOneDto
-                .builder()
-                .Name(name)
-                .description(description)
-                .detailAddress(detailAddress)
-                .phoneNumber(phoneNumber)
-                .businessSchedules(businessScheduleDtos)
-                .menus(menuReadDtos)
-                .employees(employees)
+        return ShopUserReadOneDto.builder()
+                .Name(shop.getName())
+                .rating(shop.getRatingByReview())
+                .description(shop.getIntroduction())
+                .detailAddress(shop.getDetailAddress())
+                .phoneNumber(shop.getPhoneNumber())
+                .businessSchedules(
+                        shop.getBusinessSchedules().stream()
+                                .map(BusinessScheduleDto::new)
+                                .toList()
+                )
                 .address(new AddressDto(shop.getAddress()))
                 .build();
     }
-
-    public List<ShopFilterDto> readTopShops(Pageable pageable){
-        Page<Shop> shopPage = shopRepository.findAll(pageable);
-        List<ShopFilterDto> result = shopPage.stream().map(shop -> new ShopFilterDto(shop)).collect(Collectors.toList());
-        return result;
-    }
-
-    @Transactional
-    public ShopRegisterDto join(Long ownerId, ShopCreateRequestDto requestDto) {
-
-        if(shopRepository.existsByName(requestDto.getName())){
-            throw new BusinessException(SHOP_NAME_ALREADY_EXIST);
-        }
-        Shop shop = Shop.createShop(requestDto);
-        shopRepository.save(shop);
-        List<BusinessSchedule> businessScheduleList = requestDto.getBusinessScheduleList();
-        for(BusinessSchedule businessSchedule : businessScheduleList){
-            shop.getBusinessSchedule(businessSchedule);
-        }
-
-        List<ShopImage> shopImages = requestDto.getShopImageList();
-        for(ShopImage shopImage : shopImages){
-            shop.getShopImage(shopImage);
-        }
-
-        Optional<ShopOwner> owner = shopOwnerRepository.findById(ownerId);
-        shop.getShopOwner(owner);
-        shop.setCreatedAt(LocalDate.now());
-        return new ShopRegisterDto(shop);
-    }
-
-    @Transactional
-    public ShopCreateResponseDto update(Long id, ShopCreateRequestDto requestDto){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-
-        shop.update(shop, requestDto);
-        return new ShopCreateResponseDto(shop);
-    }
-
-    @Transactional
-    public ShopDeleteResponseDto delete(Long id){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-
-        ShopOwner owner = shop.getShopOwner();
-        owner.deleteShop(shop);
-        shopRepository.deleteById(id);
-        return new ShopDeleteResponseDto(id);
-    }
-
-    //가게 이름 조회(가게 주인)
-    public List<ReadShopNamesDto> readShopNames(Long id){
-        ShopOwner owner = shopOwnerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
-        List<Shop> shopList = shopRepository.findByShopOwnerId(id);
-
-        List<ReadShopNamesDto> result = new ArrayList<>();
-
-        for(Shop shop : shopList){
-            result.add(new ReadShopNamesDto(shop));
-        }
-        return result;
-    }
-
-    public ShopOwnerMainReadOneDto readMain(Long id){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-        return new ShopOwnerMainReadOneDto(shop);
-    }
-
-    public ShopOwnerDetailReadOneDto readOne(Long id){
+    public ShopOwnerDetailReadOneDto getShopProfileDetailsOwner(Long id){
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
         List<BusinessScheduleDto> businessScheduleDtos = new ArrayList<>();
@@ -167,6 +80,71 @@ public class ShopService {
 
         return new ShopOwnerDetailReadOneDto(shop, businessScheduleDtos);
     }
+
+    public List<ShopFilterDto> readTopShops(Pageable pageable){
+        Page<Shop> shopPage = shopRepository.findAll(pageable);
+        List<ShopFilterDto> result = shopPage.stream().map(shop -> new ShopFilterDto(shop)).collect(Collectors.toList());
+        return result;
+    }
+
+    @Transactional
+    public ShopCreateResponseDto join(Long ownerId, ShopCreateRequestDto requestDto) {
+
+        if(shopRepository.existsByName(requestDto.getName())){
+            throw new BusinessException(SHOP_NAME_ALREADY_EXIST);
+        }
+
+        Shop shop=shopRepository.save(Shop.createShop(requestDto));
+
+        String url=requestDto.getSnsUrl();
+        if (url.contains("pf.kakao.com")){
+            shop.setKakaoUrl(url);
+        } else if (url.contains("instagram.com")) {
+            shop.setInstagramUrl(url);
+        }else shop.setBlogUrl(url);
+
+        for(BusinessSchedule businessSchedule : requestDto.getBusinessScheduleList()){
+            shop.setBusinessSchedule(businessSchedule);
+        }
+
+        for(ShopImage shopImage : requestDto.getShopImageList()){
+            shop.setShopImage(shopImage);
+        }
+
+        shop.setShopOwner(shopOwnerRepository.findById(ownerId).orElseThrow(()-> new EntityNotFoundException(SHOP_OWNER_NOT_EXIST)));
+        return new ShopCreateResponseDto(shop);
+    }
+
+    @Transactional
+    public ShopCreateResponseDto update(Long id, ShopUpdateRequestDto requestDto){
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        shop.update(requestDto);
+        return new ShopCreateResponseDto(shop);
+    }
+
+    @Transactional
+    public ShopDeleteResponseDto delete(Long shopId){
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        shop.setIsDeleted(true);
+        shop.setDeletedAt(LocalDateTime.now());
+        return new ShopDeleteResponseDto(shopId);
+    }
+
+    //가게 이름 조회(가게 주인)
+    public List<ReadShopNamesDto> readShopNames(Long ownerId){
+        if (!shopImageRepository.existsById(ownerId)) throw new EntityNotFoundException(SHOP_OWNER_NOT_EXIST);
+
+        return  shopRepository.findByShopOwnerId(ownerId).stream()
+                .map(ReadShopNamesDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public ShopOwnerMainReadOneDto readMain(Long id){
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+
+        return new ShopOwnerMainReadOneDto(shop);
+    }
+
 
 
     public List<NewShopFilterDto> readNewShops(Pageable pageable){
