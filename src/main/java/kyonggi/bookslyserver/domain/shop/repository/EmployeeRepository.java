@@ -32,5 +32,5 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
 
     boolean existsByName(String name);
 
-    Optional<List<Employee>> findByShop(Shop shop);
+    List<Employee> findByShop(Shop shop);
 }
