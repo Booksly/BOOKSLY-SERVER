@@ -29,7 +29,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.Array;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -100,9 +102,28 @@ public class ShopService {
 
     public List<ShopFilteredShopsResponseDto> readFilteredShops(ShopFilteredShopsRequestDto requestDto){
         List<String[]> address = new ArrayList<>();
+        List<String[]> dates = new ArrayList<>();
+        List<String[]> times = new ArrayList<>();
+
+        List<LocalDate> localDates = new ArrayList<>();
+        List<LocalTime> localTimes = new ArrayList<>();
+
         for(String addr : requestDto.getRegion()){
             address.add(addr.split(" "));
         }
+
+        for(String date : requestDto.getDate()){
+            dates.add(date.split("[.]"));
+        }
+
+        for(String[] str : dates){
+            localDates.add(LocalDate.of(Integer.parseInt(str[0]), Integer.parseInt(str[1]), Integer.parseInt(str[2])));
+        }
+
+        for(String time : requestDto.getTimes()){
+
+        }
+
 
         List<Shop> shops = new ArrayList<>();
         List<Shop> filteredShops = new ArrayList<>();
@@ -134,7 +155,16 @@ public class ShopService {
 
         filteredShops = shopRepository.findAllFilteredShopsByCategoryIds(requestDto.getCategories(), filteredShops);
 
-
+        List<Shop> filter = new ArrayList<>();
+        for(Shop shop : filteredShops){
+            for(LocalDate date : localDates){
+                for(ReservationSchedule reservationSchedule : shop.getReservationSchedules()){
+                    if(date.isEqual(reservationSchedule.getWorkDate())){
+                        filter.add(shop);
+                    }
+                }
+            }
+        }
 
         result = filteredShops.stream().map(shop -> new ShopFilteredShopsResponseDto(shop)).collect(Collectors.toList());
 
