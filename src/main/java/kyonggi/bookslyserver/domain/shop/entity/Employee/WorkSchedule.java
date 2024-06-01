@@ -2,7 +2,6 @@ package kyonggi.bookslyserver.domain.shop.entity.Employee;
 
 import jakarta.persistence.*;
 
-import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeWorkScheduleDto;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 
 
@@ -45,5 +44,12 @@ public class WorkSchedule extends BaseTimeEntity {
                 .isDayOff(isDayOff)
                 .employee(employee)
                 .build();
+    }
+
+    public void updateWorkSchedule(LocalTime startTime, LocalTime endTime, boolean isDayOff) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.isDayOff = isDayOff;
+
     }
 }

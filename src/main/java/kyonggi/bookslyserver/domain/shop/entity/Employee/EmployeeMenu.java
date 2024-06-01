@@ -7,6 +7,8 @@ import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
+import java.util.ArrayList;
+
 @Entity
 @Getter
 @Setter
@@ -28,8 +30,11 @@ public class EmployeeMenu extends BaseTimeEntity {
     private Menu menu;
 
     public static EmployeeMenu createEntity(Employee employee, Menu menu){
-        return EmployeeMenu.builder()
+        EmployeeMenu employeeMenu = EmployeeMenu.builder()
                 .employee(employee)
                 .menu(menu).build();
+
+        employee.getEmployeeMenus().add(employeeMenu);
+        return employeeMenu;
     }
 }

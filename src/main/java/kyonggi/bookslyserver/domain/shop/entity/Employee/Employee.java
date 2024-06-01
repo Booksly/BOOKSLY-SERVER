@@ -42,6 +42,7 @@ public class Employee extends BaseTimeEntity {
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<EmployeeMenu> employeeMenus = new ArrayList<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
@@ -51,25 +52,26 @@ public class Employee extends BaseTimeEntity {
     private List<WorkSchedule> workSchedules = new ArrayList<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<TimeEventSchedule> timeEventSchedules = new ArrayList<>();
 
-
-    public EmployeeMenu addMenu(Employee employee, Menu menu){
-        EmployeeMenu employeeMenu = EmployeeMenu.createEntity(employee, menu);
-        this.employeeMenus.add(employeeMenu);
-        menu.getEmployeeMenus().add(employeeMenu);
-        return employeeMenu;
+    public void updateProfileImgUrl(String profileImgUri) {
+        this.profileImgUri = profileImgUri;
     }
 
-    public void update(EmployeeCreateRequestDto dto){
-        this.name = dto.employeeName();
-        this.selfIntro = dto.description();
-        this.profileImgUri = dto.imgUri();
-        this.employeeMenus.clear();
-        this.workSchedules.clear();
+    public void updateName(String name) {
+        this.name = name;
     }
 
-    public void
+    public void updateSelfIntro(String selfIntro) {
+        this.selfIntro = selfIntro;
+    }
+
+    public void deleteEmployeeMenu(EmployeeMenu employeeMenu) {
+        this.employeeMenus.remove(employeeMenu);
+    }
+
+    public void deleteAllEmployeeMenu() {
+        this.employeeMenus = new ArrayList<>();
+    }
 
 }
