@@ -11,6 +11,7 @@ import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeCreateRequ
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeWorkScheduleRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.*;
+import kyonggi.bookslyserver.domain.shop.dto.response.menu.ReadEmployeesMenusResponseDto;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.EmployeeMenu;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.WorkSchedule;
@@ -62,6 +63,10 @@ public class EmployeeService {
 
     private final ReviewRepository reviewRepository;
 
+    private final MenuCategoryRepository menuCategoryRepository;
+
+    private final MenuImageRepository menuImageRepository;
+
     public ReadEmployeeWithReviewsWrapperResponseDto readEmployeesWithReviews(Long shopId, Boolean withReviews){
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
         List<Employee> employees = employeeRepository.findByShop(shop);
@@ -76,12 +81,20 @@ public class EmployeeService {
         return ReadEmployeeWithReviewsWrapperResponseDto.of(employeeDtos);
     }
 
+    public ReadEmployeeResponseDto readEmployeeInfo(Long employeeId){
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EntityNotFoundException(EMPLOYEES_NOT_FOUND));
 
-    public EmployeeReadOneDto readOneEmployee(Long id){
-        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(EMPLOYEES_NOT_FOUND));
+        List<EmployeeMenu> employeeMenus = employeeMenuRepository.findByEmployeeId(employeeId);
+        List<Menu> menus = employeeMenus.stream()
+                .map(EmployeeMenu::getMenu)
+                .collect(Collectors.toList());
 
-        List<EmployeeMenu> employeeMenus = employeeMenuRepository.findByEmployeeId(id);
-        return new EmployeeReadOneDto(employee, employeeMenus);
+        List<ReadEmployeesMenusResponseDto> menusResponseDtos = menus.stream().collect(Collectors.groupingBy(Menu::getMenuCategory))
+                .entrySet().stream()
+                .map(entry -> ReadEmployeesMenusResponseDto.of(entry.getKey().getName(), entry.getValue()))
+                .collect(Collectors.toList());
+
+        return ReadEmployeeResponseDto.of(employee, menusResponseDtos);
     }
 
 
