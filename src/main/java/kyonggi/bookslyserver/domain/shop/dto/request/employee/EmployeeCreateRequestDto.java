@@ -11,8 +11,7 @@ import java.util.List;
 public record EmployeeCreateRequestDto(
         @NotNull String name,
         @NotNull @Length(max = 50) String description,
-        MultipartFile image,
         List<Long> menus,
-        @NotNull List<EmployeeWorkScheduleDto> workSchedules
+        @NotNull List<EmployeeWorkScheduleRequestDto> workSchedules
 ) {
 }
