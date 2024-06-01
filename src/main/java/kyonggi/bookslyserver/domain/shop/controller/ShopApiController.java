@@ -3,6 +3,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
@@ -81,7 +82,7 @@ public class ShopApiController {
 
     //가게 수정
     @PutMapping("/api/shops/{shopId}")
-    public ResponseEntity<SuccessResponse<?>> updateShop(@PathVariable("shopId") Long id, @RequestBody @Validated ShopCreateRequestDto requestDto){
+    public ResponseEntity<SuccessResponse<?>> updateShop(@PathVariable("shopId") Long id, @RequestBody @Validated ShopUpdateRequestDto requestDto){
         ShopCreateResponseDto result = shopService.update(id, requestDto);
         return SuccessResponse.ok(result);
     }

@@ -5,6 +5,7 @@ import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.review.entity.Review;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Menu.Menu;
@@ -141,49 +142,50 @@ public class Shop extends BaseTimeEntity {
                 .timeUnit(requestDto.getTimeUnit())
                 .build();
     }
-
-    public void update(Shop shop, ShopCreateRequestDto requestDto){
+    public void update(ShopUpdateRequestDto requestDto) {
         int business_flag = 0;
         int shopImage_flag = 0;
 
-        if(requestDto.getName() != null) {
-            this.name = requestDto.getName();
-        }
-        if(requestDto.getPhoneNumber() != null) {
-            this.phoneNumber = requestDto.getPhoneNumber();
-        }
+        Optional.ofNullable(requestDto.name()).ifPresent(name -> this.name = name);
+        Optional.ofNullable(requestDto.phoneNumber()).ifPresent(phoneNumber -> this.phoneNumber = phoneNumber);
 
-        this.address.update(requestDto.getFirstAddress(), requestDto.getSecondAddress(), requestDto.getThirdAddress());
+        this.address.update(
+                requestDto.firstAddress(),
+                requestDto.secondAddress(),
+                requestDto.thirdAddress()
+        );
 
-        if(requestDto.getDetailAddress() != null) {
-            this.detailAddress = requestDto.getDetailAddress();
+        Optional.ofNullable(requestDto.detailAddress()).ifPresent(detailAddress -> this.detailAddress = detailAddress);
+        Optional.ofNullable(requestDto.kakaoUrl()).ifPresent(kakaoUrl -> this.kakaoUrl = kakaoUrl);
+        Optional.ofNullable(requestDto.instagramUrl()).ifPresent(instagramUrl -> this.instagramUrl = instagramUrl);
+        Optional.ofNullable(requestDto.introduction()).ifPresent(introduction -> this.introduction = introduction);
+        if (requestDto.businessScheduleList() != null) {
+            for (BusinessSchedule businessSchedule : requestDto.businessScheduleList()) {
+                if (business_flag < this.businessSchedules.size()) {
+                    this.businessSchedules.get(business_flag)
+                            .update(
+                                    businessSchedule.getDay(),
+                                    businessSchedule.getOpenAt(),
+                                    businessSchedule.getCloseAt(),
+                                    businessSchedule.getIsHoliday()
+                            );
+                }
+                business_flag++;
+            }
         }
-        if(requestDto.getKakaoUrl() != null) {
-            this.kakaoUrl = requestDto.getKakaoUrl();
+        if (requestDto.shopImageList()!=null){
+            for (ShopImage shopImage : requestDto.shopImageList()) {
+                if (shopImage_flag < this.shopImages.size()) {
+                    this.shopImages.get(shopImage_flag)
+                            .update(
+                                    shopImage.getImgUri(),
+                                    shopImage.getIsRepresentative()
+                            );
+                }
+                shopImage_flag++;
+            }
         }
-        if(requestDto.getInstagramUrl() != null) {
-            this.instagramUrl = requestDto.getInstagramUrl();
-        }
-        if(requestDto.getIntroduction() != null) {
-            this.introduction = requestDto.getIntroduction();
-        }
-
-        for(BusinessSchedule businessSchedule : requestDto.getBusinessScheduleList()){
-            this.businessSchedules
-                    .get(business_flag)
-                    .update(businessSchedule.getDay(), businessSchedule.getOpenAt(), businessSchedule.getCloseAt(), businessSchedule.getIsHoliday());
-            business_flag++;
-        }
-
-        for(ShopImage shopImage : requestDto.getShopImageList()){
-            this.shopImages
-                    .get(shopImage_flag)
-                    .update(shopImage.getImgUri(), shopImage.getIsRepresentative());
-            shopImage_flag++;
-        }
-        this.timeUnit = requestDto.getTimeUnit();
     }
-
     public float getRatingByReview() {
         if (reviews.size() > 0) {
             float sum = 0;

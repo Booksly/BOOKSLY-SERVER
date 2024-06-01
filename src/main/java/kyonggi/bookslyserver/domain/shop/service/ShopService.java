@@ -3,6 +3,7 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
@@ -88,7 +89,7 @@ public class ShopService {
     }
 
     @Transactional
-    public ShopRegisterDto join(Long ownerId, ShopCreateRequestDto requestDto) {
+    public ShopCreateResponseDto join(Long ownerId, ShopCreateRequestDto requestDto) {
 
         if(shopRepository.existsByName(requestDto.getName())){
             throw new BusinessException(SHOP_NAME_ALREADY_EXIST);
@@ -112,15 +113,13 @@ public class ShopService {
         }
 
         shop.setShopOwner(shopOwnerRepository.findById(ownerId).orElseThrow(()-> new EntityNotFoundException(SHOP_OWNER_NOT_EXIST)));
-        return new ShopRegisterDto(shop);
+        return new ShopCreateResponseDto(shop);
     }
 
     @Transactional
-    public ShopCreateResponseDto update(Long id, ShopCreateRequestDto requestDto){
+    public ShopCreateResponseDto update(Long id, ShopUpdateRequestDto requestDto){
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-
-        shop.update(shop, requestDto);
+        shop.update(requestDto);
         return new ShopCreateResponseDto(shop);
     }
 
