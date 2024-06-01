@@ -35,15 +35,15 @@ public class EmployeeApiController {
     }
 
     @GetMapping("/api/shops/{shopId}/employees/names")
-    public ResponseEntity<SuccessResponse<?>> readEmployeeNameWithImages(@PathVariable("shopId") Long shopId, @RequestParam("withImage") Boolean withImage) {
+    public ResponseEntity<SuccessResponse<?>> readEmployeeNamesWithImage(@PathVariable("shopId") Long shopId, @RequestParam("withImage") Boolean withImage) {
         ReadEmployeeNamesWithImageWrapperResponseDto responseDto = employeeService.readEmployeeNamesWithImages(shopId, withImage);
         return SuccessResponse.ok(responseDto);
     }
 
     @GetMapping("/api/shops/employees/{employeeId}")
-    public ResponseEntity<SuccessResponse<?>> readOneEmployee(@PathVariable("employeeId") Long id) {
-        EmployeeReadOneDto result = employeeService.readOneEmployee(id);
-        return SuccessResponse.ok(result);
+    public ResponseEntity<SuccessResponse<?>> readEmployeeInfo(@PathVariable("employeeId") Long employeeId) {
+        ReadEmployeeResponseDto responseDto = employeeService.readEmployeeInfo(employeeId);
+        return SuccessResponse.ok(responseDto);
     }
 
     @PutMapping("/api/shops/{shopId}/employees/{employeeId}")
