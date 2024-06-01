@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MenuCategoryRepository extends JpaRepository<MenuCategory, Long> {
@@ -23,4 +24,7 @@ public interface MenuCategoryRepository extends JpaRepository<MenuCategory, Long
     Optional<MenuCategory> findByNameAndShopOwner(@Param("name") String name, @Param("ownerId") Long ownerId);
 
     MenuCategory findByName(String name);
+
+    @Query("select distinct mc from MenuCategory mc join fetch mc.menus m where m in :menus")
+    List<MenuCategory> findByMenusWithCategories(@Param("menus") List<Menu> menus);
 }
