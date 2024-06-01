@@ -68,6 +68,18 @@ public class ShopService {
                 .address(new AddressDto(shop.getAddress()))
                 .build();
     }
+    public ShopOwnerDetailReadOneDto getShopProfileDetailsOwner(Long id){
+        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+
+        List<BusinessScheduleDto> businessScheduleDtos = new ArrayList<>();
+
+        for(BusinessSchedule businessSchedule : shop.getBusinessSchedules()){
+            businessScheduleDtos.add(new BusinessScheduleDto(businessSchedule));
+        }
+
+
+        return new ShopOwnerDetailReadOneDto(shop, businessScheduleDtos);
+    }
 
     public List<ShopFilterDto> readTopShops(Pageable pageable){
         Page<Shop> shopPage = shopRepository.findAll(pageable);
@@ -81,21 +93,18 @@ public class ShopService {
         if(shopRepository.existsByName(requestDto.getName())){
             throw new BusinessException(SHOP_NAME_ALREADY_EXIST);
         }
-        Shop shop = Shop.createShop(requestDto);
-        shopRepository.save(shop);
-        List<BusinessSchedule> businessScheduleList = requestDto.getBusinessScheduleList();
-        for(BusinessSchedule businessSchedule : businessScheduleList){
-            shop.getBusinessSchedule(businessSchedule);
+
+        Shop shop=shopRepository.save(Shop.createShop(requestDto));
+
+        for(BusinessSchedule businessSchedule : requestDto.getBusinessScheduleList()){
+            shop.setBusinessSchedule(businessSchedule);
         }
 
-        List<ShopImage> shopImages = requestDto.getShopImageList();
-        for(ShopImage shopImage : shopImages){
-            shop.getShopImage(shopImage);
+        for(ShopImage shopImage : requestDto.getShopImageList()){
+            shop.setShopImage(shopImage);
         }
 
-        Optional<ShopOwner> owner = shopOwnerRepository.findById(ownerId);
-        shop.getShopOwner(owner);
-        shop.setCreatedAt(LocalDate.now());
+        shop.setShopOwner(shopOwnerRepository.findById(ownerId).orElseThrow(()-> new EntityNotFoundException(SHOP_OWNER_NOT_EXIST)));
         return new ShopRegisterDto(shop);
     }
 
@@ -134,18 +143,6 @@ public class ShopService {
         return new ShopOwnerMainReadOneDto(shop);
     }
 
-    public ShopOwnerDetailReadOneDto readOne(Long id){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-        List<BusinessScheduleDto> businessScheduleDtos = new ArrayList<>();
-
-        for(BusinessSchedule businessSchedule : shop.getBusinessSchedules()){
-            businessScheduleDtos.add(new BusinessScheduleDto(businessSchedule));
-        }
-
-
-        return new ShopOwnerDetailReadOneDto(shop, businessScheduleDtos);
-    }
 
 
     public List<NewShopFilterDto> readNewShops(Pageable pageable){

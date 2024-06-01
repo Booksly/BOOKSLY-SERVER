@@ -48,6 +48,8 @@ public class Shop extends BaseTimeEntity {
 
     private String kakaoUrl;
 
+    private String blogUrl;
+
     @Lob
     private String introduction;
 
@@ -106,18 +108,18 @@ public class Shop extends BaseTimeEntity {
 
 
     //==생성메서드==//
-    public void getBusinessSchedule(BusinessSchedule businessSchedule) {
+    public void setBusinessSchedule(BusinessSchedule businessSchedule) {
         this.businessSchedules.add(businessSchedule);
         businessSchedule.setShop(this);
     }
 
-    public void getShopImage(ShopImage shopImage){
+    public void setShopImage(ShopImage shopImage){
         this.shopImages.add(shopImage);
         shopImage.setShop(this);
     }
 
-    public void getShopOwner(Optional<ShopOwner> shopOwner){
-        this.shopOwner = shopOwner.orElseThrow();
+    public void setShopOwner(ShopOwner shopOwner){
+        this.shopOwner = shopOwner;
         this.shopOwner.getShops().add(this);
     }
 

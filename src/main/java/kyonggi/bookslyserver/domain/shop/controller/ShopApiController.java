@@ -5,7 +5,6 @@ package kyonggi.bookslyserver.domain.shop.controller;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopCreateResponseDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopRegisterDto;
-import kyonggi.bookslyserver.domain.shop.dto.response.shop.ShopUserReadOneDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.service.ShopService;
 import kyonggi.bookslyserver.global.auth.principal.shopOwner.OwnerId;
@@ -37,24 +36,24 @@ public class ShopApiController {
     //가게 상세 프로필 조회(유저)
     @GetMapping("/api/shops/{shopId}/profile/user")
     public ResponseEntity<SuccessResponse<?>> findShop(@PathVariable("shopId") Long shopId){
-        ShopUserReadOneDto result = shopService.getShopProfileDetails(shopId);
-        return SuccessResponse.ok(result);
-    }
-
-    //가게 메인 페이지 조회(가게 주인)
-    @GetMapping("/api/shops/{shopId}/mainprofile/owner")
-    public ResponseEntity<SuccessResponse<?>> readMain(@PathVariable("shopId") Long id){
-        ShopOwnerMainReadOneDto result = shopService.readMain(id);
-        return SuccessResponse.ok(result);
+        return SuccessResponse.ok(shopService.getShopProfileDetails(shopId));
     }
 
 
     //가게 상세 프로필 조회(가게 주인)
     @GetMapping("/api/shops/{shopId}/profile/owner")
     public ResponseEntity<SuccessResponse<?>> readShop(@PathVariable("shopId") Long id){
-        ShopOwnerDetailReadOneDto result = shopService.readOne(id);
+        ShopOwnerDetailReadOneDto result = shopService.getShopProfileDetailsOwner(id);
         return SuccessResponse.ok(result);
     }
+
+    //가게 메인 페이지 조회(가게 주인)
+    @GetMapping("/api/shops/{shopId}/mainProfile/owner")
+    public ResponseEntity<SuccessResponse<?>> readMain(@PathVariable("shopId") Long id){
+        ShopOwnerMainReadOneDto result = shopService.readMain(id);
+        return SuccessResponse.ok(result);
+    }
+
 
 
     //새로 입점한 가게 리스트 조회
@@ -76,9 +75,8 @@ public class ShopApiController {
 
     //가게 등록
     @PostMapping("/api/shops")
-    public ResponseEntity<SuccessResponse<?>> createShop(@OwnerId Long id, @RequestBody @Validated ShopCreateRequestDto requestDto){
-        ShopRegisterDto result = shopService.join(id, requestDto);
-        return SuccessResponse.ok(result);
+    public ResponseEntity<SuccessResponse<?>> createShop(@OwnerId Long ownerId, @RequestBody @Validated ShopCreateRequestDto requestDto){
+        return SuccessResponse.ok(shopService.join(ownerId, requestDto));
     }
 
     //가게 수정
