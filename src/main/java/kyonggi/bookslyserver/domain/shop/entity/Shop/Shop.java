@@ -135,8 +135,6 @@ public class Shop extends BaseTimeEntity {
                 .category(Category.builder().categoryName(requestDto.getCategory()).build())
                 .address(Address.builder().firstAddress(requestDto.getFirstAddress()).secondAddress(requestDto.getSecondAddress()).thirdAddress(requestDto.getThirdAddress()).build())
                 .detailAddress(requestDto.getDetailAddress())
-                .kakaoUrl(requestDto.getKakaoUrl())
-                .instagramUrl(requestDto.getInstagramUrl())
                 .introduction(requestDto.getIntroduction())
                 .businessSchedules(new ArrayList<>())
                 .shopImages(new ArrayList<>())

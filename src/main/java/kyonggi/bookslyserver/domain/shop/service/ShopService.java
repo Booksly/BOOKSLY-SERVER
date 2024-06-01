@@ -96,6 +96,13 @@ public class ShopService {
 
         Shop shop=shopRepository.save(Shop.createShop(requestDto));
 
+        String url=requestDto.getSnsUrl();
+        if (url.contains("pf.kakao.com")){
+            shop.setKakaoUrl(url);
+        } else if (url.contains("instagram.com")) {
+            shop.setInstagramUrl(url);
+        }else shop.setBlogUrl(url);
+
         for(BusinessSchedule businessSchedule : requestDto.getBusinessScheduleList()){
             shop.setBusinessSchedule(businessSchedule);
         }

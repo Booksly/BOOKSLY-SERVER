@@ -32,6 +32,8 @@ public class ShopCreateRequestDto {
 
     private String instagramUrl;
 
+    private String snsUrl;
+
     private String introduction;
 
 
