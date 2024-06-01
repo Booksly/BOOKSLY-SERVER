@@ -47,7 +47,7 @@ public class Reservation extends BaseTimeEntity {
     @Column
     private String refuseReason;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "reservationSchedule_id")
     private ReservationSchedule reservationSchedule;
 

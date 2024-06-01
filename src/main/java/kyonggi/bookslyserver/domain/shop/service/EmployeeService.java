@@ -6,6 +6,7 @@ import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRepository;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationSettingRepository;
+import kyonggi.bookslyserver.domain.review.repository.ReviewRepository;
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeWorkScheduleRequestDto;
@@ -59,25 +60,17 @@ public class EmployeeService {
 
     private final AmazonS3Manager amazonS3Manager;
 
+    private final ReviewRepository reviewRepository;
 
-    public List<EmployeeReadDto> readEmployee(Long id, Boolean withReviews){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+    public ReadEmployeeWithReviewsWrapperResponseDto readShopEmployee(Long shopId, Boolean withReviews){
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
+        List<Employee> employees = employeeRepository.findByShop(shop).orElseThrow(()-> new EntityNotFoundException(EMPLOYEE_NOT_CONFIG));
+        List<ReadEmployeeWithReviewsResponseDto> employeeDtos = employees.stream().map(employee -> {
+            Integer reviewCount = withReviews ? reviewRepository.countReviewsByEmployeeId(employee.getId()) : null;
+            return ReadEmployeeWithReviewsResponseDto.of(employee, withReviews, reviewCount);
+        }).collect(Collectors.toList());
 
-
-        List<EmployeeReadDto> employeeReadDtos = new ArrayList<>();
-
-            if (shop.getEmployees().size() != 0) {
-                for (Employee employee : shop.getEmployees()) {
-                    EmployeeReadDto employeeReadDto = new EmployeeReadDto(employee, withReviews);
-                    employeeReadDtos.add(employeeReadDto);
-                }
-            }
-            else{
-                throw new BusinessException(ErrorCode.EMPLOYEES_NOT_FOUND);
-            }
-
-
-        return employeeReadDtos;
+        return ReadEmployeeWithReviewsWrapperResponseDto.of(employeeDtos);
     }
 
 
@@ -85,8 +78,6 @@ public class EmployeeService {
         Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(EMPLOYEES_NOT_FOUND));
 
         List<EmployeeMenu> employeeMenus = employeeMenuRepository.findByEmployeeId(id);
-
-
         return new EmployeeReadOneDto(employee, employeeMenus);
     }
 
