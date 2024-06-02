@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
@@ -25,8 +26,8 @@ public interface ShopRepository extends JpaRepository<Shop,Long> {
     List<Shop> findByShopOwnerId(@Param("id") Long id);
 
 
-    @Query("select s from Shop s where s.createdAt <= :currentDate and s.createdAt >= :flagDate")
-    Page<Shop> findNewShops(Pageable pageable, @Param("currentDate") LocalDate currentDate, @Param("flagDate")LocalDate flagDate);
+    @Query("select s from Shop s where s.createDate <= :currentDate and s.createDate >= :flagDate")
+    Page<Shop> findNewShops(Pageable pageable, @Param("currentDate") LocalDateTime currentDate, @Param("flagDate")LocalDateTime flagDate);
 
     @Query("select s from Shop s where s.address.firstAddress = :firstAddress and s.address.secondAddress = :secondAddress and s IN :shops")
     List<Shop> findShopsByOneAndTwoAddress(@Param("firstAddress") String firstAddress, @Param("secondAddress") String secondAddress, @Param("shops") List<Shop> shops);

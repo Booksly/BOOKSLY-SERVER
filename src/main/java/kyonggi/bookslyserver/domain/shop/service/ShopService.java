@@ -9,10 +9,10 @@ import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
-import kyonggi.bookslyserver.domain.shop.repository.BusinessScheduleRepository;
 import kyonggi.bookslyserver.domain.shop.repository.CategoryRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
+import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
@@ -82,8 +82,9 @@ public class ShopService {
         for(ShopImage shopImage : requestDto.getShopImageList()){
             shop.setShopImage(shopImage);
         }
-
-        shop.setShopOwner(shopOwnerRepository.findById(ownerId).orElseThrow(()-> new EntityNotFoundException(SHOP_OWNER_NOT_EXIST)));
+        ShopOwner shopOwner=shopOwnerRepository.findById(ownerId).orElseThrow(()-> new EntityNotFoundException(SHOP_OWNER_NOT_EXIST));
+        if (shopOwner.getShops().isEmpty()) shop.setIsRepresentative(true);
+        shop.setShopOwner(shopOwner);
         return new ShopCreateResponseDto(shop);
     }
 
@@ -118,7 +119,7 @@ public class ShopService {
 
 
     public List<NewShopFilterDto> readNewShops(Pageable pageable){
-        Page<Shop> shopPage = shopRepository.findNewShops(pageable, LocalDate.now(), LocalDate.now().minusMonths(3));
+        Page<Shop> shopPage = shopRepository.findNewShops(pageable, LocalDateTime.now(), LocalDateTime.now().minusMonths(3));
         return shopPage.stream().map(NewShopFilterDto::new).collect(Collectors.toList());
     }
 

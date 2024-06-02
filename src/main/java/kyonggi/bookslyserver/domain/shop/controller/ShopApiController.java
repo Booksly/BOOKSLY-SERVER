@@ -28,17 +28,16 @@ public class ShopApiController {
     private final ShopService shopService;
 
     //가게 이름 조회(가게 주인)
-    @GetMapping("/api/shops/shopNames")
+    @GetMapping("/api/shops/names")
     public ResponseEntity<SuccessResponse<?>> readShopNames(@OwnerId Long ownerId){
         return SuccessResponse.ok(shopService.readShopNames(ownerId));
     }
 
     //가게 상세 프로필 조회(유저)
-    @GetMapping("/api/shops/{shopId}/profile/user")
+    @GetMapping("/api/shops/{shopId}/profile")
     public ResponseEntity<SuccessResponse<?>> findShop(@PathVariable("shopId") Long shopId){
         return SuccessResponse.ok(shopService.getShopProfileDetails(shopId));
     }
-
 
     //가게 상세 프로필 조회(가게 주인)
     @GetMapping("/api/shops/{shopId}/profile/owner")
@@ -49,7 +48,7 @@ public class ShopApiController {
 
     //새로 입점한 가게 리스트 조회
     @GetMapping("/api/shops/new")
-    public ResponseEntity<SuccessResponse<?>> readNewShops(@PageableDefault(size = 5, page = 0, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable){
+    public ResponseEntity<SuccessResponse<?>> readNewShops(@PageableDefault(size = 5, page = 0, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable){
                 return SuccessResponse.ok(shopService.readNewShops(pageable));
     }
   

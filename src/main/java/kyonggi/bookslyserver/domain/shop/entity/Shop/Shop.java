@@ -66,6 +66,9 @@ public class Shop extends BaseTimeEntity {
     private String businessNumber;
 
     @Column(columnDefinition = "tinyint(0) default 0")
+    private Boolean isRepresentative;
+
+    @Column(columnDefinition = "tinyint(0) default 0")
     private Boolean isDeleted;
 
     private LocalDateTime deletedAt;
