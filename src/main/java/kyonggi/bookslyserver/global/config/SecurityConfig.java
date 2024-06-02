@@ -84,7 +84,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/events/closing-events/today","/api/events/time-events/today","/api/users/test","/api/shops/{shopId}/reviews").permitAll()
 
                         //인증이 필요한 uri - 일반 회원만 접근 가능
-                        .requestMatchers("/api/users/**","/api/auth/verify/user/**","/api/reservations","/api/reservations/all")
+
+                        .requestMatchers("/api/users/**","/api/auth/verify/user/**","/api/reservations","/api/reservations/all","/api/reservations/now","/api/reservations/{reservationId}/**","/api/shops/{shopId}/profile/user")
                         .hasRole("USER")
 
                         .requestMatchers(HttpMethod.POST,"/api/shops/**").hasRole("ADMIN")

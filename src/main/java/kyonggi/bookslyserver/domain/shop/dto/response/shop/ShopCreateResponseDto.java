@@ -21,6 +21,8 @@ public class ShopCreateResponseDto {
 
     private String instagramUrl;
 
+    private String blogUrl;
+
     private List<BusinessScheduleDto> businessScheduleList;
 
     private String mainImage;
@@ -34,6 +36,7 @@ public class ShopCreateResponseDto {
         phoneNumber = shop.getPhoneNumber();
         kakaoUrl = shop.getKakaoUrl();
         instagramUrl = shop.getInstagramUrl();
+        blogUrl=shop.getBlogUrl();
 
         for(ShopImage shopImage : shop.getShopImages()){
             if(shopImage.getIsRepresentative()){
