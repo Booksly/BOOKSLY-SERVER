@@ -75,12 +75,9 @@ public class ShopService {
     public ShopOwnerDetailReadOneDto getShopProfileDetailsOwner(Long id){
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
-        List<BusinessScheduleDto> businessScheduleDtos = new ArrayList<>();
-
-        for(BusinessSchedule businessSchedule : shop.getBusinessSchedules()){
-            businessScheduleDtos.add(new BusinessScheduleDto(businessSchedule));
-        }
-
+        List<BusinessScheduleDto> businessScheduleDtos = shop.getBusinessSchedules().stream()
+                .map(BusinessScheduleDto::new)
+                .collect(Collectors.toList());
 
         return new ShopOwnerDetailReadOneDto(shop, businessScheduleDtos);
     }
