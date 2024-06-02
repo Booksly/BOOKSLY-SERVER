@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 
 import jakarta.transaction.Transactional;
+import kyonggi.bookslyserver.domain.shop.converter.ShopConverter;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
@@ -38,63 +39,25 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
 
-    private final BusinessScheduleRepository businessScheduleRepository;
-
     private final ShopImageRepository shopImageRepository;
 
     private final ShopOwnerRepository shopOwnerRepository;
 
     private final CategoryRepository categoryRepository;
-
+    private final ShopConverter shopConverter;
     private final String ALL_REGION = "전체";
-
 
 
     public ShopUserReadOneDto getShopProfileDetails(Long shopId){
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-        shop.setTotalVisitors(shop.getTotalVisitors() + 1);
-        return ShopUserReadOneDto.builder()
-                .Name(shop.getName())
-                .category(shop.getCategory().getCategoryName().toString())
-                .imageUrl(findRepresentativeImageUrl(shop))
-                .rating(shop.getRatingByReview())
-                .description(shop.getIntroduction())
-                .detailAddress(shop.getDetailAddress())
-                .phoneNumber(shop.getPhoneNumber())
-                .businessSchedules(
-                        shop.getBusinessSchedules().stream()
-                                .map(BusinessScheduleDto::new)
-                                .toList()
-                )
-                .address(new AddressDto(shop.getAddress()))
-                .blogUrl(shop.getBlogUrl())
-                .instagramUrl(shop.getInstagramUrl())
-                .kakaoUrl(shop.getKakaoUrl())
-                .build();
-    }
-    private String findRepresentativeImageUrl(Shop shop){
-        Optional<ShopImage> img=shop.getShopImages().stream()
-                .filter(ShopImage::getIsRepresentative)
-                .findFirst();
-        return img.map(ShopImage::getImgUri).orElse(null);
+        return shopConverter.toShopUserReadOneDto(shop);
     }
 
     public ShopOwnerDetailReadOneDto getShopProfileDetailsOwner(Long id){
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-        List<BusinessScheduleDto> businessScheduleDtos = shop.getBusinessSchedules().stream()
-                .map(BusinessScheduleDto::new)
-                .collect(Collectors.toList());
-
-        return new ShopOwnerDetailReadOneDto(shop, businessScheduleDtos);
+        return shopConverter.toShopOwnerDetailReadOneDto(shop);
     }
 
-    public List<ShopFilterDto> readTopShops(Pageable pageable){
-        Page<Shop> shopPage = shopRepository.findAll(pageable);
-        List<ShopFilterDto> result = shopPage.stream().map(shop -> new ShopFilterDto(shop)).collect(Collectors.toList());
-        return result;
-    }
 
     @Transactional
     public ShopCreateResponseDto join(Long ownerId, ShopCreateRequestDto requestDto) {
@@ -148,12 +111,11 @@ public class ShopService {
                 .collect(Collectors.toList());
     }
 
-    public ShopOwnerMainReadOneDto readMain(Long id){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-        return new ShopOwnerMainReadOneDto(shop);
+    public List<ShopFilterDto> readTopShops(Pageable pageable){
+        Page<Shop> shopPage = shopRepository.findAll(pageable);
+        List<ShopFilterDto> result = shopPage.stream().map(shop -> new ShopFilterDto(shop)).collect(Collectors.toList());
+        return result;
     }
-
 
 
     public List<NewShopFilterDto> readNewShops(Pageable pageable){

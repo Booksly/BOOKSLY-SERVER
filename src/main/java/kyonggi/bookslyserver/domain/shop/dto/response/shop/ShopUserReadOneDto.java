@@ -1,7 +1,6 @@
 package kyonggi.bookslyserver.domain.shop.dto.response.shop;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import kyonggi.bookslyserver.domain.shop.dto.response.menu.MenuReadDto;
 import lombok.Builder;
 
 import java.util.List;
@@ -9,8 +8,8 @@ import java.util.List;
 public record ShopUserReadOneDto(
     String Name,
     String category,
-    String imageUrl,
-    AddressDto address,
+    String profileImg,
+    String address,
     String description,
     String detailAddress,
     String phoneNumber,
