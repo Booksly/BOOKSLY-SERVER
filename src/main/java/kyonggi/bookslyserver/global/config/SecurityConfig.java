@@ -14,6 +14,7 @@ import kyonggi.bookslyserver.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +26,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import retrofit2.http.POST;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -82,13 +84,18 @@ public class SecurityConfig {
                         .requestMatchers("/api/events/closing-events/today","/api/events/time-events/today","/api/users/test","/api/shops/{shopId}/reviews").permitAll()
 
                         //인증이 필요한 uri - 일반 회원만 접근 가능
-                        .requestMatchers("/api/users/**","/api/auth/verify/user/**","/api/reservations","/api/reservations/all","/api/shops/reviews/**")
+                        .requestMatchers("/api/users/**","/api/auth/verify/user/**","/api/reservations","/api/reservations/all")
                         .hasRole("USER")
 
+                        .requestMatchers(HttpMethod.POST,"/api/shops/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/shops/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/shops/**").hasRole("ADMIN")
+
                         //인증이 필요한 uri - 기업 회원만 접근 가능
-                        .requestMatchers("/api/owners/**","/api/events/**","/api/shops/**","/api/employees/{employeeId}/reservations/**","api/reservations/owner/**"
+                        .requestMatchers("/api/owners/**","/api/events/**","/api/employees/{employeeId}/reservations/**","api/reservations/owner/**"
                                 ,"api/notices/shops/**")
                         .hasRole("ADMIN")
+
                         // 그 외 요청, 인증이 필요없음 - 비회원도 접근 가능
                         .anyRequest().permitAll());
 
