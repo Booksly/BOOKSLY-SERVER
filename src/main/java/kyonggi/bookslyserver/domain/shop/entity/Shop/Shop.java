@@ -15,7 +15,6 @@ import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +35,6 @@ public class Shop extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate createdAt;
-
     private String name;
 
     private int totalVisitors;
@@ -55,13 +52,11 @@ public class Shop extends BaseTimeEntity {
     @Lob
     private String introduction;
 
-    private String detailAddress;
-
-    private boolean isClosed;
-
-    private String zipCode;
+    private Long zipCode;
 
     private String streetAddress;
+
+    private String detailAddress;
 
     private String businessNumber;
 
@@ -144,6 +139,8 @@ public class Shop extends BaseTimeEntity {
                 .category(Category.builder().categoryName(requestDto.getCategory()).build())
                 .address(Address.builder().firstAddress(requestDto.getFirstAddress()).secondAddress(requestDto.getSecondAddress()).thirdAddress(requestDto.getThirdAddress()).build())
                 .detailAddress(requestDto.getDetailAddress())
+                .zipCode(requestDto.getZipCode())
+                .streetAddress(requestDto.getStreetAddress())
                 .introduction(requestDto.getIntroduction())
                 .businessSchedules(new ArrayList<>())
                 .shopImages(new ArrayList<>())

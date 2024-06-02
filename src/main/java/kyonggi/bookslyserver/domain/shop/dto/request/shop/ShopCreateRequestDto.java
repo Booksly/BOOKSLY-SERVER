@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 public class ShopCreateRequestDto {
 
-    @NotNull private String Name;
+    @NotNull private String name;
 
     @NotNull private CategoryName category;
 
@@ -28,9 +28,9 @@ public class ShopCreateRequestDto {
 
     @NotNull private String detailAddress;
 
-    private String kakaoUrl;
+    @NotNull private Long zipCode;
 
-    private String instagramUrl;
+    @NotNull private String streetAddress;
 
     private String snsUrl;
 
