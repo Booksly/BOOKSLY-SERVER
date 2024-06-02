@@ -57,6 +57,7 @@ public class ShopService {
         return ShopUserReadOneDto.builder()
                 .Name(shop.getName())
                 .category(shop.getCategory().getCategoryName().toString())
+                .imageUrl(findRepresentativeImageUrl(shop))
                 .rating(shop.getRatingByReview())
                 .description(shop.getIntroduction())
                 .detailAddress(shop.getDetailAddress())
@@ -72,6 +73,13 @@ public class ShopService {
                 .kakaoUrl(shop.getKakaoUrl())
                 .build();
     }
+    private String findRepresentativeImageUrl(Shop shop){
+        Optional<ShopImage> img=shop.getShopImages().stream()
+                .filter(ShopImage::getIsRepresentative)
+                .findFirst();
+        return img.map(ShopImage::getImgUri).orElse(null);
+    }
+
     public ShopOwnerDetailReadOneDto getShopProfileDetailsOwner(Long id){
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 

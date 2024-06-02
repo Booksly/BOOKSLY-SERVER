@@ -3,9 +3,11 @@ package kyonggi.bookslyserver.domain.shop.dto.response.shop;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import kyonggi.bookslyserver.domain.review.entity.Review;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
 
 import java.util.List;
-@JsonInclude(JsonInclude.Include.NON_NULL)
+import java.util.Optional;
+
 public record ShopOwnerDetailReadOneDto(
         String name,
         float reviewAvg,
@@ -16,8 +18,11 @@ public record ShopOwnerDetailReadOneDto(
         String detailAddress,
         String phoneNum,
         List<BusinessScheduleDto> businessSchedules,
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         String instagramUrl,
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         String kakaoUrl,
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         String blogUrl,
         String profileImg
 ) {
@@ -35,7 +40,7 @@ public record ShopOwnerDetailReadOneDto(
                 shop.getInstagramUrl(),
                 shop.getKakaoUrl(),
                 shop.getBlogUrl(),
-                shop.getShopImages() != null && !shop.getShopImages().isEmpty() ? shop.getShopImages().get(0).getImgUri() : null
+                findRepresentativeImageUrl(shop)
         );
     }
 
@@ -48,5 +53,11 @@ public record ShopOwnerDetailReadOneDto(
             avg += review.getRating();
         }
         return Float.parseFloat(String.format("%.1f", avg / shop.getReviews().size()));
+    }
+    private static String findRepresentativeImageUrl(Shop shop){
+        Optional<ShopImage> img=shop.getShopImages().stream()
+                .filter(ShopImage::getIsRepresentative)
+                .findFirst();
+        return img.map(ShopImage::getImgUri).orElse(null);
     }
 }
