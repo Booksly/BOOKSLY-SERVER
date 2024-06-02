@@ -113,8 +113,7 @@ public class ShopService {
 
     public List<ShopFilterDto> readTopShops(Pageable pageable){
         Page<Shop> shopPage = shopRepository.findAll(pageable);
-        List<ShopFilterDto> result = shopPage.stream().map(shop -> new ShopFilterDto(shop)).collect(Collectors.toList());
-        return result;
+        return shopPage.stream().map(ShopFilterDto::new).collect(Collectors.toList());
     }
 
 

@@ -59,8 +59,7 @@ public class ShopApiController {
         if(pageable.getPageNumber() > 9){
             throw new InvalidValueException(ErrorCode.PAGE_NUMBER_OVER);
         }
-        List<ShopFilterDto> result = shopService.readTopShops(pageable);
-        return SuccessResponse.ok(result);
+        return SuccessResponse.ok(shopService.readTopShops(pageable));
     }
 
     //가게 등록
