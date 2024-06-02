@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
@@ -53,9 +54,9 @@ public class ShopService {
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
 
         shop.setTotalVisitors(shop.getTotalVisitors() + 1);
-
         return ShopUserReadOneDto.builder()
                 .Name(shop.getName())
+                .category(shop.getCategory().getCategoryName().toString())
                 .rating(shop.getRatingByReview())
                 .description(shop.getIntroduction())
                 .detailAddress(shop.getDetailAddress())
@@ -66,6 +67,9 @@ public class ShopService {
                                 .toList()
                 )
                 .address(new AddressDto(shop.getAddress()))
+                .blogUrl(shop.getBlogUrl())
+                .instagramUrl(shop.getInstagramUrl())
+                .kakaoUrl(shop.getKakaoUrl())
                 .build();
     }
     public ShopOwnerDetailReadOneDto getShopProfileDetailsOwner(Long id){
