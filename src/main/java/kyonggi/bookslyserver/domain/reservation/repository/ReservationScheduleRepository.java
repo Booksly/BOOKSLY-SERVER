@@ -7,6 +7,7 @@ import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -56,4 +57,10 @@ public interface ReservationScheduleRepository extends JpaRepository<Reservation
                                                           @Param("endTime") LocalTime endTime,
                                                           @Param("shop") Shop shop, Pageable pageable);
 
+
+    @Modifying
+    @Query("DELETE FROM ReservationSchedule rs WHERE rs.employee.id = :employeeId AND rs.reservations IS EMPTY")
+    void deleteAllByEmployeeIdAndReservationsEmpty(@Param("employeeId") Long employeeId);
+
+    List<ReservationSchedule> findByEmployee(Employee employee);
 }
