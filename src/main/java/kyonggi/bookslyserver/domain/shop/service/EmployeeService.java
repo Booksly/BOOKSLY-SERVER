@@ -3,9 +3,13 @@ package kyonggi.bookslyserver.domain.shop.service;
 import kyonggi.bookslyserver.domain.event.entity.Event;
 import kyonggi.bookslyserver.domain.event.entity.closeEvent.ClosingEvent;
 import kyonggi.bookslyserver.domain.event.entity.timeEvent.TimeEvent;
+import kyonggi.bookslyserver.domain.event.repository.ClosingEventRepository;
+import kyonggi.bookslyserver.domain.event.repository.EmployeeTimeEventRepository;
+import kyonggi.bookslyserver.domain.event.repository.TimeEventRepository;
 import kyonggi.bookslyserver.domain.reservation.entity.ReservationSchedule;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationScheduleRepository;
 import kyonggi.bookslyserver.domain.reservation.repository.ReservationSettingRepository;
+import kyonggi.bookslyserver.domain.review.entity.Review;
 import kyonggi.bookslyserver.domain.review.repository.ReviewRepository;
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeUpdateRequestDto;
@@ -63,9 +67,11 @@ public class EmployeeService {
 
     private final ReviewRepository reviewRepository;
 
-    private final MenuCategoryRepository menuCategoryRepository;
+    private final ClosingEventRepository closingEventRepository;
 
-    private final MenuImageRepository menuImageRepository;
+    private final EmployeeTimeEventRepository employeeTimeEventRepository;
+
+    private final TimeEventRepository timeEventRepository;
 
     public ReadEmployeeWithReviewsWrapperResponseDto readEmployeesWithReviews(Long shopId, Boolean withReviews){
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
@@ -272,14 +278,37 @@ public class EmployeeService {
     }
 
 
-    @Transactional
     public EmployeeDeleteResponseDto delete(Long id){
+
         Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(EMPLOYEE_NOT_FOUND));
 
+        //직원과 관련된 예약 일정 중 예약이 없는 것만 삭제
+        reservationScheduleRepository.deleteAllByEmployeeIdAndReservationsEmpty(employee.getId());
 
-        Shop shop = employee.getShop();
-        shop.getEmployees().remove(employee);
-        employeeRepository.deleteById(id);
+        List<ReservationSchedule> reservationSchedules = reservationScheduleRepository.findByEmployee(employee);
+        for (ReservationSchedule schedule : reservationSchedules) {
+            schedule.clearEmployee();  // 예약 일정에서 직원 참조 해제
+        }
+        reservationScheduleRepository.saveAll(reservationSchedules);
+
+
+        //마감 임박 이벤트, 마감임박이벤트 메뉴 삭제
+        closingEventRepository.deleteByEmployee(employee);
+
+        //타임 이벤트를 한명의 직원만 담당하고 있는 경우 타임이벤트 삭제
+        TimeEvent timeEvent = employeeTimeEventRepository.findTimeEventByEmployee(employee);
+        if (employeeTimeEventRepository.countByTimeEvent(timeEvent) == 1 ) {
+            timeEventRepository.delete(timeEvent);
+        }
+
+        List<Review> reviews = reviewRepository.findByEmployee(employee);
+        for (Review review : reviews) {
+            review.clearEmployee(); // 리뷰에서 직원 참조 해제
+        }
+
+        //직원 삭제
+        employeeRepository.delete(employee);
+
         return new EmployeeDeleteResponseDto(id);
     }
 

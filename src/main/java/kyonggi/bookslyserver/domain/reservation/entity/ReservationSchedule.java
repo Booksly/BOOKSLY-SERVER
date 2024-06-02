@@ -83,4 +83,8 @@ public class ReservationSchedule extends BaseTimeEntity {
     public void cancelTimeEvent() {
         this.timeEventSchedule = null;
     }
+
+    public void clearEmployee() {
+        this.employee = null;
+    }
 }

@@ -14,6 +14,8 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.PERSIST;
+
 @Entity
 @Getter
 @Builder
@@ -38,7 +40,7 @@ public class Employee extends BaseTimeEntity {
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", cascade = PERSIST)
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
