@@ -120,8 +120,7 @@ public class ShopService {
 
     public List<NewShopFilterDto> readNewShops(Pageable pageable){
         Page<Shop> shopPage = shopRepository.findNewShops(pageable, LocalDate.now(), LocalDate.now().minusMonths(3));
-        List<NewShopFilterDto> result = shopPage.stream().map(shop -> new NewShopFilterDto(shop)).collect(Collectors.toList());
-        return result;
+        return shopPage.stream().map(NewShopFilterDto::new).collect(Collectors.toList());
     }
 
 

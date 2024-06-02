@@ -48,10 +48,9 @@ public class ShopApiController {
 
 
     //새로 입점한 가게 리스트 조회
-    @GetMapping("/api/shops/newshops")
+    @GetMapping("/api/shops/new")
     public ResponseEntity<SuccessResponse<?>> readNewShops(@PageableDefault(size = 5, page = 0, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable){
-        List<NewShopFilterDto> result = shopService.readNewShops(pageable);
-        return SuccessResponse.ok(result);
+                return SuccessResponse.ok(shopService.readNewShops(pageable));
     }
   
     //Top100 조회
