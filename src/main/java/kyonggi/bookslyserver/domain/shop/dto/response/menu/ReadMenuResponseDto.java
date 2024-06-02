@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record ReadMenuResponseDto(
+        Long menuId,
         String imgUri,
         int price,
         String menuName,
@@ -12,6 +13,7 @@ public record ReadMenuResponseDto(
 ) {
     public static ReadMenuResponseDto of(Menu menu) {
         return ReadMenuResponseDto.builder()
+                .menuId(menu.getId())
                 .imgUri(menu.getMenuImage() != null ? menu.getMenuImage().getMenuImgUri() : null)
                 .price(menu.getPrice())
                 .menuName(menu.getMenuName())

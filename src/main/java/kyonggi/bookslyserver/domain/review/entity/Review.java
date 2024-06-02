@@ -46,4 +46,8 @@ public class Review extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewImage> reviewImages = new ArrayList<>();
+
+    public void clearEmployee() {
+        this.employee = null;
+    }
 }

@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.shop.repository;
 
 import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.entity.Employee.Employee;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,8 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
 
     @Query("select e from Employee e join fetch e.employeeMenus em join fetch em.menu where e.id in :employeeIds")
     List<Employee> findAllById(@Param("employeeIds") List<Long> employeeIds);
+
+    boolean existsByName(String name);
+
+    List<Employee> findByShop(Shop shop);
 }

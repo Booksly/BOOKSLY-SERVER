@@ -36,6 +36,9 @@ public class AmazonConfig {
     @Value(value = "${cloud.aws.s3.path.menu}")
     private String menuPath;
 
+    @Value(value = "${cloud.aws.s3.path.employee}")
+    private String employeePath;
+
     @PostConstruct
     public void init() {
         this.awsCredentials = new BasicAWSCredentials(accessKey, secretKey);

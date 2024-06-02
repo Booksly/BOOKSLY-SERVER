@@ -2,7 +2,6 @@ package kyonggi.bookslyserver.domain.shop.entity.Employee;
 
 import jakarta.persistence.*;
 
-import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeWorkScheduleDto;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 
 
@@ -37,14 +36,20 @@ public class WorkSchedule extends BaseTimeEntity {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    public static WorkSchedule createEntity(Employee employee, EmployeeWorkScheduleDto dto){
-        return WorkSchedule
-                .builder()
-                .dayOfWeek(dto.dayOfWeek())
-                .startTime(dto.startTime())
-                .endTime(dto.endTime())
-                .isDayOff(dto.isDayOff())
+    public static WorkSchedule createEntity(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, boolean isDayOff, Employee employee){
+        return WorkSchedule.builder()
+                .dayOfWeek(dayOfWeek)
+                .startTime(startTime)
+                .endTime(endTime)
+                .isDayOff(isDayOff)
                 .employee(employee)
                 .build();
+    }
+
+    public void updateWorkSchedule(LocalTime startTime, LocalTime endTime, boolean isDayOff) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.isDayOff = isDayOff;
+
     }
 }

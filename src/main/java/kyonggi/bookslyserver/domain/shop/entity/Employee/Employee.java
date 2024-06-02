@@ -14,9 +14,10 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.PERSIST;
+
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -39,10 +40,11 @@ public class Employee extends BaseTimeEntity {
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", cascade = PERSIST)
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<EmployeeMenu> employeeMenus = new ArrayList<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
@@ -52,33 +54,26 @@ public class Employee extends BaseTimeEntity {
     private List<WorkSchedule> workSchedules = new ArrayList<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<TimeEventSchedule> timeEventSchedules = new ArrayList<>();
 
-    public static Employee createEntity(Shop shop, EmployeeCreateRequestDto requestDto){
-        return Employee.builder()
-                .name(requestDto.employeeName())
-                .selfIntro(requestDto.description())
-                .profileImgUri(requestDto.imgUri())
-                .shop(shop)
-                .employeeMenus(new ArrayList<>())
-                .workSchedules(new ArrayList<>())
-                .build();
+    public void updateProfileImgUrl(String profileImgUri) {
+        this.profileImgUri = profileImgUri;
     }
 
-    public EmployeeMenu addMenu(Employee employee, Menu menu){
-        EmployeeMenu employeeMenu = EmployeeMenu.createEntity(employee, menu);
-        this.employeeMenus.add(employeeMenu);
-        menu.getEmployeeMenus().add(employeeMenu);
-        return employeeMenu;
+    public void updateName(String name) {
+        this.name = name;
     }
 
-    public void update(EmployeeCreateRequestDto dto){
-        this.name = dto.employeeName();
-        this.selfIntro = dto.description();
-        this.profileImgUri = dto.imgUri();
-        this.employeeMenus.clear();
-        this.workSchedules.clear();
+    public void updateSelfIntro(String selfIntro) {
+        this.selfIntro = selfIntro;
+    }
+
+    public void deleteEmployeeMenu(EmployeeMenu employeeMenu) {
+        this.employeeMenus.remove(employeeMenu);
+    }
+
+    public void deleteAllEmployeeMenu() {
+        this.employeeMenus = new ArrayList<>();
     }
 
 }

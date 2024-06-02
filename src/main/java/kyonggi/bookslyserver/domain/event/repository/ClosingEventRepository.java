@@ -24,4 +24,5 @@ public interface ClosingEventRepository extends JpaRepository<ClosingEvent, Long
     @Query("select c.employee.shop from ClosingEvent c join c.employee e join e.shop")
     List<Shop> findShopsByClosingEvent();
 
+    void deleteByEmployee(Employee employee);
 }

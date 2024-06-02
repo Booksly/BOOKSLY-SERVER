@@ -13,6 +13,8 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Getter
 @Setter
@@ -33,15 +35,15 @@ public class Menu extends BaseTimeEntity {
 
     private int price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name="shop_id")
     private Shop shop;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name="menuCategory_id")
     private MenuCategory menuCategory;
 
-    @OneToOne(mappedBy = "menu", cascade = CascadeType.REMOVE)
+    @OneToOne(mappedBy = "menu", cascade = CascadeType.REMOVE, fetch = LAZY)
     private MenuImage menuImage;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.REMOVE)

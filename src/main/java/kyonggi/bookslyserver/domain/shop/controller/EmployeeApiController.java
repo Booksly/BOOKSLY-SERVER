@@ -2,6 +2,7 @@ package kyonggi.bookslyserver.domain.shop.controller;
 
 
 import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeCreateRequestDto;
+import kyonggi.bookslyserver.domain.shop.dto.request.employee.EmployeeUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.employee.*;
 import kyonggi.bookslyserver.domain.shop.service.EmployeeService;
 import kyonggi.bookslyserver.global.common.SuccessResponse;
@@ -9,50 +10,49 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
 @Validated
 public class EmployeeApiController {
-    final private EmployeeService employeeService;
 
-
-    @GetMapping("/api/shops/{shopId}/employees")
-    public ResponseEntity<SuccessResponse<?>> readEmployee(@PathVariable("shopId") Long id, @RequestParam("withReviews") Boolean withReviews) {
-        List<EmployeeReadDto> result = employeeService.readEmployee(id, withReviews);
-        return SuccessResponse.ok(result);
-    }
-
-
-    @GetMapping("/api/shops/employees/{employeeId}")
-    public ResponseEntity<SuccessResponse<?>> readOneEmployee(@PathVariable("employeeId") Long id) {
-        EmployeeReadOneDto result = employeeService.readOneEmployee(id);
-        return SuccessResponse.ok(result);
-    }
-
-    @GetMapping("/api/shops/{shopId}/employees/reservation")
-    public ResponseEntity<SuccessResponse<?>> readReserveEmployees(@PathVariable("shopId") Long id) {
-        List<ReserveEmployeesDto> result = employeeService.readReserveEmployees(id);
-        return SuccessResponse.ok(result);
-    }
-
-    @GetMapping("/api/shops/{shopId}/employees/eventRegistration")
-    public ResponseEntity<SuccessResponse<?>> readEmployeeNames(@PathVariable("shopId") Long id) {
-        List<EventRegisterEmployeeNamesDto> result = employeeService.readEmployeeNames(id);
-        return SuccessResponse.ok(result);
-    }
+    private final EmployeeService employeeService;
 
     @PostMapping("/api/shops/{shopId}/employees")
-    public ResponseEntity<SuccessResponse<?>> createEmployee(@PathVariable("shopId") Long id, @RequestBody @Validated EmployeeCreateRequestDto requestDto) {
-        EmployeeCreateResponseDto result = employeeService.join(id, requestDto);
+    public ResponseEntity<SuccessResponse<?>> createEmployee(@PathVariable("shopId") Long shopId,
+                                                             @RequestParam("assignAllMenus") Boolean assignAllMenus,
+                                                             @RequestPart @Validated EmployeeCreateRequestDto requestDto,
+                                                             @RequestPart(required = false) MultipartFile profileImage) {
+        EmployeeCreateResponseDto result = employeeService.join(shopId, assignAllMenus, requestDto, profileImage);
         return SuccessResponse.ok(result);
     }
 
-    @PutMapping("/api/shops/employees/{employeeId}")
-    public ResponseEntity<SuccessResponse<?>> updateEmployee(@PathVariable("employeeId") Long id, @RequestBody @Validated EmployeeCreateRequestDto requestDto) {
-        EmployeeUpdateResponseDto result = employeeService.update(id, requestDto);
+    @GetMapping("/api/shops/{shopId}/employees")
+    public ResponseEntity<SuccessResponse<?>> readEmployeesWithReviews(@PathVariable("shopId") Long shopId, @RequestParam("withReviews") Boolean withReviews) {
+        ReadEmployeeWithReviewsWrapperResponseDto responseDto = employeeService.readEmployeesWithReviews(shopId, withReviews);
+        return SuccessResponse.ok(responseDto);
+    }
+
+    @GetMapping("/api/shops/{shopId}/employees/names")
+    public ResponseEntity<SuccessResponse<?>> readEmployeeNamesWithImage(@PathVariable("shopId") Long shopId, @RequestParam("withImage") Boolean withImage) {
+        ReadEmployeeNamesWithImageWrapperResponseDto responseDto = employeeService.readEmployeeNamesWithImages(shopId, withImage);
+        return SuccessResponse.ok(responseDto);
+    }
+
+    @GetMapping("/api/shops/employees/{employeeId}")
+    public ResponseEntity<SuccessResponse<?>> readEmployeeInfo(@PathVariable("employeeId") Long employeeId) {
+        ReadEmployeeResponseDto responseDto = employeeService.readEmployeeInfo(employeeId);
+        return SuccessResponse.ok(responseDto);
+    }
+
+    @PutMapping("/api/shops/{shopId}/employees/{employeeId}")
+    public ResponseEntity<SuccessResponse<?>> updateEmployee(@PathVariable("shopId") Long shopId,
+                                                             @PathVariable("employeeId") Long employeeId,
+                                                             @RequestPart @Validated EmployeeUpdateRequestDto requestDto,
+                                                             @RequestParam("assignAllMenus") Boolean assignAllMenus,
+                                                             @RequestPart(required = false) MultipartFile profileImage) {
+        UpdateEmployeeResponseDto result = employeeService.update(shopId, employeeId, assignAllMenus, requestDto, profileImage);
         return SuccessResponse.ok(result);
     }
 
