@@ -136,7 +136,6 @@ public class Shop extends BaseTimeEntity {
                 .name(requestDto.getName())
                 .phoneNumber(requestDto.getPhoneNumber())
                 .businessNumber(requestDto.getBusinessNumber())
-                .category(Category.builder().categoryName(requestDto.getCategory()).build())
                 .address(Address.builder().firstAddress(requestDto.getFirstAddress()).secondAddress(requestDto.getSecondAddress()).thirdAddress(requestDto.getThirdAddress()).build())
                 .detailAddress(requestDto.getDetailAddress())
                 .zipCode(requestDto.getZipCode())

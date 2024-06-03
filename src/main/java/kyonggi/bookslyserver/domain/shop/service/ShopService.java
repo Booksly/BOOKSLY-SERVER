@@ -78,6 +78,9 @@ public class ShopService {
 
         Shop shop=shopRepository.save(Shop.createShop(requestDto));
 
+        Category category=categoryRepository.findById(requestDto.getCategoryId()).orElseThrow(()-> new EntityNotFoundException(CATEGORY_NOT_FOUND));
+        shop.setCategory(category);
+
         String url=requestDto.getSnsUrl();
         if (url.contains("pf.kakao.com")){
             shop.setKakaoUrl(url);
