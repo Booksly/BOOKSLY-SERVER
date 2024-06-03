@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class ShopCreateResponseDto {
+    private Long id;
+
     private String name;
 
     private String introduction;
@@ -29,6 +31,8 @@ public class ShopCreateResponseDto {
     private String mainImage;
 
     public ShopCreateResponseDto(Shop shop){
+
+        id=shop.getId();
         name = shop.getName();
         introduction = shop.getIntroduction();
         address = shop.getAddress().getFirstAddress() + " "
