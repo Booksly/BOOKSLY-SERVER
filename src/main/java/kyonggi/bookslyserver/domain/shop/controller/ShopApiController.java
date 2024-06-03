@@ -27,40 +27,35 @@ public class ShopApiController {
 
     private final ShopService shopService;
 
+    // 카테고리 조회
+    @GetMapping("/api/categories")
+    public ResponseEntity<SuccessResponse<?>> getCategories(){
+        return SuccessResponse.ok(shopService.getAllCategories());
+    }
+
     //가게 이름 조회(가게 주인)
-    @GetMapping("/api/shops/shopNames")
+    @GetMapping("/api/shops/names")
     public ResponseEntity<SuccessResponse<?>> readShopNames(@OwnerId Long ownerId){
         return SuccessResponse.ok(shopService.readShopNames(ownerId));
     }
 
     //가게 상세 프로필 조회(유저)
-    @GetMapping("/api/shops/{shopId}/profile/user")
+    @GetMapping("/api/shops/{shopId}/profile")
     public ResponseEntity<SuccessResponse<?>> findShop(@PathVariable("shopId") Long shopId){
         return SuccessResponse.ok(shopService.getShopProfileDetails(shopId));
     }
 
-
     //가게 상세 프로필 조회(가게 주인)
     @GetMapping("/api/shops/{shopId}/profile/owner")
-    public ResponseEntity<SuccessResponse<?>> readShop(@PathVariable("shopId") Long id){
-        ShopOwnerDetailReadOneDto result = shopService.getShopProfileDetailsOwner(id);
-        return SuccessResponse.ok(result);
+    public ResponseEntity<SuccessResponse<?>> readShop(@PathVariable("shopId") Long shopId){
+        return SuccessResponse.ok(shopService.getShopProfileDetailsOwner(shopId));
     }
-
-    //가게 메인 페이지 조회(가게 주인)
-    @GetMapping("/api/shops/{shopId}/mainProfile/owner")
-    public ResponseEntity<SuccessResponse<?>> readMain(@PathVariable("shopId") Long id){
-        ShopOwnerMainReadOneDto result = shopService.readMain(id);
-        return SuccessResponse.ok(result);
-    }
-
 
 
     //새로 입점한 가게 리스트 조회
-    @GetMapping("/api/shops/newshops")
-    public ResponseEntity<SuccessResponse<?>> readNewShops(@PageableDefault(size = 5, page = 0, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable){
-        List<NewShopFilterDto> result = shopService.readNewShops(pageable);
-        return SuccessResponse.ok(result);
+    @GetMapping("/api/shops/new")
+    public ResponseEntity<SuccessResponse<?>> readNewShops(@PageableDefault(size = 5, page = 0, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable){
+                return SuccessResponse.ok(shopService.readNewShops(pageable));
     }
   
     //Top100 조회
@@ -69,8 +64,7 @@ public class ShopApiController {
         if(pageable.getPageNumber() > 9){
             throw new InvalidValueException(ErrorCode.PAGE_NUMBER_OVER);
         }
-        List<ShopFilterDto> result = shopService.readTopShops(pageable);
-        return SuccessResponse.ok(result);
+        return SuccessResponse.ok(shopService.readTopShops(pageable));
     }
 
     //가게 등록

@@ -14,6 +14,8 @@ public record ShopUpdateRequestDto(
         String firstAddress,
         String secondAddress,
         String thirdAddress,
+        Long zipCode,
+        String streetAddress,
         String detailAddress,
         String kakaoUrl,
         String instagramUrl,

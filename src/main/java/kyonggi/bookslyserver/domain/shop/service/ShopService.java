@@ -2,16 +2,18 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 
 import jakarta.transaction.Transactional;
+import kyonggi.bookslyserver.domain.shop.converter.ShopConverter;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Category;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
-import kyonggi.bookslyserver.domain.shop.repository.BusinessScheduleRepository;
 import kyonggi.bookslyserver.domain.shop.repository.CategoryRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
+import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
@@ -26,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
@@ -37,55 +40,34 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
 
-    private final BusinessScheduleRepository businessScheduleRepository;
-
     private final ShopImageRepository shopImageRepository;
 
     private final ShopOwnerRepository shopOwnerRepository;
 
     private final CategoryRepository categoryRepository;
-
+    private final ShopConverter shopConverter;
     private final String ALL_REGION = "전체";
 
-
+    public List<CategoryResponseDto> getAllCategories(){
+        List<Category> categories=categoryRepository.findAll();
+        return categories.stream()
+                .map(category -> new CategoryResponseDto(
+                        category.getCategoryName().getName(),
+                        category.getId()
+                ))
+                .toList();
+    }
 
     public ShopUserReadOneDto getShopProfileDetails(Long shopId){
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-        shop.setTotalVisitors(shop.getTotalVisitors() + 1);
-
-        return ShopUserReadOneDto.builder()
-                .Name(shop.getName())
-                .rating(shop.getRatingByReview())
-                .description(shop.getIntroduction())
-                .detailAddress(shop.getDetailAddress())
-                .phoneNumber(shop.getPhoneNumber())
-                .businessSchedules(
-                        shop.getBusinessSchedules().stream()
-                                .map(BusinessScheduleDto::new)
-                                .toList()
-                )
-                .address(new AddressDto(shop.getAddress()))
-                .build();
+        return shopConverter.toShopUserReadOneDto(shop);
     }
+
     public ShopOwnerDetailReadOneDto getShopProfileDetailsOwner(Long id){
         Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-        List<BusinessScheduleDto> businessScheduleDtos = new ArrayList<>();
-
-        for(BusinessSchedule businessSchedule : shop.getBusinessSchedules()){
-            businessScheduleDtos.add(new BusinessScheduleDto(businessSchedule));
-        }
-
-
-        return new ShopOwnerDetailReadOneDto(shop, businessScheduleDtos);
+        return shopConverter.toShopOwnerDetailReadOneDto(shop);
     }
 
-    public List<ShopFilterDto> readTopShops(Pageable pageable){
-        Page<Shop> shopPage = shopRepository.findAll(pageable);
-        List<ShopFilterDto> result = shopPage.stream().map(shop -> new ShopFilterDto(shop)).collect(Collectors.toList());
-        return result;
-    }
 
     @Transactional
     public ShopCreateResponseDto join(Long ownerId, ShopCreateRequestDto requestDto) {
@@ -95,6 +77,9 @@ public class ShopService {
         }
 
         Shop shop=shopRepository.save(Shop.createShop(requestDto));
+
+        Category category=categoryRepository.findById(requestDto.getCategoryId()).orElseThrow(()-> new EntityNotFoundException(CATEGORY_NOT_FOUND));
+        shop.setCategory(category);
 
         String url=requestDto.getSnsUrl();
         if (url.contains("pf.kakao.com")){
@@ -110,8 +95,9 @@ public class ShopService {
         for(ShopImage shopImage : requestDto.getShopImageList()){
             shop.setShopImage(shopImage);
         }
-
-        shop.setShopOwner(shopOwnerRepository.findById(ownerId).orElseThrow(()-> new EntityNotFoundException(SHOP_OWNER_NOT_EXIST)));
+        ShopOwner shopOwner=shopOwnerRepository.findById(ownerId).orElseThrow(()-> new EntityNotFoundException(SHOP_OWNER_NOT_EXIST));
+        if (shopOwner.getShops().isEmpty()) shop.setIsRepresentative(true);
+        shop.setShopOwner(shopOwner);
         return new ShopCreateResponseDto(shop);
     }
 
@@ -139,18 +125,15 @@ public class ShopService {
                 .collect(Collectors.toList());
     }
 
-    public ShopOwnerMainReadOneDto readMain(Long id){
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-
-        return new ShopOwnerMainReadOneDto(shop);
+    public List<ShopFilterDto> readTopShops(Pageable pageable){
+        Page<Shop> shopPage = shopRepository.findAll(pageable);
+        return shopPage.stream().map(ShopFilterDto::new).collect(Collectors.toList());
     }
 
 
-
     public List<NewShopFilterDto> readNewShops(Pageable pageable){
-        Page<Shop> shopPage = shopRepository.findNewShops(pageable, LocalDate.now(), LocalDate.now().minusMonths(3));
-        List<NewShopFilterDto> result = shopPage.stream().map(shop -> new NewShopFilterDto(shop)).collect(Collectors.toList());
-        return result;
+        Page<Shop> shopPage = shopRepository.findNewShops(pageable, LocalDateTime.now(), LocalDateTime.now().minusMonths(3));
+        return shopPage.stream().map(NewShopFilterDto::new).collect(Collectors.toList());
     }
 
 

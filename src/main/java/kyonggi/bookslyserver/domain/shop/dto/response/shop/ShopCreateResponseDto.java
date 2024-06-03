@@ -1,12 +1,13 @@
 package kyonggi.bookslyserver.domain.shop.dto.response.shop;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
 import lombok.Data;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class ShopCreateResponseDto {
     private String name;
