@@ -27,6 +27,12 @@ public class ShopApiController {
 
     private final ShopService shopService;
 
+    // 카테고리 조회
+    @GetMapping("/api/categories")
+    public ResponseEntity<SuccessResponse<?>> getCategories(){
+        return SuccessResponse.ok(shopService.getAllCategories());
+    }
+
     //가게 이름 조회(가게 주인)
     @GetMapping("/api/shops/names")
     public ResponseEntity<SuccessResponse<?>> readShopNames(@OwnerId Long ownerId){

@@ -7,6 +7,7 @@ import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
+import kyonggi.bookslyserver.domain.shop.entity.Shop.Category;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
 import kyonggi.bookslyserver.domain.shop.repository.CategoryRepository;
@@ -47,6 +48,15 @@ public class ShopService {
     private final ShopConverter shopConverter;
     private final String ALL_REGION = "전체";
 
+    public List<CategoryResponseDto> getAllCategories(){
+        List<Category> categories=categoryRepository.findAll();
+        return categories.stream()
+                .map(category -> new CategoryResponseDto(
+                        category.getCategoryName().getName(),
+                        category.getId()
+                ))
+                .toList();
+    }
 
     public ShopUserReadOneDto getShopProfileDetails(Long shopId){
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
