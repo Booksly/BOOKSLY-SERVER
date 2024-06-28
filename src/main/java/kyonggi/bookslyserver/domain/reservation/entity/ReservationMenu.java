@@ -24,6 +24,6 @@ public class ReservationMenu extends BaseTimeEntity {
     private Menu menu;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="reervation_id")
+    @JoinColumn(name="reservation_id")
     private Reservation reservation;
 }
