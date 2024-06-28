@@ -66,4 +66,11 @@ public class Reservation extends BaseTimeEntity {
         }
     }
 
+    public void setCanceled(boolean canceled) {
+        isCanceled = canceled;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
 }

@@ -198,9 +198,10 @@ public class ReserveCommandService {
         ReservationSchedule reservationSchedule=reservationScheduleRepository.findById(reservation.getReservationSchedule().getId()).orElseThrow(()->new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
         reservationSchedule.getReservations().remove(reservation);
 
-        if (reservationSchedule.isAutoConfirmed()&&reservationSchedule.isClosed()){
+        if (reservationSchedule.isAutoConfirmed() && reservationSchedule.isClosed()){
             reservationSchedule.setClosed(false);
         }
+
 
         /**
          * 예약 취소 알림 생성
