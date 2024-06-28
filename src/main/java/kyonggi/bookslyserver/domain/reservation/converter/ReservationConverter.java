@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 @RequiredArgsConstructor
 public class ReservationConverter {
-    public static ReservationSetting toReservationSetting(ReserveRequestDTO.reservationSettingRequestDTO requestDTO){
+    public static ReservationSetting toReservationSetting(ReserveRequestDTO.reservationSettingRequestDTO requestDTO, Shop shop){
         return ReservationSetting.builder()
                 .registerMin(requestDTO.getRegisterMin())
                 .registerHr(requestDTO.getRegisterHr())
@@ -24,17 +24,13 @@ public class ReservationConverter {
                 .maxCapacity(requestDTO.getMaxCapacity())
                 .isAutoConfirmation(requestDTO.isAuto())
                 .notice(requestDTO.getNotice())
+                .shop(shop)
                 .build();
     }
-    public static ReservationSetting updateReservationSetting(ReserveRequestDTO.reservationSettingRequestDTO request, ReservationSetting reservationSetting){
-        reservationSetting.setRegisterMin(request.getRegisterMin());
-        reservationSetting.setRegisterHr(request.getRegisterHr());
-        reservationSetting.setAutoConfirmation(request.isAuto());
-        reservationSetting.setMaxCapacity(request.getMaxCapacity());
-        reservationSetting.setReservationCycle(request.getCycle());
-        reservationSetting.setNotice(request.getNotice());
+/*    public static ReservationSetting updateReservationSetting(ReserveRequestDTO.reservationSettingRequestDTO request, ReservationSetting reservationSetting){
+        reservationSetting.update(request);
         return reservationSetting;
-    }
+    }*/
     public static ReserveResponseDTO.reservationSettingResultDTO toReservationSettingResultDTO(ReservationSetting reservationSetting){
         return ReserveResponseDTO.reservationSettingResultDTO.builder()
                 .shopId(reservationSetting.getShop().getId())

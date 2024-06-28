@@ -44,6 +44,7 @@ public class ReserveOwnerCommandService {
     private final ReservationScheduleRepository reservationScheduleRepository;
     private final ReservationSettingRepository reservationSettingRepository;
     private final UserNoticeRepository userNoticeRepository;
+
     /**
      *  시간대 수동 마감
      */
@@ -57,6 +58,7 @@ public class ReserveOwnerCommandService {
             return "시간대 오픈 완료";
         }
     }
+
     /**
      * reservation setting 생성 로직
      */
@@ -67,19 +69,13 @@ public class ReserveOwnerCommandService {
         if ((request.getRegisterMin() == null && request.getRegisterHr() == null)) throw new InvalidValueException(ErrorCode.TIME_SETTING_BAD_REQUEST);
         if((request.isAuto() && request.getMaxCapacity() == null)) throw new InvalidValueException(ErrorCode.AUTO_SETTING_BAD_REQUEST);
 
-        ReservationSetting reservationSetting;
-        // 존재 여부 확인
-        Optional<ReservationSetting> existingSetting=reservationSettingRepository.findByShop(shop);
+        ReservationSetting reservationSetting = reservationSettingRepository.findByShop(shop)
+                .map(setting -> setting.update(request))
+                .orElseGet(() -> ReservationConverter.toReservationSetting(request, shop));
 
-        if (existingSetting.isPresent()){
-            reservationSetting= ReservationConverter.updateReservationSetting(request,existingSetting.get());
-        }
-        else {
-            reservationSetting= ReservationConverter.toReservationSetting(request);
-            reservationSetting.setShop(shop);
-        }
         return ReservationConverter.toReservationSettingResultDTO(reservationSettingRepository.save(reservationSetting));
     }
+
     /**
      * 직원별 reservation Schedule 생성 로직
      */
