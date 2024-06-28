@@ -3,6 +3,7 @@ package kyonggi.bookslyserver.domain.shop.service;
 
 import jakarta.transaction.Transactional;
 import kyonggi.bookslyserver.domain.shop.converter.ShopConverter;
+import kyonggi.bookslyserver.domain.shop.dto.request.shop.BusinessScheduleRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
@@ -24,11 +25,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static kyonggi.bookslyserver.global.error.ErrorCode.*;
@@ -88,9 +87,7 @@ public class ShopService {
             shop.setInstagramUrl(url);
         }else shop.setBlogUrl(url);
 
-        for(BusinessSchedule businessSchedule : requestDto.getBusinessScheduleList()){
-            shop.setBusinessSchedule(businessSchedule);
-        }
+        addBusinessSchedulesToShop(requestDto.getBusinessScheduleList(), shop);
 
         for(ShopImage shopImage : requestDto.getShopImageList()){
             shop.setShopImage(shopImage);
@@ -99,6 +96,18 @@ public class ShopService {
         if (shopOwner.getShops().isEmpty()) shop.setIsRepresentative(true);
         shop.setShopOwner(shopOwner);
         return new ShopCreateResponseDto(shop);
+    }
+
+    private void addBusinessSchedulesToShop(List<BusinessScheduleRequestDto> scheduleRequestList, Shop shop) {
+        scheduleRequestList.forEach(scheduleRequest -> {
+            BusinessSchedule businessSchedule = BusinessSchedule.builder()
+                    .day(scheduleRequest.day())
+                    .openAt(scheduleRequest.openAt())
+                    .closeAt(scheduleRequest.closeAt())
+                    .isHoliday(scheduleRequest.isHoliday())
+                    .build();
+            businessSchedule.addShop(shop);
+        });
     }
 
     @Transactional

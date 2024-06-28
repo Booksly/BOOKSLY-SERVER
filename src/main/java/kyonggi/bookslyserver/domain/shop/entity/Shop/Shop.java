@@ -110,13 +110,6 @@ public class Shop extends BaseTimeEntity {
     private List<TimeEvent> timeEvents = new ArrayList<>();
 
 
-
-    //==생성메서드==//
-    public void setBusinessSchedule(BusinessSchedule businessSchedule) {
-        this.businessSchedules.add(businessSchedule);
-        businessSchedule.setShop(this);
-    }
-
     public void setShopImage(ShopImage shopImage){
         this.shopImages.add(shopImage);
         shopImage.setShop(this);
