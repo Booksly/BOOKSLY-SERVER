@@ -59,12 +59,12 @@ public class Menu extends BaseTimeEntity {
     private List<ReservationMenu> reservationMenus = new ArrayList<>();
 
     //==생성메서드==//
-    public static Menu createEntity(MenuCreateRequestDto requestDto, Shop shop){
+    public static Menu createEntity(MenuCreateRequestDto requestDto){
         Menu menu = Menu.builder()
                 .menuName(requestDto.menuName())
                 .price(requestDto.price())
                 .description(requestDto.description())
-                .shop(shop).build();
+                .build();
 
         return menu;
     }
@@ -72,6 +72,16 @@ public class Menu extends BaseTimeEntity {
     public void register(Shop shop){
         shop.getMenus().add(this);
         this.shop = shop;
+    }
+
+    public void addMenuCategory(MenuCategory menuCategory) {
+        this.menuCategory = menuCategory;
+        menuCategory.getMenus().add(this);
+    }
+
+    public void addShop(Shop shop) {
+        this.shop = shop;
+        shop.getMenus().add(this);
     }
 
     public void addImg(MenuImage image){

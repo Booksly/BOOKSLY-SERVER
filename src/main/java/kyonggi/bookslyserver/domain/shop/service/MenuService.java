@@ -89,15 +89,14 @@ public class MenuService {
     }
 
     public MenuCreateResponseDto create(Long ownerId, Long shopId, MenuCreateRequestDto requestDto){
+
         Shop shop = shopService.findShop(ownerId, shopId);
+        MenuCategory menuCategory = menuCategoryRepository.findById(requestDto.menuCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
 
-        MenuCategory menuCategory = menuCategoryRepository.findById(requestDto.menuCategoryId()).orElseThrow(() -> new EntityNotFoundException(MENUCATEGORY_NOT_FOUND));
-
-        if (menuRepository.existsNameInCategory(requestDto.menuName(), menuCategory.getId()))
-            throw new ConflictException(MENU_NAME_ALREADY_EXIST);
-
-        Menu menu = Menu.createEntity(requestDto, shop);
-
+        validateMenuName(requestDto, menuCategory);
+        Menu menu = Menu.createEntity(requestDto);
+        // 메뉴 이미지 등록
         if (requestDto.menuImg() != null) {
             String menuPictureUrl = uploadMenuImgToS3(requestDto.menuImg());
             MenuImage image = MenuImage.builder().menuImgUri(menuPictureUrl).menu(menu).build();
@@ -105,12 +104,16 @@ public class MenuService {
             menu.addImg(image);
         }
 
-        menuCategory.addMenu(menu);
-        shop.getMenus().add(menu);
-
+        menu.addMenuCategory(menuCategory);
+        menu.addShop(shop);
         menuRepository.save(menu);
-        return MenuCreateResponseDto.of(menu);
 
+        return MenuCreateResponseDto.of(menu);
+    }
+
+    private void validateMenuName(MenuCreateRequestDto requestDto, MenuCategory menuCategory) {
+        if (menuRepository.existsNameInCategory(requestDto.menuName(), menuCategory.getId()))
+            throw new ConflictException(MENU_NAME_ALREADY_EXIST);
     }
 
     private String uploadMenuImgToS3(MultipartFile image) {
