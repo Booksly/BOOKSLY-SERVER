@@ -58,17 +58,10 @@ public class Reservation extends BaseTimeEntity {
     private List<ReservationMenu> reservationMenus=new ArrayList<>();
 
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name="review_id")
     private Review review;
 
-    public void addReview(Review review) {
-        this.review = review;
-        review.setReservation(this);
-    }
-
-    public void deleteReview(Review review) {
+    public void deleteReview() {
         if (this.review != null) {
-            this.review.setReservation(null);
             this.review = null;
         }
     }

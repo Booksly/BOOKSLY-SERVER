@@ -23,6 +23,7 @@ import kyonggi.bookslyserver.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
@@ -35,6 +36,7 @@ import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class ReviewService {
 
     private static final long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
@@ -84,6 +86,7 @@ public class ReviewService {
 
 
     public CreateReviewResponseDto createReview(Long userId, CreateReviewRequestDto createReviewRequestDto) {
+
         validateReviewPictures(createReviewRequestDto.getReviewPictures());
 
         Reservation reservation = reservationRepository.findById(createReviewRequestDto.getReservationId()).orElseThrow(() -> new EntityNotFoundException(RESERVATION_NOT_FOUND));
@@ -95,15 +98,16 @@ public class ReviewService {
                 .employee(reservationSchedule.getEmployee())
                 .user(userQueryService.findUser(userId))
                 .content(createReviewRequestDto.getContent())
-                .rating(createReviewRequestDto.getRating()).build();
+                .rating(createReviewRequestDto.getRating())
+                .reservation(reservation).build();
 
         Review savedReview = reviewRepository.save(review);
-        reservation.addReview(savedReview);
 
-        Uuid savedUuid = uuidService.createUuid();
-
-        if (createReviewRequestDto.getReviewPictures() != null && !createReviewRequestDto.getReviewPictures().isEmpty())
+        // 리뷰 사진 업로드
+        if (createReviewRequestDto.getReviewPictures() != null && !createReviewRequestDto.getReviewPictures().isEmpty()) {
+            Uuid savedUuid = uuidService.createUuid();
             uploadFileToS3(createReviewRequestDto, savedReview, savedUuid);
+        }
 
         return CreateReviewResponseDto.of(savedReview);
     }
@@ -120,12 +124,14 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException(REVIEW_NOT_FOUND));
         if (review.getUser().getId() != userId) throw new ForbiddenException();
 
+        // 리뷰 이미지가 있다면 삭제
         if (review.getReviewImages() != null) {
             review.getReviewImages().stream().
-                    forEach(reviewImage -> amazonS3Manager.deleteFile(amazonS3Manager.extractKeyNameFromUrl(reviewImage.getReviewImgUrl())));
+                    forEach(reviewImage ->
+                            amazonS3Manager.deleteFile(amazonS3Manager.extractKeyNameFromUrl(reviewImage.getReviewImgUrl())));
         }
 
-        review.getReservation().deleteReview(review);
+        review.getReservation().deleteReview(); // 양방향 관계 정리
         reviewRepository.deleteById(reviewId);
     }
 }
