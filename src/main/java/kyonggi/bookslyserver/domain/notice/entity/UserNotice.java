@@ -31,4 +31,8 @@ public class UserNotice extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="reservation_id")
     private Reservation reservation;
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
 }
