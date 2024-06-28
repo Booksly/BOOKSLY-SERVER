@@ -73,4 +73,17 @@ public class Reservation extends BaseTimeEntity {
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
     }
+
+    public void confirm() {
+        this.isConfirmed = true;
+        // 예약 확정에 따른 예약 거절 여부 처리
+        this.isRefused = false;
+    }
+
+    public void refuse(String refuseReason) {
+        this.isRefused = true;
+        this.refuseReason = refuseReason;
+        // 예약 거절에 따른 예약 확정 여부 처리
+        this.isConfirmed = false;
+    }
 }

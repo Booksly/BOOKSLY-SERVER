@@ -151,7 +151,7 @@ public class ReserveOwnerCommandService {
     public String confirmReservationRequest(Long reservationId){
         Reservation reservation=reservationRepository.findById(reservationId)
                 .orElseThrow(()->new EntityNotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
-        reservation.setConfirmed(true);
+        reservation.confirm();
         reservationRepository.save(reservation);
 
         userNoticeRepository.save(
@@ -169,8 +169,7 @@ public class ReserveOwnerCommandService {
         if (requestDTO.getRefuseReason()==null){
             throw new InvalidValueException(ErrorCode.REFUSAL_REASON_MISSING);
         }
-        reservation.setRefused(true);
-        reservation.setRefuseReason(requestDTO.getRefuseReason());
+        reservation.refuse(requestDTO.getRefuseReason());
         reservationRepository.save(reservation);
         /**
          * 거절된 예약 알림 객체 생성

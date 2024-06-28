@@ -63,6 +63,10 @@ public class ReservationSchedule extends BaseTimeEntity {
     @JoinColumn(name = "timeEventSchedule_id")
     private TimeEventSchedule timeEventSchedule;
 
+    public void setClosed(boolean closed) {
+        isClosed = closed;
+    }
+
     //==연관 관계 편의 메서드==//
     public void addTimeEventSchedule(TimeEventSchedule timeEventSchedule) {
         this.timeEventSchedule = timeEventSchedule;
