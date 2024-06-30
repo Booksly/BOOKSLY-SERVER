@@ -108,12 +108,6 @@ public class Shop extends BaseTimeEntity {
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private List<TimeEvent> timeEvents = new ArrayList<>();
 
-
-    public void setShopImage(ShopImage shopImage){
-        this.shopImages.add(shopImage);
-        shopImage.setShop(this);
-    }
-
     public void setShopOwner(ShopOwner shopOwner){
         this.shopOwner = shopOwner;
         this.shopOwner.getShops().add(this);

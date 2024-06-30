@@ -33,4 +33,10 @@ public class ShopImage extends BaseTimeEntity {
             this.isRepresentative = isRepresentative;
         }
     }
+
+    //== 연관관계 편의 메서드 ==//
+    public void addShop(Shop shop) {
+        this.shop = shop;
+        shop.getShopImages().add(this);
+    }
 }

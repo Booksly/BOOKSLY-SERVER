@@ -71,11 +71,8 @@ public class ShopService {
     @Transactional
     public ShopCreateResponseDto join(Long ownerId, ShopCreateRequestDto requestDto) {
 
-
-        if(shopRepository.existsByName(requestDto.getName())){
-            throw new BusinessException(SHOP_NAME_ALREADY_EXIST);
-        }
-
+        // 가게 생성 조건 검증
+        checkShopNameUniqueness(requestDto);
         Shop shop=shopRepository.save(Shop.createShop(requestDto));
 
         Category category=categoryRepository.findById(requestDto.getCategoryId()).orElseThrow(()-> new EntityNotFoundException(CATEGORY_NOT_FOUND));
@@ -87,12 +84,17 @@ public class ShopService {
         addBusinessSchedulesToShop(requestDto.getBusinessScheduleList(), shop);
 
         for(ShopImage shopImage : requestDto.getShopImageList()){
-            shop.setShopImage(shopImage);
+            shopImage.addShop(shop);
         }
         ShopOwner shopOwner=shopOwnerRepository.findById(ownerId).orElseThrow(()-> new EntityNotFoundException(SHOP_OWNER_NOT_EXIST));
         if (shopOwner.getShops().isEmpty()) shop.setRepresentative(true);
         shop.setShopOwner(shopOwner);
+
         return new ShopCreateResponseDto(shop);
+    }
+
+    private void checkShopNameUniqueness(ShopCreateRequestDto requestDto) {
+        if(shopRepository.existsByName(requestDto.getName())) throw new BusinessException(SHOP_NAME_ALREADY_EXIST);
     }
 
     private void addBusinessSchedulesToShop(List<BusinessScheduleRequestDto> scheduleRequestList, Shop shop) {
