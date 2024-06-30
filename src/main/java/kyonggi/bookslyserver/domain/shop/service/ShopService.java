@@ -71,6 +71,7 @@ public class ShopService {
     @Transactional
     public ShopCreateResponseDto join(Long ownerId, ShopCreateRequestDto requestDto) {
 
+
         if(shopRepository.existsByName(requestDto.getName())){
             throw new BusinessException(SHOP_NAME_ALREADY_EXIST);
         }
@@ -81,11 +82,7 @@ public class ShopService {
         shop.setCategory(category);
 
         String url=requestDto.getSnsUrl();
-        if (url.contains("pf.kakao.com")){
-            shop.setKakaoUrl(url);
-        } else if (url.contains("instagram.com")) {
-            shop.setInstagramUrl(url);
-        }else shop.setBlogUrl(url);
+        shop.assignSNSUrl(url);
 
         addBusinessSchedulesToShop(requestDto.getBusinessScheduleList(), shop);
 
@@ -93,7 +90,7 @@ public class ShopService {
             shop.setShopImage(shopImage);
         }
         ShopOwner shopOwner=shopOwnerRepository.findById(ownerId).orElseThrow(()-> new EntityNotFoundException(SHOP_OWNER_NOT_EXIST));
-        if (shopOwner.getShops().isEmpty()) shop.setIsRepresentative(true);
+        if (shopOwner.getShops().isEmpty()) shop.setRepresentative(true);
         shop.setShopOwner(shopOwner);
         return new ShopCreateResponseDto(shop);
     }
@@ -120,8 +117,7 @@ public class ShopService {
     @Transactional
     public ShopDeleteResponseDto delete(Long shopId){
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(SHOP_NOT_FOUND));
-        shop.setIsDeleted(true);
-        shop.setDeletedAt(LocalDateTime.now());
+        shop.markAsDeleted();
         return new ShopDeleteResponseDto(shopId);
     }
 

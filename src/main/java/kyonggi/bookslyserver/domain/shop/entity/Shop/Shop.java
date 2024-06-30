@@ -193,6 +193,33 @@ public class Shop extends BaseTimeEntity {
         return 0;
     }
 
+    public void markAsDeleted() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
+    }
 
+    public void assignSNSUrl(String url) {
+        final String kakao = "pf.kakao.com";
+        final String instagram = "instagram.com";
+        if (url.contains(kakao)){
+            this.kakaoUrl = url;
+        } else if (url.contains(instagram)) {
+            this.instagramUrl = url;
+        }else{
+            this.blogUrl = url;
+        }
+    }
 
+    // setter
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setRepresentative(Boolean representative) {
+        isRepresentative = representative;
+    }
+
+    public void setTotalVisitors(int totalVisitors) {
+        this.totalVisitors = totalVisitors;
+    }
 }
