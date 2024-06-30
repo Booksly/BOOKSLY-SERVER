@@ -6,7 +6,6 @@ import lombok.Setter;
 
 @Embeddable
 @Getter
-@Setter
 public class TimeUnit {
     private String hour;
     private String minute;
