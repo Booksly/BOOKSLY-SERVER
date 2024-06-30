@@ -1,9 +1,9 @@
 package kyonggi.bookslyserver.domain.shop.dto.request.shop;
 
 import jakarta.validation.constraints.NotNull;
-import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.TimeUnit;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class ShopCreateRequestDto {
 
     @NotNull private List<BusinessScheduleRequestDto> businessScheduleList;
 
-    @NotNull private List<ShopImage> shopImageList;
+    @NotNull private MultipartFile shopImage;
 
     private TimeUnit timeUnit;
 

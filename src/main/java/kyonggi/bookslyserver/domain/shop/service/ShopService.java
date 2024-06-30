@@ -8,6 +8,7 @@ import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopCreateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.request.shop.ShopUpdateRequestDto;
 import kyonggi.bookslyserver.domain.shop.dto.response.shop.*;
 import kyonggi.bookslyserver.domain.shop.entity.BusinessSchedule.BusinessSchedule;
+import kyonggi.bookslyserver.domain.shop.entity.Menu.MenuImage;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Category;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.ShopImage;
@@ -16,6 +17,9 @@ import kyonggi.bookslyserver.domain.shop.repository.ShopImageRepository;
 import kyonggi.bookslyserver.domain.shop.repository.ShopRepository;
 import kyonggi.bookslyserver.domain.user.entity.ShopOwner;
 import kyonggi.bookslyserver.domain.user.repository.ShopOwnerRepository;
+import kyonggi.bookslyserver.global.aws.s3.AmazonS3Manager;
+import kyonggi.bookslyserver.global.common.uuid.Uuid;
+import kyonggi.bookslyserver.global.common.uuid.UuidService;
 import kyonggi.bookslyserver.global.error.ErrorCode;
 import kyonggi.bookslyserver.global.error.exception.BusinessException;
 import kyonggi.bookslyserver.global.error.exception.EntityNotFoundException;
@@ -24,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,13 +43,14 @@ import static kyonggi.bookslyserver.global.error.ErrorCode.*;
 public class ShopService {
 
     private final ShopRepository shopRepository;
-
     private final ShopImageRepository shopImageRepository;
-
     private final ShopOwnerRepository shopOwnerRepository;
-
     private final CategoryRepository categoryRepository;
+    private final UuidService uuidService;
+
+    private final AmazonS3Manager amazonS3Manager;
     private final ShopConverter shopConverter;
+
     private final String ALL_REGION = "전체";
 
     public List<CategoryResponseDto> getAllCategories(){
@@ -73,24 +79,36 @@ public class ShopService {
 
         // 가게 생성 조건 검증
         checkShopNameUniqueness(requestDto);
+        ShopOwner shopOwner=shopOwnerRepository.findById(ownerId).orElseThrow(()-> new EntityNotFoundException(SHOP_OWNER_NOT_EXIST));
+
+        // 가게 생성
         Shop shop=shopRepository.save(Shop.createShop(requestDto));
 
+        // 가게 이미지 등록
+        String shopImageUrl = uploadShopImgToS3(requestDto.getShopImage());
+        ShopImage shopImage = ShopImage.builder().imgUri(shopImageUrl).build();
+        shopImageRepository.save(shopImage);
+        shopImage.addShop(shop);
+
+        // 가게 카테고리 설정
         Category category=categoryRepository.findById(requestDto.getCategoryId()).orElseThrow(()-> new EntityNotFoundException(CATEGORY_NOT_FOUND));
         shop.setCategory(category);
 
-        String url=requestDto.getSnsUrl();
-        shop.assignSNSUrl(url);
-
+        // 가게 영업 일정 설정
         addBusinessSchedulesToShop(requestDto.getBusinessScheduleList(), shop);
 
-        for(ShopImage shopImage : requestDto.getShopImageList()){
-            shopImage.addShop(shop);
-        }
-        ShopOwner shopOwner=shopOwnerRepository.findById(ownerId).orElseThrow(()-> new EntityNotFoundException(SHOP_OWNER_NOT_EXIST));
+        // 대표 가게 설정
         if (shopOwner.getShops().isEmpty()) shop.setRepresentative(true);
         shop.setShopOwner(shopOwner);
 
         return new ShopCreateResponseDto(shop);
+    }
+
+    private String uploadShopImgToS3(MultipartFile shopImage) {
+        Uuid uuid = uuidService.createUuid();
+        String pictureUrl = amazonS3Manager.uploadFile(
+                amazonS3Manager.generateShopKeyName(uuid, shopImage.getOriginalFilename()), shopImage);
+        return pictureUrl;
     }
 
     private void checkShopNameUniqueness(ShopCreateRequestDto requestDto) {

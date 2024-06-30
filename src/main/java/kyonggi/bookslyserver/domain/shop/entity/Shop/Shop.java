@@ -118,7 +118,8 @@ public class Shop extends BaseTimeEntity {
     }
 
     public static Shop createShop(ShopCreateRequestDto requestDto){
-        return Shop.builder()
+
+        Shop shop = Shop.builder()
                 .name(requestDto.getName())
                 .phoneNumber(requestDto.getPhoneNumber())
                 .businessNumber(requestDto.getBusinessNumber())
@@ -131,6 +132,10 @@ public class Shop extends BaseTimeEntity {
                 .shopImages(new ArrayList<>())
                 .timeUnit(requestDto.getTimeUnit())
                 .build();
+
+        String url=requestDto.getSnsUrl();
+        shop.assignSNSUrl(url);
+        return shop;
     }
     public void update(ShopUpdateRequestDto requestDto) {
         int business_flag = 0;
