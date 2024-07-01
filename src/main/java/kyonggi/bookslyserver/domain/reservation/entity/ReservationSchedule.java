@@ -18,7 +18,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -63,6 +62,10 @@ public class ReservationSchedule extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "timeEventSchedule_id")
     private TimeEventSchedule timeEventSchedule;
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
+    }
 
     //==연관 관계 편의 메서드==//
     public void addTimeEventSchedule(TimeEventSchedule timeEventSchedule) {

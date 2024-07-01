@@ -8,7 +8,6 @@ import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -33,5 +32,11 @@ public class ShopImage extends BaseTimeEntity {
         if(isRepresentative != this.isRepresentative) {
             this.isRepresentative = isRepresentative;
         }
+    }
+
+    //== 연관관계 편의 메서드 ==//
+    public void addShop(Shop shop) {
+        this.shop = shop;
+        shop.getShopImages().add(this);
     }
 }

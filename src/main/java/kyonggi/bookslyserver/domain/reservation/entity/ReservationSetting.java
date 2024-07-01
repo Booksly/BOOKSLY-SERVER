@@ -1,13 +1,13 @@
 package kyonggi.bookslyserver.domain.reservation.entity;
 
 import jakarta.persistence.*;
+import kyonggi.bookslyserver.domain.reservation.dto.ReserveRequestDTO;
 import kyonggi.bookslyserver.domain.shop.entity.Shop.Shop;
 import kyonggi.bookslyserver.global.common.BaseTimeEntity;
 import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -34,4 +34,15 @@ public class ReservationSetting extends BaseTimeEntity {
     @OneToOne
     @JoinColumn(name = "shop_id",referencedColumnName = "id")
     private Shop shop;
+
+    public ReservationSetting update(ReserveRequestDTO.reservationSettingRequestDTO request) {
+        this.registerMin = request.getRegisterMin();
+        this.registerHr = request.getRegisterHr();
+        this.isAutoConfirmation = request.isAuto();
+        this.maxCapacity = request.getMaxCapacity();
+        this.reservationCycle = request.getCycle();
+        this.notice = request.getNotice();
+
+        return this;
+    }
 }

@@ -24,7 +24,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -109,19 +108,6 @@ public class Shop extends BaseTimeEntity {
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
     private List<TimeEvent> timeEvents = new ArrayList<>();
 
-
-
-    //==생성메서드==//
-    public void setBusinessSchedule(BusinessSchedule businessSchedule) {
-        this.businessSchedules.add(businessSchedule);
-        businessSchedule.setShop(this);
-    }
-
-    public void setShopImage(ShopImage shopImage){
-        this.shopImages.add(shopImage);
-        shopImage.setShop(this);
-    }
-
     public void setShopOwner(ShopOwner shopOwner){
         this.shopOwner = shopOwner;
         this.shopOwner.getShops().add(this);
@@ -132,7 +118,8 @@ public class Shop extends BaseTimeEntity {
     }
 
     public static Shop createShop(ShopCreateRequestDto requestDto){
-        return Shop.builder()
+
+        Shop shop = Shop.builder()
                 .name(requestDto.getName())
                 .phoneNumber(requestDto.getPhoneNumber())
                 .businessNumber(requestDto.getBusinessNumber())
@@ -145,6 +132,10 @@ public class Shop extends BaseTimeEntity {
                 .shopImages(new ArrayList<>())
                 .timeUnit(requestDto.getTimeUnit())
                 .build();
+
+        String url=requestDto.getSnsUrl();
+        shop.assignSNSUrl(url);
+        return shop;
     }
     public void update(ShopUpdateRequestDto requestDto) {
         int business_flag = 0;
@@ -201,6 +192,33 @@ public class Shop extends BaseTimeEntity {
         return 0;
     }
 
+    public void markAsDeleted() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
+    }
 
+    public void assignSNSUrl(String url) {
+        final String kakao = "pf.kakao.com";
+        final String instagram = "instagram.com";
+        if (url.contains(kakao)){
+            this.kakaoUrl = url;
+        } else if (url.contains(instagram)) {
+            this.instagramUrl = url;
+        }else{
+            this.blogUrl = url;
+        }
+    }
 
+    // setter
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setRepresentative(Boolean representative) {
+        isRepresentative = representative;
+    }
+
+    public void setTotalVisitors(int totalVisitors) {
+        this.totalVisitors = totalVisitors;
+    }
 }

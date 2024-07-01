@@ -15,7 +15,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -42,6 +41,7 @@ public class Review extends BaseTimeEntity {
     private Employee employee;
 
     @OneToOne(mappedBy = "review", fetch = LAZY)
+    @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)

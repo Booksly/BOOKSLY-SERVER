@@ -14,7 +14,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -37,10 +36,6 @@ public class MenuCategory extends BaseTimeEntity {
         return MenuCategory.builder().name(requestDto.categoryName()).shop(shop).build();
     }
 
-    public void addMenu(Menu menu){
-        this.menus.add(menu);
-        menu.setMenuCategory(this);
-    }
 
     public void updateName(String name) {
         this.name = name;

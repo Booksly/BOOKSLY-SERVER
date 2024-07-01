@@ -13,7 +13,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -23,12 +22,10 @@ public class TimeEventMenu extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //@ManyToOne(fetch = LAZY)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    //@ManyToOne(fetch = LAZY)
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "timeEvent_id")
     private TimeEvent timeEvent;

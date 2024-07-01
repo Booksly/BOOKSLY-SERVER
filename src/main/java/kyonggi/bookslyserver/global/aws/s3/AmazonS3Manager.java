@@ -55,6 +55,10 @@ public class AmazonS3Manager{
         return amazonConfig.getEmployeePath() + '/' + uuid.getUuid();
     }
 
+    public String generateShopKeyName(Uuid uuid, String originalFilename) {
+        return amazonConfig.getShopPath() + '/' + uuid.getUuid() + '/' + originalFilename;
+    }
+
     public void deleteFile(String keyName) {
         try {
             // deleteObject(버킷명, 키값)으로 객체 삭제
